@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Jadwal Uji Kompetensi (UJK) - LSP</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono (untuk angka & kode ala papan stasiun) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        kai: {
+                            navy: '#070B19',
+                            panel: '#0F162C',
+                            rowEven: '#111933',
+                            rowOdd: '#0B1124',
+                            border: '#1E294B',
+                            orange: '#F37021',
+                            blue: '#0066B3',
+                            amber: '#FFB800',
+                            cyan: '#00E5FF'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom styles untuk efek layar stasiun TV/LED & animasi halus */
+        body {
+            background-color: #070B19;
+            color: #F8FAFC;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* Animasi kedip status aktif ala FIDS Bandara/Stasiun */
+        @keyframes fidsPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(0.98); }
+        }
+        .animate-fids-pulse {
+            animation: fidsPulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes dotBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+        .animate-dot-blink {
+            animation: dotBlink 1s infinite;
+        }
+
+        /* Animasi Running Text (Marquee mulus) */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            width: 100%;
+        }
+        .marquee-content {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marqueeScroll 35s linear infinite;
+        }
+        .marquee-container:hover .marquee-content {
+            animation-play-state: paused;
+        }
+        @keyframes marqueeScroll {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Animasi transisi baris tabel saat ganti halaman */
+        @keyframes rowFlipIn {
+            0% {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .row-animate {
+            animation: rowFlipIn 0.35s ease-out forwards;
+        }
+
+        /* Custom scrollbar untuk panel admin */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B1124;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #273663;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3B5296;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-kai-navy text-slate-100 font-sans antialiased">
+
+    <!-- ==================== HEADER DISPLAY STASIUN / FIDS ==================== -->
+    <header id="main-header" class="bg-gradient-to-r from-[#0A1128] via-[#0F1B3D] to-[#0A1128] border-b-4 border-kai-orange shadow-2xl px-4 py-3 sm:px-6 lg:px-8 transition-colors duration-300">
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
+            
+            <!-- Kiri: Identitas Lembaga Sertifikasi Profesi (LSP) & Logo/Ikon Custom -->
+            <div class="flex items-center gap-4 w-full lg:w-auto justify-between lg:justify-start">
+                <div class="flex items-center gap-3.5">
+                    <!-- Emblem / Logo Custom -->
+                    <div id="header-logo-box" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-kai-orange to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 border border-orange-300/30 shrink-0 overflow-hidden">
+                        <span id="display-header-icon" class="text-white text-2xl sm:text-3xl font-black">
+                            <i class="fa-solid fa-award"></i>
+                        </span>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span id="display-header-badge" class="px-2.5 py-0.5 text-[10px] sm:text-xs font-extrabold tracking-wider uppercase bg-kai-blue text-white rounded">
+                                LISENSI BNSP
+                            </span>
+                            <span id="display-sub-title" class="text-xs sm:text-sm font-bold text-amber-400 tracking-wide uppercase">
+                                LEMBAGA SERTIFIKASI PROFESI • PUSAT INFORMASI TUK
+                            </span>
+                        </div>
+                        <h1 id="display-main-title" class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white uppercase leading-tight mt-0.5">
+                            JADWAL UJI KOMPETENSI (UJK)
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Tombol Kontrol Cepat Mobile -->
+                <div class="flex lg:hidden items-center gap-2">
+                    <button onclick="toggleFullscreen()" title="Layar Penuh (F11)" class="p-2.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-600 transition">
+                        <i class="fa-solid fa-expand text-base"></i>
+                    </button>
+                    <button onclick="toggleAdminDrawer()" title="Panel Kontrol Admin (Alt+A)" class="p-2.5 rounded-lg bg-kai-orange hover:bg-orange-600 text-white shadow-lg transition">
+                        <i class="fa-solid fa-gear text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kanan: Jam Digital Real-Time (WIB), Tanggal, & Tombol Kontrol -->
+            <div class="flex items-center justify-between lg:justify-end gap-4 w-full lg:w-auto border-t lg:border-t-0 border-slate-800/80 pt-2 lg:pt-0">
+                <div id="header-clock-wrapper" class="text-left lg:text-right">
+                    <div id="live-date" class="text-xs sm:text-sm font-bold text-cyan-300 uppercase tracking-wider">
+                        MEMUAT TANGGAL...
+                    </div>
+                    <div class="flex items-baseline gap-1.5 justify-start lg:justify-end">
+                        <span id="live-clock" class="font-mono text-2xl sm:text-3xl lg:text-4xl font-extrabold text-amber-400 tracking-wider drop-shadow-[0_0_8px_rgba(255,184,0,0.35)]">
+                            00:00:00
+                        </span>
+                        <span class="text-xs sm:text-sm font-extrabold text-slate-300 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
+                            WIB
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Tombol Fullscreen & Admin (Desktop) -->
+                <div class="hidden lg:flex items-center gap-2.5 pl-3 border-l border-slate-700/80">
+                    <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Tampilan Layar Penuh TV (F11)" class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-600/80 transition cursor-pointer">
+                        <i id="icon-fullscreen" class="fa-solid fa-expand text-sm"></i>
+                        <span class="text-xs font-bold uppercase tracking-wider">Layar Penuh</span>
+                    </button>
+                    <button onclick="toggleAdminDrawer()" title="Buka Panel Admin (Tekan Alt + A)" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-kai-orange hover:bg-orange-600 text-white font-bold shadow-lg shadow-orange-600/25 transition cursor-pointer">
+                        <i class="fa-solid fa-sliders text-sm"></i>
+                        <span class="text-xs uppercase tracking-wider">Admin</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub-Header Mobile/Tablet untuk Ringkasan -->
+        <div class="xl:hidden mt-2 pt-2 border-t border-slate-800/80 flex items-center justify-between">
+            <span class="text-xs font-extrabold tracking-wider text-cyan-300 uppercase flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                MONITORING RUANG & ASESOR UJK
+            </span>
+            <span id="mobile-summary-badge" class="text-xs font-mono font-bold text-slate-300 bg-slate-800 px-2 py-0.5 rounded">
+                0 Sesi Aktif
+            </span>
+        </div>
+    </header>
+
+    <!-- ==================== TABEL UTAMA FIDS (DISPLAY LAYAR BESAR) ==================== -->
+    <main class="flex-1 flex flex-col px-3 py-3 sm:px-6 sm:py-4 overflow-hidden">
+        <div class="flex-1 flex flex-col bg-kai-panel rounded-2xl border border-kai-border shadow-2xl overflow-hidden">
+            
+            <!-- Wrapper Tabel Responsif (Fokus pada Tanggal Uji Kompetensi, Nama TUK, & Nama Asesor) -->
+            <div class="flex-1 overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[680px]">
+                    <thead>
+                        <tr id="table-head-row" class="bg-[#162247] text-amber-400 border-b-2 border-kai-orange text-xs sm:text-sm lg:text-base font-extrabold uppercase tracking-wider">
+                            <th class="py-4 px-5 w-[26%] whitespace-nowrap">
+                                <i class="fa-solid fa-calendar-days mr-1.5 text-cyan-400"></i>TANGGAL UJI KOMPETENSI
+                            </th>
+                            <th class="py-4 px-5 w-[38%]">
+                                <i class="fa-solid fa-location-dot mr-1.5 text-cyan-400"></i>NAMA TUK
+                            </th>
+                            <th class="py-4 px-5 w-[36%]">
+                                <i class="fa-solid fa-user-tie mr-1.5 text-cyan-400"></i>NAMA ASESOR
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="fids-table-body" class="divide-y divide-slate-800/90 text-base sm:text-lg lg:text-2xl font-semibold">
+                        <!-- Baris jadwal akan dirender secara dinamis melalui JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bar Info Paginasi & Progress Auto-Slide -->
+            <div class="bg-[#0B1226] border-t border-slate-800 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-4 text-xs sm:text-sm text-slate-300">
+                    <span class="flex items-center gap-1.5 font-semibold">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span>
+                        Total Jadwal UJK: <strong id="total-schedules-count" class="text-white font-mono">0</strong> Jadwal
+                    </span>
+                </div>
+
+                <!-- Kontrol Halaman & Indikator Auto-Page -->
+                <div class="flex items-center gap-3 ml-auto">
+                    <div id="auto-page-indicator" class="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-400 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">
+                        <i class="fa-solid fa-rotate text-kai-orange animate-spin" style="animation-duration: 6s;"></i>
+                        <span>Auto-Slide: <strong id="auto-slide-seconds" class="text-cyan-300">10d</strong></span>
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="prevPage()" title="Halaman Sebelumnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
+                        </button>
+                        <span id="page-indicator" class="font-mono text-xs sm:text-sm font-extrabold px-3 py-1 rounded-lg bg-kai-blue/30 text-cyan-300 border border-kai-blue/50">
+                            HALAMAN 1 / 1
+                        </span>
+                        <button onclick="nextPage()" title="Halaman Berikutnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar Tipis untuk Auto-Pagination -->
+            <div class="w-full h-1 bg-slate-900">
+                <div id="pagination-progress-bar" class="h-full bg-gradient-to-r from-kai-orange via-amber-400 to-cyan-400 transition-all duration-300" style="width: 0%;"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== FOOTER RUNNING TEXT (PENGUMUMAN STASIUN) ==================== -->
+    <footer class="bg-[#090F22] border-t-2 border-kai-orange flex items-stretch h-12 sm:h-14 shadow-2xl">
+        <!-- Label Pengumuman -->
+        <div class="bg-kai-orange text-white font-black text-xs sm:text-sm lg:text-base px-4 sm:px-6 flex items-center gap-2 shrink-0 tracking-wider uppercase shadow-lg z-10">
+            <i class="fa-solid fa-bullhorn text-base sm:text-lg animate-bounce"></i>
+            <span>INFORMASI ASESI</span>
+        </div>
+
+        <!-- Teks Berjalan -->
+        <div class="flex-1 flex items-center overflow-hidden bg-gradient-to-r from-[#0D152E] to-[#090F22]">
+            <div class="marquee-container">
+                <div id="display-running-text" class="marquee-content text-sm sm:text-base lg:text-lg font-bold text-amber-300 tracking-wide">
+                    SELAMAT DATANG DI TEMPAT UJI KOMPETENSI (TUK) — HARAP ASESI HADIR 30 MENIT SEBELUM JADWAL DIMULAI DENGAN MEMBAWA KTP ASLI, KARTU PESERTA UJK, SERTA BUKTI PORTOFOLIO PERSYARATAN.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== PANEL KONTROL ADMIN (SLIDE-OVER DRAWER) ==================== -->
+    <div id="admin-backdrop" onclick="toggleAdminDrawer()" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden transition-opacity"></div>
+
+    <aside id="admin-drawer" class="fixed top-0 right-0 h-full w-full max-w-3xl bg-[#0D1429] border-l-2 border-kai-orange shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- Header Panel Admin -->
+        <div class="px-6 py-4 bg-[#121C38] border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-kai-orange/20 border border-kai-orange text-kai-orange flex items-center justify-center">
+                    <i class="fa-solid fa-sliders text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-extrabold text-white tracking-wide">PANEL KONTROL OPERATOR UJK</h2>
+                    <p class="text-xs text-slate-400">Kelola header layar, jadwal UJK, status pelaksanaan, dan running text</p>
+                </div>
+            </div>
+            <button onclick="toggleAdminDrawer()" class="p-2 rounded-lg bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Konten Scrollable Panel Admin -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+
+            <!-- Bagian 1: Pengaturan Header & Identitas Layar Display -->
+            <section class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="text-sm font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-tv"></i> Pengaturan Header & Tampilan Layar
+                    </h3>
+                    <span class="text-[11px] font-semibold text-slate-400">Kustomisasi langsung ke layar utama</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Judul Utama Header</label>
+                        <input type="text" id="input-main-title" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm font-bold focus:outline-none focus:border-kai-orange" placeholder="Contoh: JADWAL UJI KOMPETENSI (UJK)">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Subjudul / Nama Lembaga / TUK</label>
+                        <input type="text" id="input-sub-title" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-kai-orange" placeholder="Contoh: LEMBAGA SERTIFIKASI PROFESI • PUSAT INFORMASI TUK">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Teks Badge / Label Kiri Atas</label>
+                        <input type="text" id="input-header-badge" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm uppercase font-bold focus:outline-none focus:border-kai-orange" placeholder="Contoh: LISENSI BNSP">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Emoji / URL Logo Header</label>
+                        <input type="text" id="input-header-icon" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-kai-orange" placeholder="Kosong = Ikon Default, atau isi Emoji / URL Gambar">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Tema Warna Header</label>
+                        <select id="input-header-theme" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm font-bold focus:outline-none focus:border-kai-orange">
+                            <option value="kai-navy">KAI Navy - Orange (Default)</option>
+                            <option value="emerald-dark">Emerald Dark - Hijau Sertifikasi</option>
+                            <option value="royal-blue">Royal Blue - Biru Korporat</option>
+                            <option value="charcoal-gold">Charcoal Gold - Hitam Emas Elegan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Toggle Tampilkan/Sembunyikan Jam Digital WIB -->
+                <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-950/90 border border-slate-800">
+                    <div>
+                        <div class="text-xs sm:text-sm font-bold text-white">Tampilkan Jam Digital Real-Time (WIB)</div>
+                        <div class="text-[11px] text-slate-400">Menampilkan tanggal dan jam digital otomatis di sisi kanan header</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="input-show-clock" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Teks Pengumuman Berjalan (Running Text Footer)</label>
+                    <textarea id="input-running-text" rows="2" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-kai-orange" placeholder="Masukkan pengumuman tata tertib atau informasi penting bagi asesi..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Baris per Halaman TV</label>
+                        <select id="input-rows-per-page" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-kai-orange">
+                            <option value="5">5 Baris / Halaman</option>
+                            <option value="6">6 Baris / Halaman</option>
+                            <option value="7" selected>7 Baris / Halaman (Ideal TV)</option>
+                            <option value="8">8 Baris / Halaman</option>
+                            <option value="10">10 Baris / Halaman</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">Durasi Auto-Slide (Detik)</label>
+                        <select id="input-slide-interval" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-kai-orange">
+                            <option value="0">Nonaktif (Manual)</option>
+                            <option value="5">Setiap 5 Detik</option>
+                            <option value="8">Setiap 8 Detik</option>
+                            <option value="10" selected>Setiap 10 Detik</option>
+                            <option value="15">Setiap 15 Detik</option>
+                            <option value="20">Setiap 20 Detik</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="saveDisplaySettings()" class="w-full py-2.5 px-4 rounded-xl bg-kai-blue hover:bg-blue-600 text-white font-bold text-sm transition shadow-lg cursor-pointer">
+                            <i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Pengaturan
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bagian 2: Form Tambah / Edit Jadwal UJK -->
+            <section class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 id="form-schedule-title" class="text-sm font-extrabold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-plus"></i> Tambah Jadwal UJK Baru
+                    </h3>
+                    <button id="btn-cancel-edit" onclick="resetScheduleForm()" class="hidden text-xs font-bold text-rose-400 hover:text-rose-300 underline cursor-pointer">
+                        Batal Edit
+                    </button>
+                </div>
+
+                <form id="schedule-form" onsubmit="handleSaveSchedule(event)" class="space-y-4">
+                    <input type="hidden" id="edit-schedule-id">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Tanggal Uji Kompetensi (Kalender) *</label>
+                            <input type="date" id="field-tanggal" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm font-mono focus:outline-none focus:border-cyan-400 [color-scheme:dark]">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nama TUK *</label>
+                            <input type="text" id="field-tuk" required placeholder="Contoh: TUK Sewaktu - Ruang A" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+                        </div>
+                    </div>
+
+                    <!-- Input Multi Asesor untuk Satu TUK -->
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-bold text-slate-300 uppercase">Daftar Nama Asesor (Bisa Lebih dari 1) *</label>
+                            <button type="button" onclick="addAsesorInputRow()" class="px-2.5 py-1 rounded-lg bg-cyan-950/90 hover:bg-cyan-800 text-cyan-300 border border-cyan-700 text-xs font-bold transition cursor-pointer">
+                                <i class="fa-solid fa-user-plus mr-1"></i> + Tambah Asesor
+                            </button>
+                        </div>
+                        <div id="asesor-inputs-container" class="space-y-2">
+                            <!-- Baris input asesor dirender secara dinamis -->
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-1">
+                        <button type="submit" id="btn-submit-schedule" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg transition cursor-pointer">
+                            <i class="fa-solid fa-plus mr-1.5"></i> Tambahkan ke Layar Jadwal
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Bagian 3: Daftar Jadwal -->
+            <section class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="text-sm font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check"></i> Daftar Jadwal UJK
+                    </h3>
+
+                    <!-- Backup / Restore / Reset -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="exportDataJSON()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-cyan-300 border border-slate-700 transition cursor-pointer">
+                            <i class="fa-solid fa-download mr-1"></i> Export JSON
+                        </button>
+                        <label class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-300 border border-slate-700 transition cursor-pointer">
+                            <i class="fa-solid fa-upload mr-1"></i> Import JSON
+                            <input type="file" id="import-json-file" accept=".json" onchange="importDataJSON(event)" class="hidden">
+                        </label>
+                        <button onclick="confirmResetDefault()" class="px-3 py-1.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-xs font-bold text-rose-300 border border-rose-800 transition cursor-pointer">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Data Contoh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-800">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead class="bg-slate-950 text-slate-400 uppercase font-bold">
+                            <tr>
+                                <th class="py-2.5 px-3">Tanggal UJK</th>
+                                <th class="py-2.5 px-3">Nama TUK</th>
+                                <th class="py-2.5 px-3">Nama Asesor</th>
+                                <th class="py-2.5 px-3 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-schedule-list" class="divide-y divide-slate-800 bg-slate-900/40">
+                            <!-- List admin dirender via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer Panel Admin -->
+        <div class="px-6 py-3 bg-[#090F22] border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <span>Shortcut: Tekan <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-200 font-mono">Alt + A</kbd> untuk buka/tutup panel admin.</span>
+            <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Tersimpan otomatis di browser</span>
+        </div>
+    </aside>
+
+    <!-- ==================== CUSTOM CONFIRMATION & TOAST MODAL (PENGGANTI ALERT/CONFIRM) ==================== -->
+    <div id="custom-modal-backdrop" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-[60] hidden items-center justify-center p-4">
+        <div class="bg-[#111933] border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center gap-3 text-amber-400">
+                <i id="modal-icon" class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                <h3 id="modal-title" class="text-lg font-extrabold text-white">Konfirmasi Tindakan</h3>
+            </div>
+            <p id="modal-message" class="text-sm text-slate-300 leading-relaxed">Apakah Anda yakin?</p>
+            <div class="flex justify-end gap-3 pt-2">
+                <button id="modal-btn-cancel" onclick="closeCustomModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-bold transition cursor-pointer">
+                    Batal
+                </button>
+                <button id="modal-btn-confirm" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-bold transition cursor-pointer">
+                    Ya, Lanjutkan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-container" class="fixed bottom-16 right-5 z-[70] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        // --- KONSTANTA & DATA DEFAULT ---
+        const STORAGE_KEY = 'fids_ujk_lsp_data_v3';
+
+        const HEADER_THEMES = {
+            'kai-navy': {
+                headerClass: 'bg-gradient-to-r from-[#0A1128] via-[#0F1B3D] to-[#0A1128] border-b-4 border-kai-orange shadow-2xl px-4 py-3 sm:px-6 lg:px-8 transition-colors duration-300',
+                badgeClass: 'px-2.5 py-0.5 text-[10px] sm:text-xs font-extrabold tracking-wider uppercase bg-kai-blue text-white rounded',
+                logoBoxClass: 'w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-kai-orange to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 border border-orange-300/30 shrink-0 overflow-hidden',
+                tableHeadClass: 'bg-[#162247] text-amber-400 border-b-2 border-kai-orange text-xs sm:text-sm lg:text-base font-extrabold uppercase tracking-wider'
+            },
+            'emerald-dark': {
+                headerClass: 'bg-gradient-to-r from-[#061C17] via-[#0B2E26] to-[#061C17] border-b-4 border-emerald-500 shadow-2xl px-4 py-3 sm:px-6 lg:px-8 transition-colors duration-300',
+                badgeClass: 'px-2.5 py-0.5 text-[10px] sm:text-xs font-extrabold tracking-wider uppercase bg-emerald-600 text-white rounded',
+                logoBoxClass: 'w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center shadow-lg shadow-emerald-500/20 border border-emerald-300/30 shrink-0 overflow-hidden',
+                tableHeadClass: 'bg-[#0E332B] text-emerald-300 border-b-2 border-emerald-500 text-xs sm:text-sm lg:text-base font-extrabold uppercase tracking-wider'
+            },
+            'royal-blue': {
+                headerClass: 'bg-gradient-to-r from-[#091833] via-[#102A5C] to-[#091833] border-b-4 border-sky-400 shadow-2xl px-4 py-3 sm:px-6 lg:px-8 transition-colors duration-300',
+                badgeClass: 'px-2.5 py-0.5 text-[10px] sm:text-xs font-extrabold tracking-wider uppercase bg-sky-600 text-white rounded',
+                logoBoxClass: 'w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow-lg shadow-sky-500/20 border border-sky-300/30 shrink-0 overflow-hidden',
+                tableHeadClass: 'bg-[#132E63] text-sky-300 border-b-2 border-sky-400 text-xs sm:text-sm lg:text-base font-extrabold uppercase tracking-wider'
+            },
+            'charcoal-gold': {
+                headerClass: 'bg-gradient-to-r from-[#121214] via-[#1F1E24] to-[#121214] border-b-4 border-amber-400 shadow-2xl px-4 py-3 sm:px-6 lg:px-8 transition-colors duration-300',
+                badgeClass: 'px-2.5 py-0.5 text-[10px] sm:text-xs font-extrabold tracking-wider uppercase bg-amber-500 text-slate-950 rounded',
+                logoBoxClass: 'w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center shadow-lg shadow-amber-500/20 border border-amber-200/40 shrink-0 overflow-hidden',
+                tableHeadClass: 'bg-[#222129] text-amber-400 border-b-2 border-amber-400 text-xs sm:text-sm lg:text-base font-extrabold uppercase tracking-wider'
+            }
+        };
+
+        const DEFAULT_DATA = {
+            settings: {
+                mainTitle: 'JADWAL UJI KOMPETENSI (UJK)',
+                subTitle: 'LEMBAGA SERTIFIKASI PROFESI • PUSAT INFORMASI TUK',
+                headerBadge: 'LISENSI BNSP',
+                headerIcon: '',
+                headerTheme: 'kai-navy',
+                showClock: true,
+                runningText: 'SELAMAT DATANG DI TEMPAT UJI KOMPETENSI (TUK) — HARAP ASESI HADIR 30 MENIT SEBELUM JADWAL DIMULAI DENGAN MEMBAWA KTP ASLI, KARTU PESERTA UJK, SERTA BUKTI PORTOFOLIO PERSYARATAN.',
+                rowsPerPage: 7,
+                slideInterval: 10
+            },
+            schedules: [
+                {
+                    id: 'ujk-1',
+                    tanggal: '18 November 2026',
+                    tuk: 'TUK Sewaktu - Ruang Praktik Perhotelan A',
+                    asesor: 'Dra. Siti Rahmawati, M.Par.'
+                },
+                {
+                    id: 'ujk-2',
+                    tanggal: '18 November 2026',
+                    tuk: 'TUK Mandiri - Lab Keperawatan Utama',
+                    asesor: 'Ns. Hendra Wijaya, S.Kep., M.Kes.'
+                },
+                {
+                    id: 'ujk-3',
+                    tanggal: '19 November 2026',
+                    tuk: 'TUK Sewaktu - Ruang Simulasi Anak B',
+                    asesor: 'Rina Kusumawardani, S.Psi.'
+                },
+                {
+                    id: 'ujk-4',
+                    tanggal: '19 November 2026',
+                    tuk: 'TUK Mandiri - Lab Komputer Administrasi 1',
+                    asesor: 'Ir. Bambang Sutrisno, M.Agr.'
+                },
+                {
+                    id: 'ujk-5',
+                    tanggal: '20 November 2026',
+                    tuk: 'TUK Mandiri - Ruang Asesmen Gedung B Lt. 2',
+                    asesor: 'Drs. Ahmad Fauzi, M.M.'
+                },
+                {
+                    id: 'ujk-6',
+                    tanggal: '20 November 2026',
+                    tuk: 'TUK Sewaktu - Ruang Praktik Perhotelan A',
+                    asesor: 'Dewi Anggraini, S.ST.Par.'
+                },
+                {
+                    id: 'ujk-7',
+                    tanggal: '21 November 2026',
+                    tuk: 'TUK Mandiri - Aula Utama Nusantara',
+                    asesor: 'Ir. Rudi Hartono, M.T., IPM'
+                },
+                {
+                    id: 'ujk-8',
+                    tanggal: '21 November 2026',
+                    tuk: 'TUK Sewaktu - Workshop F&B Lounge',
+                    asesor: 'Dimas Pratama, S.E.'
+                },
+                {
+                    id: 'ujk-9',
+                    tanggal: '22 November 2026',
+                    tuk: 'TUK Lapangan - Kebun Praktik Blok C',
+                    asesor: 'Dr. Ir. Suryadi, M.P.'
+                }
+            ]
+        };
+
+        let appState = loadAppState();
+        let currentPage = 1;
+        let autoSlideTimer = null;
+        let progressTimer = null;
+        let progressPercent = 0;
+
+        // --- INISIALISASI APLIKASI ---
+        window.addEventListener('DOMContentLoaded', () => {
+            applySettingsToUI();
+            resetScheduleForm();
+            renderAll();
+            startLiveClock();
+            startAutoPagination();
+        });
+
+        function formatTanggalIndonesia(dateVal) {
+            if (!dateVal) return '-';
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateVal)) {
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                const [y, m, d] = dateVal.split('-');
+                const monthName = months[parseInt(m, 10) - 1] || m;
+                return `${parseInt(d, 10)} ${monthName} ${y}`;
+            }
+            return dateVal;
+        }
+
+        function normalizeAsesorList(item) {
+            if (Array.isArray(item.asesorList) && item.asesorList.length > 0) {
+                return item.asesorList;
+            }
+            if (typeof item.asesor === 'string' && item.asesor.trim()) {
+                return item.asesor.split(/\n|;/).map(s => s.trim()).filter(Boolean);
+            }
+            return ['-'];
+        }
+
+        function loadAppState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    return {
+                        settings: { ...DEFAULT_DATA.settings, ...(parsed.settings || {}) },
+                        schedules: Array.isArray(parsed.schedules) ? parsed.schedules : DEFAULT_DATA.schedules
+                    };
+                }
+            } catch (err) {
+                console.warn('Gagal membaca localStorage, menggunakan data default.', err);
+            }
+            return JSON.parse(JSON.stringify(DEFAULT_DATA));
+        }
+
+        function persistAppState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+            } catch (err) {
+                showToast('Gagal menyimpan data ke penyimpanan browser.', 'error');
+            }
+        }
+
+        // --- JAM DIGITAL REAL-TIME (WIB) ---
+        function startLiveClock() {
+            const days = ['MINGGU', 'SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU'];
+            const months = ['JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOVEMBER', 'DESEMBER'];
+
+            function updateClock() {
+                const now = new Date();
+                const dayName = days[now.getDay()];
+                const dateNum = String(now.getDate()).padStart(2, '0');
+                const monthName = months[now.getMonth()];
+                const yearNum = now.getFullYear();
+
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+
+                const dateEl = document.getElementById('live-date');
+                const clockEl = document.getElementById('live-clock');
+                if (dateEl) dateEl.textContent = `${dayName}, ${dateNum} ${monthName} ${yearNum}`;
+                if (clockEl) clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        // --- RENDER TABEL UTAMA FIDS & ADMIN ---
+        function renderAll() {
+            renderFIDSTable();
+            renderAdminList();
+            updateSummaryCounters();
+        }
+
+        function renderFIDSTable() {
+            const tbody = document.getElementById('fids-table-body');
+            const rowsPerPage = parseInt(appState.settings.rowsPerPage, 10) || 7;
+            const totalItems = appState.schedules.length;
+            const totalPages = Math.max(1, Math.ceil(totalItems / rowsPerPage));
+
+            if (currentPage > totalPages) {
+                currentPage = 1;
+            }
+
+            document.getElementById('page-indicator').textContent = `HALAMAN ${currentPage} / ${totalPages}`;
+
+            if (totalItems === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="py-16 text-center text-slate-400">
+                            <i class="fa-regular fa-calendar-xmark text-4xl mb-3 text-slate-600 block"></i>
+                            <p class="text-lg font-bold text-slate-300">Belum ada jadwal Uji Kompetensi yang ditampilkan.</p>
+                            <p class="text-sm mt-1">Buka Panel Admin (<kbd class="px-1.5 py-0.5 bg-slate-800 rounded">Alt + A</kbd>) untuk menambahkan jadwal baru.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const startIdx = (currentPage - 1) * rowsPerPage;
+            const pageItems = appState.schedules.slice(startIdx, startIdx + rowsPerPage);
+
+            tbody.innerHTML = pageItems.map((item, idx) => {
+                const isEven = idx % 2 === 0;
+                const rowBg = isEven ? 'bg-kai-rowEven/90' : 'bg-kai-rowOdd/90';
+                const asesorList = normalizeAsesorList(item);
+                const asesorHTML = asesorList.length === 1
+                    ? `<div class="text-white font-bold text-base sm:text-xl lg:text-2xl leading-snug">${escapeHTML(asesorList[0])}</div>`
+                    : `<ul class="space-y-1.5">
+                        ${asesorList.map((nama, i) => `
+                            <li class="flex items-start gap-2 text-white font-bold text-sm sm:text-lg lg:text-xl leading-snug">
+                                <span class="inline-flex items-center justify-center px-2 py-0.5 rounded bg-kai-blue/40 border border-cyan-500/40 text-cyan-300 font-mono text-xs sm:text-sm shrink-0 mt-0.5">${i + 1}</span>
+                                <span>${escapeHTML(nama)}</span>
+                            </li>
+                        `).join('')}
+                       </ul>`;
+
+                return `
+                    <tr class="${rowBg} hover:bg-[#19264D] transition-colors row-animate" style="animation-delay: ${idx * 45}ms">
+                        <!-- TANGGAL UJI KOMPETENSI -->
+                        <td class="py-4 px-5 align-middle whitespace-nowrap">
+                            <div class="font-mono text-cyan-300 font-extrabold text-base sm:text-xl lg:text-2xl tracking-wide">
+                                ${escapeHTML(formatTanggalIndonesia(item.tanggal))}
+                            </div>
+                        </td>
+
+                        <!-- NAMA TUK -->
+                        <td class="py-4 px-5 align-middle">
+                            <div class="text-amber-300 font-extrabold text-base sm:text-xl lg:text-2xl leading-snug">
+                                ${escapeHTML(item.tuk)}
+                            </div>
+                        </td>
+
+                        <!-- NAMA ASESOR -->
+                        <td class="py-4 px-5 align-middle">
+                            ${asesorHTML}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateSummaryCounters() {
+            const totalSesi = appState.schedules.length;
+
+            document.getElementById('total-schedules-count').textContent = totalSesi;
+            document.getElementById('mobile-summary-badge').textContent = `${totalSesi} Jadwal`;
+        }
+
+        // --- PENGATURAN HEADER & DISPLAY ---
+        function applySettingsToUI() {
+            const s = appState.settings;
+            const theme = HEADER_THEMES[s.headerTheme] || HEADER_THEMES['kai-navy'];
+
+            // Terapkan kelas tema pada header dan kepala tabel
+            const mainHeader = document.getElementById('main-header');
+            const headerBadge = document.getElementById('display-header-badge');
+            const logoBox = document.getElementById('header-logo-box');
+            const tableHeadRow = document.getElementById('table-head-row');
+
+            if (mainHeader) mainHeader.className = theme.headerClass;
+            if (headerBadge) headerBadge.className = theme.badgeClass;
+            if (logoBox) logoBox.className = theme.logoBoxClass;
+            if (tableHeadRow) tableHeadRow.className = theme.tableHeadClass;
+
+            // Terapkan teks header & running text
+            document.getElementById('display-main-title').textContent = s.mainTitle || DEFAULT_DATA.settings.mainTitle;
+            document.getElementById('display-sub-title').textContent = s.subTitle || '';
+            document.getElementById('display-header-badge').textContent = s.headerBadge || 'LISENSI BNSP';
+            document.getElementById('display-header-badge').style.display = s.headerBadge ? 'inline-block' : 'none';
+            document.getElementById('display-running-text').textContent = s.runningText || DEFAULT_DATA.settings.runningText;
+
+            // Terapkan ikon / emoji / URL logo kustom
+            const iconContainer = document.getElementById('display-header-icon');
+            const iconVal = (s.headerIcon || '').trim();
+            if (!iconVal) {
+                iconContainer.innerHTML = '<i class="fa-solid fa-award"></i>';
+            } else if (/^https?:\/\//i.test(iconVal)) {
+                iconContainer.innerHTML = `<img src="${escapeHTML(iconVal)}" alt="Logo" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid fa-award\\'></i>'">`;
+            } else {
+                iconContainer.textContent = iconVal;
+            }
+
+            // Tampilkan / sembunyikan jam digital WIB
+            const clockWrapper = document.getElementById('header-clock-wrapper');
+            if (clockWrapper) {
+                clockWrapper.style.display = s.showClock !== false ? 'block' : 'none';
+            }
+
+            // Sinkronkan nilai ke form admin
+            document.getElementById('input-main-title').value = s.mainTitle || '';
+            document.getElementById('input-sub-title').value = s.subTitle || '';
+            document.getElementById('input-header-badge').value = s.headerBadge || '';
+            document.getElementById('input-header-icon').value = s.headerIcon || '';
+            document.getElementById('input-header-theme').value = s.headerTheme || 'kai-navy';
+            document.getElementById('input-show-clock').checked = s.showClock !== false;
+            document.getElementById('input-running-text').value = s.runningText || '';
+            document.getElementById('input-rows-per-page').value = String(s.rowsPerPage || 7);
+            document.getElementById('input-slide-interval').value = String(s.slideInterval ?? 10);
+        }
+
+        function saveDisplaySettings() {
+            appState.settings.mainTitle = document.getElementById('input-main-title').value.trim() || DEFAULT_DATA.settings.mainTitle;
+            appState.settings.subTitle = document.getElementById('input-sub-title').value.trim();
+            appState.settings.headerBadge = document.getElementById('input-header-badge').value.trim();
+            appState.settings.headerIcon = document.getElementById('input-header-icon').value.trim();
+            appState.settings.headerTheme = document.getElementById('input-header-theme').value;
+            appState.settings.showClock = document.getElementById('input-show-clock').checked;
+            appState.settings.runningText = document.getElementById('input-running-text').value.trim() || DEFAULT_DATA.settings.runningText;
+            appState.settings.rowsPerPage = parseInt(document.getElementById('input-rows-per-page').value, 10) || 7;
+            appState.settings.slideInterval = parseInt(document.getElementById('input-slide-interval').value, 10);
+
+            persistAppState();
+            applySettingsToUI();
+            currentPage = 1;
+            renderAll();
+            startAutoPagination();
+            showToast('Pengaturan header & layar berhasil disimpan!', 'success');
+        }
+
+        // --- AUTO PAGINATION / SLIDE HALAMAN OTOMATIS ---
+        function startAutoPagination() {
+            if (autoSlideTimer) clearInterval(autoSlideTimer);
+            if (progressTimer) clearInterval(progressTimer);
+
+            const intervalSec = parseInt(appState.settings.slideInterval, 10) || 0;
+            const progressBar = document.getElementById('pagination-progress-bar');
+            const indicatorEl = document.getElementById('auto-slide-seconds');
+
+            if (intervalSec <= 0) {
+                if (indicatorEl) indicatorEl.textContent = 'Manual';
+                if (progressBar) progressBar.style.width = '0%';
+                return;
+            }
+
+            if (indicatorEl) indicatorEl.textContent = `${intervalSec}d`;
+            progressPercent = 0;
+            if (progressBar) progressBar.style.width = '0%';
+
+            const tickMs = 100;
+            const stepPercent = (tickMs / (intervalSec * 1000)) * 100;
+
+            progressTimer = setInterval(() => {
+                const rowsPerPage = parseInt(appState.settings.rowsPerPage, 10) || 7;
+                const totalPages = Math.max(1, Math.ceil(appState.schedules.length / rowsPerPage));
+
+                if (totalPages <= 1) {
+                    progressPercent = 0;
+                    if (progressBar) progressBar.style.width = '0%';
+                    return;
+                }
+
+                progressPercent += stepPercent;
+                if (progressPercent >= 100) {
+                    progressPercent = 0;
+                    nextPage(true);
+                }
+                if (progressBar) progressBar.style.width = `${progressPercent}%`;
+            }, tickMs);
+        }
+
+        function nextPage(isAuto = false) {
+            const rowsPerPage = parseInt(appState.settings.rowsPerPage, 10) || 7;
+            const totalPages = Math.max(1, Math.ceil(appState.schedules.length / rowsPerPage));
+            currentPage = currentPage >= totalPages ? 1 : currentPage + 1;
+            renderFIDSTable();
+            if (!isAuto) {
+                progressPercent = 0;
+                const progressBar = document.getElementById('pagination-progress-bar');
+                if (progressBar) progressBar.style.width = '0%';
+            }
+        }
+
+        function prevPage() {
+            const rowsPerPage = parseInt(appState.settings.rowsPerPage, 10) || 7;
+            const totalPages = Math.max(1, Math.ceil(appState.schedules.length / rowsPerPage));
+            currentPage = currentPage <= 1 ? totalPages : currentPage - 1;
+            renderFIDSTable();
+            progressPercent = 0;
+            const progressBar = document.getElementById('pagination-progress-bar');
+            if (progressBar) progressBar.style.width = '0%';
+        }
+
+        // --- CRUD JADWAL UJK DI PANEL ADMIN ---
+        function renderAdminList() {
+            const tbody = document.getElementById('admin-schedule-list');
+            if (!tbody) return;
+
+            if (appState.schedules.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-500">Belum ada data jadwal.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = appState.schedules.map((item, index) => {
+                const asesorList = normalizeAsesorList(item);
+                return `
+                <tr class="hover:bg-slate-800/50 transition">
+                    <td class="py-2.5 px-3 font-mono font-bold text-cyan-300 whitespace-nowrap align-top">
+                        ${escapeHTML(formatTanggalIndonesia(item.tanggal))}
+                    </td>
+                    <td class="py-2.5 px-3 align-top">
+                        <div class="font-bold text-amber-300">
+                            <i class="fa-solid fa-location-dot mr-1.5 text-cyan-400"></i>${escapeHTML(item.tuk)}
+                        </div>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-200 font-semibold align-top">
+                        <ul class="space-y-1">
+                            ${asesorList.map((nama, i) => `
+                                <li class="flex items-center gap-1.5">
+                                    <span class="text-[11px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-cyan-300">${i + 1}</span>
+                                    <span>${escapeHTML(nama)}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </td>
+                    <td class="py-2.5 px-3 text-right whitespace-nowrap space-x-1 align-top">
+                        <button onclick="moveSchedule(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Geser Naik" class="p-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 cursor-pointer">
+                            <i class="fa-solid fa-arrow-up text-xs"></i>
+                        </button>
+                        <button onclick="moveSchedule(${index}, 1)" ${index === appState.schedules.length - 1 ? 'disabled' : ''} title="Geser Turun" class="p-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 cursor-pointer">
+                            <i class="fa-solid fa-arrow-down text-xs"></i>
+                        </button>
+                        <button onclick="editSchedule('${item.id}')" title="Edit Jadwal" class="p-1.5 rounded bg-sky-900/60 hover:bg-sky-700 text-sky-300 cursor-pointer">
+                            <i class="fa-solid fa-pen-to-square text-xs"></i>
+                        </button>
+                        <button onclick="confirmDeleteSchedule('${item.id}')" title="Hapus Jadwal" class="p-1.5 rounded bg-rose-900/60 hover:bg-rose-700 text-rose-300 cursor-pointer">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+        }
+
+        function addAsesorInputRow(value = '') {
+            const container = document.getElementById('asesor-inputs-container');
+            const rowCount = container.children.length + 1;
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-2 asesor-input-row';
+            row.innerHTML = `
+                <span class="asesor-row-num w-7 h-9 rounded-lg bg-slate-800 border border-slate-700 text-cyan-300 font-mono text-xs font-bold flex items-center justify-center shrink-0">${rowCount}</span>
+                <input type="text" required value="${escapeHTML(value)}" placeholder="Nama Asesor Kompetensi ke-${rowCount}..." class="asesor-field-input flex-1 px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+                <button type="button" onclick="removeAsesorInputRow(this)" title="Hapus Baris Asesor" class="p-2 rounded-xl bg-rose-950/70 hover:bg-rose-800 text-rose-300 border border-rose-800/70 transition cursor-pointer shrink-0">
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
+            `;
+            container.appendChild(row);
+            updateAsesorRowNumbers();
+        }
+
+        function removeAsesorInputRow(btn) {
+            const container = document.getElementById('asesor-inputs-container');
+            if (container.children.length <= 1) {
+                showToast('Minimal harus ada 1 Nama Asesor.', 'info');
+                return;
+            }
+            btn.closest('.asesor-input-row').remove();
+            updateAsesorRowNumbers();
+        }
+
+        function updateAsesorRowNumbers() {
+            const rows = document.querySelectorAll('#asesor-inputs-container .asesor-input-row');
+            rows.forEach((row, idx) => {
+                const badge = row.querySelector('.asesor-row-num');
+                const input = row.querySelector('.asesor-field-input');
+                if (badge) badge.textContent = idx + 1;
+                if (input) input.placeholder = `Nama Asesor Kompetensi ke-${idx + 1}...`;
+            });
+        }
+
+        function convertTextDateToISO(dateStr) {
+            if (!dateStr) return '';
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+            const monthMap = {
+                januari: '01', februari: '02', maret: '03', april: '04',
+                mei: '05', juni: '06', juli: '07', agustus: '08',
+                september: '09', oktober: '10', november: '11', desember: '12'
+            };
+            const parts = dateStr.trim().split(/\s+/);
+            if (parts.length === 3) {
+                const day = String(parts[0]).padStart(2, '0');
+                const month = monthMap[parts[1].toLowerCase()];
+                const year = parts[2];
+                if (month && /^\d{4}$/.test(year)) {
+                    return `${year}-${month}-${day}`;
+                }
+            }
+            return '';
+        }
+
+        function handleSaveSchedule(event) {
+            event.preventDefault();
+            const editId = document.getElementById('edit-schedule-id').value;
+            const asesorInputs = Array.from(document.querySelectorAll('#asesor-inputs-container .asesor-field-input'));
+            const asesorList = asesorInputs.map(inp => inp.value.trim()).filter(Boolean);
+
+            if (asesorList.length === 0) {
+                showToast('Harap isi minimal satu Nama Asesor.', 'error');
+                return;
+            }
+
+            const scheduleObj = {
+                id: editId || 'ujk-' + Date.now(),
+                tanggal: document.getElementById('field-tanggal').value.trim(),
+                tuk: document.getElementById('field-tuk').value.trim(),
+                asesor: asesorList.join('; '),
+                asesorList: asesorList
+            };
+
+            if (editId) {
+                const idx = appState.schedules.findIndex(s => s.id === editId);
+                if (idx !== -1) {
+                    appState.schedules[idx] = scheduleObj;
+                    showToast('Perubahan jadwal UJK disimpan!', 'success');
+                }
+            } else {
+                appState.schedules.push(scheduleObj);
+                showToast('Jadwal UJK baru ditambahkan ke layar!', 'success');
+            }
+
+            persistAppState();
+            resetScheduleForm();
+            renderAll();
+        }
+
+        function editSchedule(id) {
+            const item = appState.schedules.find(s => s.id === id);
+            if (!item) return;
+
+            document.getElementById('edit-schedule-id').value = item.id;
+            document.getElementById('field-tanggal').value = convertTextDateToISO(item.tanggal);
+            document.getElementById('field-tuk').value = item.tuk;
+
+            const container = document.getElementById('asesor-inputs-container');
+            container.innerHTML = '';
+            const asesorList = normalizeAsesorList(item);
+            asesorList.forEach(nama => addAsesorInputRow(nama));
+
+            document.getElementById('form-schedule-title').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit Jadwal UJK';
+            document.getElementById('btn-submit-schedule').innerHTML = '<i class="fa-solid fa-check mr-1.5"></i> Simpan Perubahan';
+            document.getElementById('btn-cancel-edit').classList.remove('hidden');
+
+            // Scroll ke form edit di drawer admin
+            document.querySelector('#admin-drawer .overflow-y-auto').scrollTo({ top: 340, behavior: 'smooth' });
+        }
+
+        function resetScheduleForm() {
+            document.getElementById('schedule-form').reset();
+            document.getElementById('edit-schedule-id').value = '';
+            const container = document.getElementById('asesor-inputs-container');
+            if (container) {
+                container.innerHTML = '';
+                addAsesorInputRow('');
+            }
+            document.getElementById('form-schedule-title').innerHTML = '<i class="fa-solid fa-calendar-plus"></i> Tambah Jadwal UJK Baru';
+            document.getElementById('btn-submit-schedule').innerHTML = '<i class="fa-solid fa-plus mr-1.5"></i> Tambahkan ke Layar Jadwal';
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+        }
+
+        function moveSchedule(index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= appState.schedules.length) return;
+
+            const temp = appState.schedules[index];
+            appState.schedules[index] = appState.schedules[targetIndex];
+            appState.schedules[targetIndex] = temp;
+
+            persistAppState();
+            renderAll();
+        }
+
+        function confirmDeleteSchedule(id) {
+            const item = appState.schedules.find(s => s.id === id);
+            if (!item) return;
+
+            openCustomModal(
+                'Hapus Jadwal UJK?',
+                `Apakah Anda yakin ingin menghapus jadwal pada tanggal "${formatTanggalIndonesia(item.tanggal)}" di "${item.tuk}"?`,
+                () => {
+                    appState.schedules = appState.schedules.filter(s => s.id !== id);
+                    persistAppState();
+                    renderAll();
+                    showToast('Jadwal UJK berhasil dihapus.', 'info');
+                }
+            );
+        }
+
+        // --- EXPORT / IMPORT / RESET DATA ---
+        function exportDataJSON() {
+            try {
+                const dataStr = JSON.stringify(appState, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const dateStamp = new Date().toISOString().slice(0, 10);
+                a.href = url;
+                a.download = `jadwal-ujk-fids-${dateStamp}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('File JSON jadwal berhasil diunduh!', 'success');
+            } catch (err) {
+                showToast('Gagal mengekspor file JSON.', 'error');
+            }
+        }
+
+        function importDataJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (!parsed || !Array.isArray(parsed.schedules)) {
+                        throw new Error('Format file JSON tidak valid.');
+                    }
+                    appState = {
+                        settings: { ...DEFAULT_DATA.settings, ...(parsed.settings || {}) },
+                        schedules: parsed.schedules
+                    };
+                    persistAppState();
+                    applySettingsToUI();
+                    currentPage = 1;
+                    renderAll();
+                    startAutoPagination();
+                    showToast('Data jadwal berhasil diimpor!', 'success');
+                } catch (err) {
+                    showToast('Gagal memuat JSON: ' + err.message, 'error');
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function confirmResetDefault() {
+            openCustomModal(
+                'Reset ke Data Contoh?',
+                'Semua perubahan jadwal dan pengaturan header Anda akan dikembalikan ke data awal.',
+                () => {
+                    appState = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                    persistAppState();
+                    applySettingsToUI();
+                    currentPage = 1;
+                    renderAll();
+                    startAutoPagination();
+                    showToast('Data dikembalikan ke pengaturan awal.', 'info');
+                }
+            );
+        }
+
+        // --- UTILITAS UI, MODAL, TOAST, FULLSCREEN & KEYBOARD ---
+        function toggleAdminDrawer() {
+            const drawer = document.getElementById('admin-drawer');
+            const backdrop = document.getElementById('admin-backdrop');
+            const isClosed = drawer.classList.contains('translate-x-full');
+
+            if (isClosed) {
+                drawer.classList.remove('translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                drawer.classList.add('translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        function toggleFullscreen() {
+            try {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            } catch (err) {
+                showToast('Browser membatasi mode layar penuh otomatis.', 'info');
+            }
+        }
+
+        document.addEventListener('fullscreenchange', () => {
+            const icon = document.getElementById('icon-fullscreen');
+            if (!icon) return;
+            if (document.fullscreenElement) {
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+            } else {
+                icon.classList.remove('fa-compress');
+                icon.classList.add('fa-expand');
+            }
+        });
+
+        // Shortcut Keyboard: Alt + A untuk Panel Admin, Panah Kiri/Kanan untuk Navigasi Halaman
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+                e.preventDefault();
+                toggleAdminDrawer();
+            } else if (e.key === 'Escape') {
+                const modal = document.getElementById('custom-modal-backdrop');
+                if (!modal.classList.contains('hidden')) {
+                    closeCustomModal();
+                    return;
+                }
+                const drawer = document.getElementById('admin-drawer');
+                if (!drawer.classList.contains('translate-x-full')) {
+                    toggleAdminDrawer();
+                }
+            } else if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'SELECT') {
+                if (e.key === 'ArrowRight') nextPage();
+                if (e.key === 'ArrowLeft') prevPage();
+            }
+        });
+
+        let pendingModalConfirm = null;
+
+        function openCustomModal(title, message, onConfirm) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            pendingModalConfirm = onConfirm;
+
+            const backdrop = document.getElementById('custom-modal-backdrop');
+            backdrop.classList.remove('hidden');
+            backdrop.classList.add('flex');
+
+            document.getElementById('modal-btn-confirm').onclick = () => {
+                if (typeof pendingModalConfirm === 'function') {
+                    pendingModalConfirm();
+                }
+                closeCustomModal();
+            };
+        }
+
+        function closeCustomModal() {
+            const backdrop = document.getElementById('custom-modal-backdrop');
+            backdrop.classList.add('hidden');
+            backdrop.classList.remove('flex');
+            pendingModalConfirm = null;
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const colors = {
+                success: 'bg-emerald-950/95 border-emerald-500 text-emerald-200',
+                error: 'bg-rose-950/95 border-rose-500 text-rose-200',
+                info: 'bg-slate-900/95 border-cyan-500 text-cyan-200'
+            };
+            const icons = {
+                success: 'fa-circle-check text-emerald-400',
+                error: 'fa-circle-exclamation text-rose-400',
+                info: 'fa-circle-info text-cyan-400'
+            };
+
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-2xl text-xs sm:text-sm font-bold transition-all duration-300 ${colors[type] || colors.info}`;
+            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-base"></i><span>${escapeHTML(message)}</span>`;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(8px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function escapeHTML(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+    </script>
+</body>
+</html>
