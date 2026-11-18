@@ -514,6 +514,9 @@
                         <button type="button" onclick="saveAndConnectFirebase()" class="flex-1 py-2 px-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs transition cursor-pointer">
                             <i class="fa-solid fa-plug mr-1"></i> Hubungkan Real-Time
                         </button>
+                        <button type="button" onclick="forcePushCloudNow()" title="Kirim data layar ini sekarang ke Cloud" class="py-2 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs transition cursor-pointer">
+                            <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Sync Sekarang
+                        </button>
                         <button type="button" onclick="disconnectFirebase()" class="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700 transition cursor-pointer">
                             Putus
                         </button>
@@ -669,7 +672,7 @@ const firebaseConfig = {
                         const remoteData = snapshot.val();
                         if (remoteData && Array.isArray(remoteData.schedules)) {
                             applyRemoteState(remoteData);
-                        } else {
+                        } else if (window.appState && !window.appState._isDefaultSeed) {
                             pushStateToCloud();
                         }
                         updateConnectionUI('online', `Live Sync (${safeRoom})`);
@@ -690,7 +693,7 @@ const firebaseConfig = {
                             if (remoteData && Array.isArray(remoteData.schedules)) {
                                 applyRemoteState(remoteData);
                             }
-                        } else {
+                        } else if (window.appState && !window.appState._isDefaultSeed) {
                             pushStateToCloud();
                         }
                         updateConnectionUI('online', `Live Sync (${safeRoom})`);
@@ -712,6 +715,7 @@ const firebaseConfig = {
             if (!window.appState) return;
             isApplyingRemoteUpdate = true;
             try {
+                window.appState._isDefaultSeed = false;
                 window.appState.settings = { ...window.appState.settings, ...(remoteData.settings || {}) };
                 window.appState.schedules = Array.isArray(remoteData.schedules) ? remoteData.schedules : [];
                 localStorage.setItem('fids_ujk_lsp_data_v3', JSON.stringify(window.appState));
@@ -740,12 +744,22 @@ const firebaseConfig = {
             } catch (err) {
                 console.error('Gagal mengirim update ke cloud:', err);
                 if (typeof window.showToast === 'function') {
-                    window.showToast('Perubahan tersimpan lokal, namun gagal sinkron ke Cloud.', 'error');
+                    window.showToast('Perubahan tersimpan lokal, namun gagal sinkron ke Cloud (Cek Rules Firebase).', 'error');
                 }
             }
         }
 
         window.pushStateToCloud = pushStateToCloud;
+
+        window.forcePushCloudNow = async function () {
+            if (!cloudMode) {
+                window.showToast('Hubungkan Firebase terlebih dahulu sebelum sinkronisasi.', 'error');
+                return;
+            }
+            window.appState._isDefaultSeed = false;
+            await pushStateToCloud();
+            window.showToast('Data jadwal berhasil dikirim ke Cloud & disinkronkan ke semua layar!', 'success');
+        };
 
         window.saveAndConnectFirebase = async function () {
             const rawCfg = document.getElementById('input-firebase-config').value;
@@ -903,6 +917,7 @@ const firebaseConfig = {
         };
 
         let appState = loadAppState();
+        window.appState = appState;
         let currentPage = 1;
         let autoSlideTimer = null;
         let progressTimer = null;
@@ -944,6 +959,7 @@ const firebaseConfig = {
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     return {
+                        _isDefaultSeed: false,
                         settings: { ...DEFAULT_DATA.settings, ...(parsed.settings || {}) },
                         schedules: Array.isArray(parsed.schedules) ? parsed.schedules : DEFAULT_DATA.schedules
                     };
@@ -951,11 +967,15 @@ const firebaseConfig = {
             } catch (err) {
                 console.warn('Gagal membaca localStorage, menggunakan data default.', err);
             }
-            return JSON.parse(JSON.stringify(DEFAULT_DATA));
+            const seed = JSON.parse(JSON.stringify(DEFAULT_DATA));
+            seed._isDefaultSeed = true;
+            return seed;
         }
 
         function persistAppState() {
             try {
+                appState._isDefaultSeed = false;
+                window.appState = appState;
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
                 if (typeof window.pushStateToCloud === 'function') {
                     window.pushStateToCloud();
