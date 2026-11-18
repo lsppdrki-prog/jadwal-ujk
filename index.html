@@ -12,6 +12,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- SheetJS (Export Excel .xlsx) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- jsPDF & AutoTable (Export PDF .pdf) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -151,7 +156,7 @@
                 <!-- Tombol Kontrol Cepat Mobile -->
                 <div class="flex lg:hidden items-center gap-2">
                     <button onclick="toggleFullscreen()" title="Layar Penuh (F11)" class="p-2.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-600 transition">
-                        <i class="fa-solid fa-expand text-base"></i>
+                        <i id="icon-fullscreen-mobile" class="fa-solid fa-expand text-base"></i>
                     </button>
                     <button onclick="toggleAdminDrawer()" title="Panel Kontrol Admin (Alt+A)" class="p-2.5 rounded-lg bg-kai-orange hover:bg-orange-600 text-white shadow-lg transition">
                         <i class="fa-solid fa-gear text-base"></i>
@@ -233,6 +238,10 @@
                     <span class="flex items-center gap-1.5 font-semibold">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span>
                         Total Jadwal UJK: <strong id="total-schedules-count" class="text-white font-mono">0</strong> Jadwal
+                    </span>
+                    <span id="realtime-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-900 border border-slate-700 text-slate-300">
+                        <span id="realtime-status-dot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+                        <span id="realtime-status-text">Mode Lokal (Offline)</span>
                     </span>
                 </div>
 
@@ -445,17 +454,23 @@
                         <i class="fa-solid fa-list-check"></i> Daftar Jadwal UJK
                     </h3>
 
-                    <!-- Backup / Restore / Reset -->
+                    <!-- Export Excel, PDF & Backup JSON -->
                     <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="exportDataExcel()" class="px-3 py-1.5 rounded-lg bg-emerald-950/90 hover:bg-emerald-800 text-xs font-bold text-emerald-300 border border-emerald-700 transition cursor-pointer">
+                            <i class="fa-solid fa-file-excel mr-1"></i> Export Excel (.xlsx)
+                        </button>
+                        <button onclick="exportDataPDF()" class="px-3 py-1.5 rounded-lg bg-rose-950/90 hover:bg-rose-800 text-xs font-bold text-rose-300 border border-rose-700 transition cursor-pointer">
+                            <i class="fa-solid fa-file-pdf mr-1"></i> Export PDF (.pdf)
+                        </button>
                         <button onclick="exportDataJSON()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-cyan-300 border border-slate-700 transition cursor-pointer">
-                            <i class="fa-solid fa-download mr-1"></i> Export JSON
+                            <i class="fa-solid fa-download mr-1"></i> JSON
                         </button>
                         <label class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-300 border border-slate-700 transition cursor-pointer">
-                            <i class="fa-solid fa-upload mr-1"></i> Import JSON
+                            <i class="fa-solid fa-upload mr-1"></i> Import
                             <input type="file" id="import-json-file" accept=".json" onchange="importDataJSON(event)" class="hidden">
                         </label>
-                        <button onclick="confirmResetDefault()" class="px-3 py-1.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-xs font-bold text-rose-300 border border-rose-800 transition cursor-pointer">
-                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Data Contoh
+                        <button onclick="confirmResetDefault()" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-rose-950 text-xs font-bold text-slate-300 hover:text-rose-300 border border-slate-700 transition cursor-pointer">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset
                         </button>
                     </div>
                 </div>
@@ -474,6 +489,46 @@
                             <!-- List admin dirender via JS -->
                         </tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- Bagian 4: Koneksi Sinkronisasi Real-Time (Firebase) -->
+            <section class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="text-sm font-extrabold uppercase tracking-wider text-orange-400 flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Sinkronisasi Real-Time Multi-Perangkat (Firebase)
+                    </h3>
+                    <span id="admin-cloud-status" class="text-[11px] font-bold px-2.5 py-0.5 rounded bg-slate-950 border border-slate-700 text-slate-400">
+                        Belum Terhubung
+                    </span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Tempelkan konfigurasi <code class="text-cyan-300">firebaseConfig</code> dari Firebase Console proyek Anda (misal: <strong class="text-slate-200">jadwal-lsp-rki</strong>) agar perubahan jadwal dari HP langsung tampil otomatis di TV ruang tunggu tanpa refresh.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Kode Ruang / Channel TUK</label>
+                        <input type="text" id="input-cloud-room" value="lsp-utama" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-orange-400" placeholder="Misal: lsp-utama">
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <button type="button" onclick="saveAndConnectFirebase()" class="flex-1 py-2 px-3 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs transition cursor-pointer">
+                            <i class="fa-solid fa-plug mr-1"></i> Hubungkan Real-Time
+                        </button>
+                        <button type="button" onclick="disconnectFirebase()" class="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs border border-slate-700 transition cursor-pointer">
+                            Putus
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Tempel Blok <span class="text-cyan-300">firebaseConfig</span> (JSON atau Snippet JS dari Firebase Console)</label>
+                    <textarea id="input-firebase-config" rows="4" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-cyan-200 text-xs font-mono focus:outline-none focus:border-orange-400" placeholder='Tempel di sini, contoh:
+const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "jadwal-lsp-rki.firebaseapp.com",
+  databaseURL: "https://jadwal-lsp-rki-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "jadwal-lsp-rki",
+  appId: "1:123456:web:abcdef"
+};'></textarea>
                 </div>
             </section>
         </div>
@@ -506,6 +561,244 @@
 
     <!-- Toast Notification -->
     <div id="toast-container" class="fixed bottom-16 right-5 z-[70] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ==================== FIREBASE REAL-TIME SYNC MODULE ==================== -->
+    <script type="module">
+        import { initializeApp, getApps, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getDatabase, ref, set as rtdbSet, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+        const CLOUD_CFG_STORAGE = 'fids_ujk_firebase_cfg_v1';
+        let activeUnsubscribe = null;
+        let cloudMode = null; // 'firestore' | 'rtdb' | null
+        let firestoreDocRef = null;
+        let rtdbDataRef = null;
+        let isApplyingRemoteUpdate = false;
+
+        function updateConnectionUI(status, text) {
+            const dot = document.getElementById('realtime-status-dot');
+            const label = document.getElementById('realtime-status-text');
+            const adminLabel = document.getElementById('admin-cloud-status');
+            if (!dot || !label) return;
+
+            if (status === 'online') {
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-ping';
+                label.textContent = text || 'Live Sync Aktif';
+                label.className = 'text-emerald-300';
+                if (adminLabel) {
+                    adminLabel.textContent = 'Terhubung Real-Time';
+                    adminLabel.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded bg-emerald-950 border border-emerald-600 text-emerald-300';
+                }
+            } else if (status === 'connecting') {
+                dot.className = 'w-2 h-2 rounded-full bg-cyan-400 animate-pulse';
+                label.textContent = text || 'Menghubungkan...';
+                label.className = 'text-cyan-300';
+            } else if (status === 'error') {
+                dot.className = 'w-2 h-2 rounded-full bg-rose-500';
+                label.textContent = text || 'Gagal Koneksi Cloud';
+                label.className = 'text-rose-300';
+                if (adminLabel) {
+                    adminLabel.textContent = 'Koneksi Gagal';
+                    adminLabel.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded bg-rose-950 border border-rose-600 text-rose-300';
+                }
+            } else {
+                dot.className = 'w-2 h-2 rounded-full bg-amber-400';
+                label.textContent = 'Mode Lokal (Offline)';
+                label.className = 'text-slate-300';
+                if (adminLabel) {
+                    adminLabel.textContent = 'Mode Lokal';
+                    adminLabel.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded bg-slate-950 border border-slate-700 text-slate-400';
+                }
+            }
+        }
+
+        function parseFirebaseConfigInput(rawText) {
+            if (!rawText || !rawText.trim()) return null;
+            const cleaned = rawText.trim();
+            try {
+                return JSON.parse(cleaned);
+            } catch (_) {
+                const match = cleaned.match(/\{[\s\S]*\}/);
+                if (!match) return null;
+                const objLiteral = match[0]
+                    .replace(/\/\/.*$/gm, '')
+                    .replace(/\/\*[\s\S]*?\*\//g, '')
+                    .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":')
+                    .replace(/'/g, '"')
+                    .replace(/,\s*([}\]])/g, '$1');
+                return JSON.parse(objLiteral);
+            }
+        }
+
+        async function initRealtimeSync(configObj, roomId = 'lsp-utama', isBuiltInEnv = false) {
+            if (!configObj || !configObj.apiKey) return;
+            updateConnectionUI('connecting', 'Menghubungkan Cloud...');
+
+            try {
+                if (typeof activeUnsubscribe === 'function') {
+                    activeUnsubscribe();
+                    activeUnsubscribe = null;
+                }
+                for (const existingApp of getApps()) {
+                    await deleteApp(existingApp);
+                }
+
+                const app = initializeApp(configObj);
+                const auth = getAuth(app);
+
+                if (isBuiltInEnv && typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    try {
+                        await signInAnonymously(auth);
+                    } catch (authErr) {
+                        console.warn('Anonymous auth dilewati (cek aturan database):', authErr.message);
+                    }
+                }
+
+                const safeRoom = (roomId || 'lsp-utama').replace(/[^a-zA-Z0-9_-]/g, '_');
+
+                if (configObj.databaseURL && !isBuiltInEnv) {
+                    // Gunakan Firebase Realtime Database jika user menyediakan databaseURL
+                    const rtdb = getDatabase(app);
+                    cloudMode = 'rtdb';
+                    rtdbDataRef = ref(rtdb, `jadwal_ujk_rooms/${safeRoom}`);
+
+                    activeUnsubscribe = onValue(rtdbDataRef, (snapshot) => {
+                        const remoteData = snapshot.val();
+                        if (remoteData && Array.isArray(remoteData.schedules)) {
+                            applyRemoteState(remoteData);
+                        } else {
+                            pushStateToCloud();
+                        }
+                        updateConnectionUI('online', `Live Sync (${safeRoom})`);
+                    }, (err) => {
+                        console.error('RTDB sync error:', err);
+                        updateConnectionUI('error', 'Akses RTDB Ditolak');
+                    });
+                } else {
+                    // Gunakan Cloud Firestore sesuai jalur ketat /artifacts/{appId}/public/data/{collectionName}
+                    const db = getFirestore(app);
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : (configObj.projectId || 'default-app-id');
+                    cloudMode = 'firestore';
+                    firestoreDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'jadwal_ujk_display', safeRoom);
+
+                    activeUnsubscribe = onSnapshot(firestoreDocRef, (docSnap) => {
+                        if (docSnap.exists()) {
+                            const remoteData = docSnap.data();
+                            if (remoteData && Array.isArray(remoteData.schedules)) {
+                                applyRemoteState(remoteData);
+                            }
+                        } else {
+                            pushStateToCloud();
+                        }
+                        updateConnectionUI('online', `Live Sync (${safeRoom})`);
+                    }, (err) => {
+                        console.error('Firestore sync error:', err);
+                        updateConnectionUI('error', 'Akses Firestore Ditolak');
+                    });
+                }
+            } catch (err) {
+                console.error('Gagal inisialisasi Firebase:', err);
+                updateConnectionUI('error', 'Konfigurasi Tidak Valid');
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Gagal menghubungkan Firebase: ' + err.message, 'error');
+                }
+            }
+        }
+
+        function applyRemoteState(remoteData) {
+            if (!window.appState) return;
+            isApplyingRemoteUpdate = true;
+            try {
+                window.appState.settings = { ...window.appState.settings, ...(remoteData.settings || {}) };
+                window.appState.schedules = Array.isArray(remoteData.schedules) ? remoteData.schedules : [];
+                localStorage.setItem('fids_ujk_lsp_data_v3', JSON.stringify(window.appState));
+                if (typeof window.applySettingsToUI === 'function') window.applySettingsToUI();
+                if (typeof window.renderAll === 'function') window.renderAll();
+                if (typeof window.startAutoPagination === 'function') window.startAutoPagination();
+            } finally {
+                isApplyingRemoteUpdate = false;
+            }
+        }
+
+        async function pushStateToCloud() {
+            if (isApplyingRemoteUpdate || !window.appState) return;
+            const payload = {
+                settings: window.appState.settings,
+                schedules: window.appState.schedules,
+                updatedAt: Date.now()
+            };
+
+            try {
+                if (cloudMode === 'rtdb' && rtdbDataRef) {
+                    await rtdbSet(rtdbDataRef, payload);
+                } else if (cloudMode === 'firestore' && firestoreDocRef) {
+                    await setDoc(firestoreDocRef, payload);
+                }
+            } catch (err) {
+                console.error('Gagal mengirim update ke cloud:', err);
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Perubahan tersimpan lokal, namun gagal sinkron ke Cloud.', 'error');
+                }
+            }
+        }
+
+        window.pushStateToCloud = pushStateToCloud;
+
+        window.saveAndConnectFirebase = async function () {
+            const rawCfg = document.getElementById('input-firebase-config').value;
+            const roomId = document.getElementById('input-cloud-room').value.trim() || 'lsp-utama';
+            const parsed = parseFirebaseConfigInput(rawCfg);
+
+            if (!parsed || !parsed.apiKey) {
+                window.showToast('Format firebaseConfig tidak valid. Pastikan apiKey dan projectId tercantum.', 'error');
+                return;
+            }
+
+            localStorage.setItem(CLOUD_CFG_STORAGE, JSON.stringify({ config: parsed, roomId }));
+            await initRealtimeSync(parsed, roomId, false);
+            window.showToast('Menghubungkan ke server Firebase Real-Time...', 'info');
+        };
+
+        window.disconnectFirebase = async function () {
+            if (typeof activeUnsubscribe === 'function') {
+                activeUnsubscribe();
+                activeUnsubscribe = null;
+            }
+            cloudMode = null;
+            firestoreDocRef = null;
+            rtdbDataRef = null;
+            localStorage.removeItem(CLOUD_CFG_STORAGE);
+            updateConnectionUI('offline');
+            window.showToast('Koneksi Firebase diputus. Beralih ke Mode Lokal.', 'info');
+        };
+
+        // Muat otomatis konfigurasi Firebase tersimpan atau lingkungan bawaan
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                try {
+                    const saved = localStorage.getItem(CLOUD_CFG_STORAGE);
+                    if (saved) {
+                        const { config, roomId } = JSON.parse(saved);
+                        const cfgBox = document.getElementById('input-firebase-config');
+                        const roomBox = document.getElementById('input-cloud-room');
+                        if (cfgBox) cfgBox.value = JSON.stringify(config, null, 2);
+                        if (roomBox) roomBox.value = roomId || 'lsp-utama';
+                        initRealtimeSync(config, roomId || 'lsp-utama', false);
+                        return;
+                    }
+                    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                        const envCfg = JSON.parse(__firebase_config);
+                        initRealtimeSync(envCfg, 'lsp-utama', true);
+                    }
+                } catch (e) {
+                    console.warn('Auto-connect cloud dilewati:', e);
+                }
+            }, 300);
+        });
+    </script>
 
     <!-- ==================== JAVASCRIPT LOGIC ==================== -->
     <script>
@@ -664,6 +957,9 @@
         function persistAppState() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+                if (typeof window.pushStateToCloud === 'function') {
+                    window.pushStateToCloud();
+                }
             } catch (err) {
                 showToast('Gagal menyimpan data ke penyimpanan browser.', 'error');
             }
@@ -991,61 +1287,81 @@
         function updateAsesorRowNumbers() {
             const rows = document.querySelectorAll('#asesor-inputs-container .asesor-input-row');
             rows.forEach((row, idx) => {
-                const badge = row.querySelector('.asesor-row-num');
+                const numBadge = row.querySelector('.asesor-row-num');
                 const input = row.querySelector('.asesor-field-input');
-                if (badge) badge.textContent = idx + 1;
+                if (numBadge) numBadge.textContent = idx + 1;
                 if (input) input.placeholder = `Nama Asesor Kompetensi ke-${idx + 1}...`;
             });
         }
 
-        function convertTextDateToISO(dateStr) {
-            if (!dateStr) return '';
-            if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
-            const monthMap = {
+        function resetScheduleForm() {
+            const form = document.getElementById('schedule-form');
+            if (form) form.reset();
+            document.getElementById('edit-schedule-id').value = '';
+            document.getElementById('field-tanggal').value = new Date().toISOString().slice(0, 10);
+
+            const container = document.getElementById('asesor-inputs-container');
+            container.innerHTML = '';
+            addAsesorInputRow('');
+
+            document.getElementById('form-schedule-title').innerHTML = '<i class="fa-solid fa-calendar-plus"></i> Tambah Jadwal UJK Baru';
+            document.getElementById('btn-submit-schedule').innerHTML = '<i class="fa-solid fa-plus mr-1.5"></i> Tambahkan ke Layar Jadwal';
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+        }
+
+        function toISODateString(dateVal) {
+            if (!dateVal) return new Date().toISOString().slice(0, 10);
+            if (/^\d{4}-\d{2}-\d{2}$/.test(dateVal)) return dateVal;
+            const monthsMap = {
                 januari: '01', februari: '02', maret: '03', april: '04',
                 mei: '05', juni: '06', juli: '07', agustus: '08',
                 september: '09', oktober: '10', november: '11', desember: '12'
             };
-            const parts = dateStr.trim().split(/\s+/);
+            const parts = dateVal.trim().split(/\s+/);
             if (parts.length === 3) {
-                const day = String(parts[0]).padStart(2, '0');
-                const month = monthMap[parts[1].toLowerCase()];
+                const day = String(parseInt(parts[0], 10)).padStart(2, '0');
+                const month = monthsMap[parts[1].toLowerCase()];
                 const year = parts[2];
                 if (month && /^\d{4}$/.test(year)) {
                     return `${year}-${month}-${day}`;
                 }
             }
-            return '';
+            return new Date().toISOString().slice(0, 10);
         }
 
         function handleSaveSchedule(event) {
             event.preventDefault();
             const editId = document.getElementById('edit-schedule-id').value;
+            const tanggal = document.getElementById('field-tanggal').value.trim();
+            const tuk = document.getElementById('field-tuk').value.trim();
+
             const asesorInputs = Array.from(document.querySelectorAll('#asesor-inputs-container .asesor-field-input'));
             const asesorList = asesorInputs.map(inp => inp.value.trim()).filter(Boolean);
 
-            if (asesorList.length === 0) {
-                showToast('Harap isi minimal satu Nama Asesor.', 'error');
+            if (!tanggal || !tuk || asesorList.length === 0) {
+                showToast('Harap lengkapi Tanggal, Nama TUK, dan minimal 1 Nama Asesor.', 'error');
                 return;
             }
 
-            const scheduleObj = {
-                id: editId || 'ujk-' + Date.now(),
-                tanggal: document.getElementById('field-tanggal').value.trim(),
-                tuk: document.getElementById('field-tuk').value.trim(),
+            const schedulePayload = {
+                tanggal,
+                tuk,
                 asesor: asesorList.join('; '),
-                asesorList: asesorList
+                asesorList
             };
 
             if (editId) {
-                const idx = appState.schedules.findIndex(s => s.id === editId);
+                const idx = appState.schedules.findIndex(item => item.id === editId);
                 if (idx !== -1) {
-                    appState.schedules[idx] = scheduleObj;
-                    showToast('Perubahan jadwal UJK disimpan!', 'success');
+                    appState.schedules[idx] = { ...appState.schedules[idx], ...schedulePayload };
+                    showToast('Jadwal UJK berhasil diperbarui!', 'success');
                 }
             } else {
-                appState.schedules.push(scheduleObj);
-                showToast('Jadwal UJK baru ditambahkan ke layar!', 'success');
+                appState.schedules.push({
+                    id: 'ujk-' + Date.now(),
+                    ...schedulePayload
+                });
+                showToast('Jadwal UJK baru berhasil ditambahkan!', 'success');
             }
 
             persistAppState();
@@ -1058,39 +1374,24 @@
             if (!item) return;
 
             document.getElementById('edit-schedule-id').value = item.id;
-            document.getElementById('field-tanggal').value = convertTextDateToISO(item.tanggal);
+            document.getElementById('field-tanggal').value = toISODateString(item.tanggal);
             document.getElementById('field-tuk').value = item.tuk;
 
             const container = document.getElementById('asesor-inputs-container');
             container.innerHTML = '';
             const asesorList = normalizeAsesorList(item);
-            asesorList.forEach(nama => addAsesorInputRow(nama));
+            asesorList.forEach(nama => addAsesorInputRow(nama === '-' ? '' : nama));
 
             document.getElementById('form-schedule-title').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit Jadwal UJK';
             document.getElementById('btn-submit-schedule').innerHTML = '<i class="fa-solid fa-check mr-1.5"></i> Simpan Perubahan';
             document.getElementById('btn-cancel-edit').classList.remove('hidden');
 
-            // Scroll ke form edit di drawer admin
-            document.querySelector('#admin-drawer .overflow-y-auto').scrollTo({ top: 340, behavior: 'smooth' });
-        }
-
-        function resetScheduleForm() {
-            document.getElementById('schedule-form').reset();
-            document.getElementById('edit-schedule-id').value = '';
-            const container = document.getElementById('asesor-inputs-container');
-            if (container) {
-                container.innerHTML = '';
-                addAsesorInputRow('');
-            }
-            document.getElementById('form-schedule-title').innerHTML = '<i class="fa-solid fa-calendar-plus"></i> Tambah Jadwal UJK Baru';
-            document.getElementById('btn-submit-schedule').innerHTML = '<i class="fa-solid fa-plus mr-1.5"></i> Tambahkan ke Layar Jadwal';
-            document.getElementById('btn-cancel-edit').classList.add('hidden');
+            document.getElementById('schedule-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function moveSchedule(index, direction) {
             const targetIndex = index + direction;
             if (targetIndex < 0 || targetIndex >= appState.schedules.length) return;
-
             const temp = appState.schedules[index];
             appState.schedules[index] = appState.schedules[targetIndex];
             appState.schedules[targetIndex] = temp;
@@ -1105,17 +1406,149 @@
 
             openCustomModal(
                 'Hapus Jadwal UJK?',
-                `Apakah Anda yakin ingin menghapus jadwal pada tanggal "${formatTanggalIndonesia(item.tanggal)}" di "${item.tuk}"?`,
+                `Apakah Anda yakin ingin menghapus jadwal di "${item.tuk}" (${formatTanggalIndonesia(item.tanggal)}) dari layar display?`,
                 () => {
                     appState.schedules = appState.schedules.filter(s => s.id !== id);
                     persistAppState();
                     renderAll();
-                    showToast('Jadwal UJK berhasil dihapus.', 'info');
+                    showToast('Jadwal UJK telah dihapus.', 'info');
                 }
             );
         }
 
-        // --- EXPORT / IMPORT / RESET DATA ---
+        // --- EXPORT EXCEL (.XLSX), PDF (.PDF), JSON & RESET DATA ---
+        function exportDataExcel() {
+            try {
+                if (typeof XLSX === 'undefined') {
+                    showToast('Library Excel belum siap, periksa koneksi internet.', 'error');
+                    return;
+                }
+                if (appState.schedules.length === 0) {
+                    showToast('Tidak ada data jadwal untuk diekspor.', 'info');
+                    return;
+                }
+
+                const rows = appState.schedules.map((item, idx) => {
+                    const asesorList = normalizeAsesorList(item);
+                    const formattedAsesor = asesorList.length === 1
+                        ? asesorList[0]
+                        : asesorList.map((nama, i) => `${i + 1}. ${nama}`).join('\n');
+
+                    return {
+                        'No': idx + 1,
+                        'Tanggal Uji Kompetensi': formatTanggalIndonesia(item.tanggal),
+                        'Nama TUK': item.tuk,
+                        'Nama Asesor Kompetensi': formattedAsesor
+                    };
+                });
+
+                const worksheet = XLSX.utils.json_to_sheet(rows);
+                worksheet['!cols'] = [
+                    { wch: 6 },
+                    { wch: 24 },
+                    { wch: 38 },
+                    { wch: 42 }
+                ];
+
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Jadwal UJK');
+
+                const dateStamp = new Date().toISOString().slice(0, 10);
+                XLSX.writeFile(workbook, `Jadwal-UJK-LSP-${dateStamp}.xlsx`);
+                showToast('File Excel (.xlsx) berhasil diunduh!', 'success');
+            } catch (err) {
+                showToast('Gagal mengekspor Excel: ' + err.message, 'error');
+            }
+        }
+
+        function exportDataPDF() {
+            try {
+                if (!window.jspdf || !window.jspdf.jsPDF) {
+                    showToast('Library PDF belum siap, periksa koneksi internet.', 'error');
+                    return;
+                }
+                if (appState.schedules.length === 0) {
+                    showToast('Tidak ada data jadwal untuk diekspor.', 'info');
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+                const mainTitle = (appState.settings.mainTitle || 'JADWAL UJI KOMPETENSI (UJK)').toUpperCase();
+                const subTitle = (appState.settings.subTitle || 'LEMBAGA SERTIFIKASI PROFESI').toUpperCase();
+                const printDate = formatTanggalIndonesia(new Date().toISOString().slice(0, 10));
+
+                // Header Kop Dokumen PDF
+                doc.setFillColor(10, 17, 40);
+                doc.rect(14, 12, 269, 22, 'F');
+
+                doc.setTextColor(255, 184, 0);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(9);
+                doc.text(subTitle, 18, 19);
+
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(15);
+                doc.text(mainTitle, 18, 28);
+
+                doc.setTextColor(100, 116, 139);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9);
+                doc.text(`Dicetak pada: ${printDate}  |  Total Jadwal: ${appState.schedules.length} Sesi`, 14, 40);
+
+                const tableBody = appState.schedules.map((item, idx) => {
+                    const asesorList = normalizeAsesorList(item);
+                    const formattedAsesor = asesorList.length === 1
+                        ? asesorList[0]
+                        : asesorList.map((nama, i) => `${i + 1}. ${nama}`).join('\n');
+
+                    return [
+                        idx + 1,
+                        formatTanggalIndonesia(item.tanggal),
+                        item.tuk,
+                        formattedAsesor
+                    ];
+                });
+
+                doc.autoTable({
+                    startY: 44,
+                    head: [['NO', 'TANGGAL UJI KOMPETENSI', 'NAMA TUK', 'NAMA ASESOR KOMPETENSI']],
+                    body: tableBody,
+                    theme: 'grid',
+                    headStyles: {
+                        fillColor: [22, 34, 71],
+                        textColor: [255, 184, 0],
+                        fontStyle: 'bold',
+                        fontSize: 10,
+                        halign: 'left'
+                    },
+                    bodyStyles: {
+                        fontSize: 10,
+                        textColor: [15, 23, 42],
+                        cellPadding: 3.5,
+                        valign: 'middle'
+                    },
+                    alternateRowStyles: {
+                        fillColor: [241, 245, 249]
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 14, halign: 'center', fontStyle: 'bold' },
+                        1: { cellWidth: 52, fontStyle: 'bold' },
+                        2: { cellWidth: 98 },
+                        3: { cellWidth: 105 }
+                    },
+                    margin: { left: 14, right: 14 }
+                });
+
+                const dateStamp = new Date().toISOString().slice(0, 10);
+                doc.save(`Jadwal-UJK-LSP-${dateStamp}.pdf`);
+                showToast('Dokumen PDF (.pdf) berhasil diunduh!', 'success');
+            } catch (err) {
+                showToast('Gagal mengekspor PDF: ' + err.message, 'error');
+            }
+        }
+
         function exportDataJSON() {
             try {
                 const dataStr = JSON.stringify(appState, null, 2);
@@ -1196,28 +1629,62 @@
             }
         }
 
-        function toggleFullscreen() {
+        let isSimulatedFullscreen = false;
+
+        function updateFullscreenIcons(isActive) {
+            const icons = [
+                document.getElementById('icon-fullscreen'),
+                document.getElementById('icon-fullscreen-mobile')
+            ];
+            icons.forEach(icon => {
+                if (!icon) return;
+                if (isActive) {
+                    icon.classList.remove('fa-expand');
+                    icon.classList.add('fa-compress');
+                } else {
+                    icon.classList.remove('fa-compress');
+                    icon.classList.add('fa-expand');
+                }
+            });
+        }
+
+        async function toggleFullscreen() {
+            const rootEl = document.documentElement;
+            const canNativeFullscreen = Boolean(document.fullscreenEnabled && rootEl.requestFullscreen);
+
             try {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
-                } else if (document.exitFullscreen) {
-                    document.exitFullscreen();
+                if (!document.fullscreenElement && !isSimulatedFullscreen) {
+                    if (canNativeFullscreen) {
+                        await rootEl.requestFullscreen();
+                    } else {
+                        throw new Error('Permissions policy restricted');
+                    }
+                } else if (document.fullscreenElement) {
+                    await document.exitFullscreen();
+                } else if (isSimulatedFullscreen) {
+                    isSimulatedFullscreen = false;
+                    document.body.classList.remove('fixed', 'inset-0', 'z-30', 'w-screen', 'h-screen');
+                    updateFullscreenIcons(false);
+                    showToast('Keluar dari mode tampilan layar penuh.', 'info');
                 }
             } catch (err) {
-                showToast('Browser membatasi mode layar penuh otomatis.', 'info');
+                // Fallback jika dijalankan dalam iframe/preview yang memblokir Fullscreen API
+                isSimulatedFullscreen = !isSimulatedFullscreen;
+                if (isSimulatedFullscreen) {
+                    document.body.classList.add('fixed', 'inset-0', 'z-30', 'w-screen', 'h-screen');
+                    updateFullscreenIcons(true);
+                    showToast('Mode Layar Penuh Display diaktifkan (tekan F11 untuk layar penuh browser).', 'info');
+                } else {
+                    document.body.classList.remove('fixed', 'inset-0', 'z-30', 'w-screen', 'h-screen');
+                    updateFullscreenIcons(false);
+                }
             }
         }
 
         document.addEventListener('fullscreenchange', () => {
-            const icon = document.getElementById('icon-fullscreen');
-            if (!icon) return;
-            if (document.fullscreenElement) {
-                icon.classList.remove('fa-expand');
-                icon.classList.add('fa-compress');
-            } else {
-                icon.classList.remove('fa-compress');
-                icon.classList.add('fa-expand');
-            }
+            const active = Boolean(document.fullscreenElement);
+            if (!active) isSimulatedFullscreen = false;
+            updateFullscreenIcons(active);
         });
 
         // Shortcut Keyboard: Alt + A untuk Panel Admin, Panah Kiri/Kanan untuk Navigasi Halaman
