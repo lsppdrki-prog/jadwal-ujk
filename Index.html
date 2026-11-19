@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Jadwal Uji Kompetensi (Google Sheets Sync)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- SheetJS & jsPDF untuk Export Laporan -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        kai: {
+                            navy: '#061124',
+                            panel: '#0B1B36',
+                            rowEven: '#0D2142',
+                            rowOdd: '#09172E',
+                            orange: '#F15A24',
+                            blue: '#1B56A8',
+                            amber: '#FFB800',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #040B17;
+            color: #F8FAFC;
+            overflow-x: hidden;
+        }
+
+        /* Animasi Running Text (Marquee) */
+        @keyframes marqueeScroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marqueeScroll 28s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+
+        /* Transisi Pergantian Halaman */
+        .page-fade-in {
+            animation: fadeInRow 0.45s ease-out forwards;
+        }
+        @keyframes fadeInRow {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar untuk Panel Admin */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0B1B36; }
+        ::-webkit-scrollbar-thumb { background: #1E3A6E; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #F15A24; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between select-none">
+
+    <!-- ===================================================================== -->
+    <!-- HEADER UTAMA (GAYA PAPAN INFORMASI STASIUN KERETA API / FIDS)         -->
+    <!-- ===================================================================== -->
+    <header id="main-header" class="bg-gradient-to-r from-[#061329] via-[#0C234B] to-[#061329] border-b-4 border-kai-orange shadow-2xl px-4 sm:px-8 py-3.5 sm:py-4 transition-colors duration-300">
+        <div class="max-w-[1920px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-3">
+            
+            <!-- Kiri: Identitas Lembaga & Judul Layar -->
+            <div class="flex items-center gap-3.5 sm:gap-5 w-full lg:w-auto justify-between lg:justify-start">
+                <div class="flex items-center gap-3.5 sm:gap-4">
+                    <div id="header-logo-box" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-kai-orange to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 border border-orange-300/30 shrink-0">
+                        <span id="header-logo-content" class="text-2xl sm:text-3xl font-black text-white">🚆</span>
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span id="header-badge" class="px-2.5 py-0.5 text-[11px] sm:text-xs font-extrabold tracking-widest uppercase bg-kai-orange text-white rounded-md shadow-sm">
+                                INFO JADWAL UJK
+                            </span>
+                            <span id="header-subtitle" class="text-xs sm:text-sm font-semibold text-amber-300 tracking-wide">
+                                LEMBAGA SERTIFIKASI PROFESI RATU KOMPETENSI INDONESIA
+                            </span>
+                        </div>
+                        <h1 id="header-title" class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white uppercase mt-0.5">
+                            JADWAL PELAKSANAAN UJI KOMPETENSI
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Tombol Kontrol Cepat Mobile -->
+                <div id="mobile-control-buttons" class="flex lg:hidden items-center gap-2">
+                    <button onclick="toggleAdminDrawer()" title="Pengaturan Google Sheets (Alt+A)" class="p-2.5 rounded-lg bg-kai-orange hover:bg-orange-600 text-white shadow-lg transition">
+                        <i class="fa-solid fa-table text-base"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kanan: Jam Digital Real-Time (WIB) & Tombol Dashboard Komputer -->
+            <div class="flex items-center justify-between lg:justify-end gap-4 w-full lg:w-auto border-t lg:border-t-0 border-slate-800/80 pt-2 lg:pt-0">
+                <div id="header-clock-wrapper" class="text-left lg:text-right">
+                    <div id="live-date" class="text-xs sm:text-sm font-bold text-cyan-300 uppercase tracking-wider">
+                        MEMUAT TANGGAL...
+                    </div>
+                    <div class="flex items-baseline gap-1.5 justify-start lg:justify-end">
+                        <span id="live-clock" class="font-mono text-2xl sm:text-3xl lg:text-4xl font-extrabold text-amber-400 tracking-wider drop-shadow-[0_0_8px_rgba(255,184,0,0.35)]">
+                            00:00:00
+                        </span>
+                        <span class="text-xs sm:text-sm font-extrabold text-slate-300 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
+                            WIB
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Tombol Fullscreen & Pengaturan Google Sheets (Khusus Browser Komputer) -->
+                <div id="desktop-control-buttons" class="hidden lg:flex items-center gap-2.5 pl-3 border-l border-slate-700/80">
+                    <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Tampilan Layar Penuh TV (F11)" class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-600/80 transition cursor-pointer">
+                        <i id="icon-fullscreen" class="fa-solid fa-expand text-sm"></i>
+                        <span class="text-xs font-bold uppercase tracking-wider">Layar Penuh</span>
+                    </button>
+                    <button id="btn-admin-dashboard" onclick="toggleAdminDrawer()" title="Pengaturan Google Sheets & Header (Alt + A)" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-600/25 transition cursor-pointer">
+                        <i class="fa-solid fa-file-excel text-sm"></i>
+                        <span class="text-xs uppercase tracking-wider">Google Sheets</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================================================================== -->
+    <!-- KONTEN UTAMA: PAPAN TABEL JADWAL UJK (3 KOLOM UTAMA)                  -->
+    <!-- ===================================================================== -->
+    <main class="flex-1 flex flex-col justify-between max-w-[1920px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-5">
+        
+        <!-- Bar Status Sinkronisasi Google Sheets & Navigasi Halaman -->
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
+            <div class="flex items-center gap-2.5 text-xs sm:text-sm text-slate-300">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700/80 font-semibold">
+                    <span id="gsheet-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                    <span id="gsheet-status-text">Mode Contoh (Belum Terhubung Google Sheets)</span>
+                </span>
+                <span class="hidden sm:inline text-slate-400">|</span>
+                <span class="hidden sm:inline text-slate-300 font-medium">
+                    Total Jadwal: <strong id="total-sessions-count" class="text-amber-400 font-mono">0</strong> TUK
+                </span>
+                <span id="last-sync-badge" class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-400 font-mono">
+                    <i class="fa-solid fa-rotate text-emerald-400"></i>
+                    <span id="last-sync-time">-</span>
+                </span>
+            </div>
+
+            <!-- Kontrol Halaman (Auto-Slide) -->
+            <div class="flex items-center gap-2">
+                <div id="auto-slide-indicator" class="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-800">
+                    <i class="fa-solid fa-rotate text-kai-orange"></i>
+                    <span>Auto-Slide: <strong id="slide-interval-label" class="text-slate-200">10 dtk</strong></span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="prevPage()" title="Halaman Sebelumnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+                    <span id="page-indicator" class="font-mono text-xs sm:text-sm font-extrabold px-3 py-1 rounded-lg bg-kai-blue/30 text-cyan-300 border border-kai-blue/50">
+                        HALAMAN 1 / 1
+                    </span>
+                    <button onclick="nextPage()" title="Halaman Berikutnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kontainer Papan Jadwal -->
+        <div class="flex-1 bg-kai-panel rounded-2xl border-2 border-slate-700/80 shadow-[0_10px_40px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col">
+            <div class="overflow-x-auto flex-1">
+                <table class="w-full text-left border-collapse min-w-[760px]">
+                    <thead>
+                        <tr class="bg-gradient-to-r from-[#102A56] via-[#163873] to-[#102A56] border-b-2 border-amber-400/80 text-amber-300 uppercase text-xs sm:text-sm lg:text-base font-extrabold tracking-wider">
+                            <th class="py-3.5 sm:py-4 px-4 sm:px-6 w-[25%]">
+                                <i class="fa-regular fa-calendar-days mr-1.5 text-kai-orange"></i>Tanggal Uji Kompetensi
+                            </th>
+                            <th class="py-3.5 sm:py-4 px-4 sm:px-6 w-[38%]">
+                                <i class="fa-solid fa-location-dot mr-1.5 text-kai-orange"></i>Nama TUK
+                            </th>
+                            <th class="py-3.5 sm:py-4 px-4 sm:px-6 w-[37%]">
+                                <i class="fa-solid fa-user-tie mr-1.5 text-kai-orange"></i>Nama Asesor
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="schedule-table-body" class="divide-y divide-slate-800/90 text-sm sm:text-base lg:text-lg font-semibold">
+                        <!-- Baris jadwal dirender otomatis oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pesan Jika Jadwal Kosong -->
+            <div id="empty-state" class="hidden flex-1 flex-col items-center justify-center py-16 px-4 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-slate-800/90 flex items-center justify-center text-slate-400 mb-3 border border-slate-700">
+                    <i class="fa-solid fa-table-list text-2xl"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-bold text-slate-200">Belum Ada Data Jadwal dari Google Sheets</h3>
+                <p class="text-sm text-slate-400 max-w-md mt-1">
+                    Pastikan Google Sheets memiliki kolom <strong class="text-amber-300">Tanggal UJK</strong>, <strong class="text-amber-300">Nama TUK</strong>, dan <strong class="text-amber-300">Nama Asesor</strong> serta sudah dipublikasikan.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- FOOTER: RUNNING TEXT PENGUMUMAN RESMI                                 -->
+    <!-- ===================================================================== -->
+    <footer class="bg-[#061124] border-t-2 border-kai-orange/90 shadow-inner">
+        <div class="max-w-[1920px] mx-auto flex items-center h-10 sm:h-12 overflow-hidden">
+            <div class="bg-kai-orange text-white font-black text-xs sm:text-sm uppercase tracking-wider px-4 sm:px-6 h-full flex items-center gap-2 shrink-0 z-10 shadow-lg">
+                <i class="fa-solid fa-bullhorn animate-bounce"></i>
+                <span>INFORMASI UJK</span>
+            </div>
+            <div class="flex-1 overflow-hidden relative h-full flex items-center bg-[#081630]">
+                <div id="running-text-display" class="animate-marquee text-sm sm:text-base lg:text-lg font-bold text-amber-300 tracking-wide px-4">
+                    Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan bukti pendaftaran.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- PANEL PENGATURAN GOOGLE SHEETS & HEADER (KHUSUS KOMPUTER ADMIN)       -->
+    <!-- ===================================================================== -->
+    <div id="admin-backdrop" onclick="toggleAdminDrawer()" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden transition-opacity"></div>
+
+    <aside id="admin-drawer" class="fixed top-0 right-0 h-full w-full max-w-2xl bg-[#0A172E] border-l-2 border-emerald-500 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- Header Drawer -->
+        <div class="flex items-center justify-between px-5 py-4 bg-[#061022] border-b border-slate-700">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                    <i class="fa-solid fa-file-excel text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-base sm:text-lg font-black text-white uppercase tracking-wide">Integrasi Google Sheets & Layar</h2>
+                    <p class="text-xs text-slate-400">Edit jadwal langsung di Google Sheets, layar TV otomatis terbarui</p>
+                </div>
+            </div>
+            <button onclick="toggleAdminDrawer()" class="p-2 rounded-xl bg-slate-800 hover:bg-red-600/80 text-slate-300 hover:text-white transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Isi Form Drawer -->
+        <div class="flex-1 overflow-y-auto p-5 space-y-6">
+
+            <!-- BAGIAN 1: KONEKSI GOOGLE SHEETS -->
+            <section class="bg-slate-900/90 rounded-2xl p-4 border border-emerald-500/50 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="text-xs font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                        <i class="fa-solid fa-table"></i> 1. Sumber Data Google Sheets (Otomatis Real-Time)
+                    </h3>
+                    <span id="drawer-gsheet-badge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-amber-300 border border-slate-700">
+                        Belum Terhubung
+                    </span>
+                </div>
+
+                <!-- Panduan Singkat 3 Langkah -->
+                <div class="bg-[#061022] rounded-xl p-3.5 border border-slate-700/80 text-xs text-slate-300 space-y-1.5 leading-relaxed">
+                    <p class="font-bold text-amber-300"><i class="fa-solid fa-circle-info mr-1"></i> Cara Menghubungkan Google Sheets (1 Menit):</p>
+                    <ol class="list-decimal list-inside space-y-1 text-slate-300">
+                        <li>Buat Google Sheets dengan 3 judul kolom pada baris ke-1: <code class="text-cyan-300 bg-slate-800 px-1 rounded">Tanggal UJK</code>, <code class="text-cyan-300 bg-slate-800 px-1 rounded">Nama TUK</code>, dan <code class="text-cyan-300 bg-slate-800 px-1 rounded">Nama Asesor</code> (pisahkan beberapa asesor dengan koma atau baris baru).</li>
+                        <li>Klik tombol <strong>Bagikan (Share)</strong> di kanan atas Google Sheets $\rightarrow$ ubah akses umum menjadi <strong>Siapa saja yang memiliki link (Viewer)</strong>.</li>
+                        <li>Salin tautan Google Sheets tersebut lalu tempelkan di kolom bawah ini.</li>
+                    </ol>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Tautan (URL) Google Sheets Anda *</label>
+                    <input type="text" id="input-gsheet-url" placeholder="https://docs.google.com/spreadsheets/d/1_j-43IVUqqGx9m4uBSxgPAhQfLDGLG3c_sEHG_Bv2f0/edit" class="w-full px-3 py-2.5 rounded-xl bg-[#061022] border border-slate-700 text-xs sm:text-sm text-white focus:border-emerald-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Nama Tab / Sheet (Opsional)</label>
+                        <input type="text" id="input-gsheet-name" placeholder="Kosongkan untuk sheet pertama (Sheet1)" class="w-full px-3 py-2 rounded-xl bg-[#061022] border border-slate-700 text-xs sm:text-sm text-white focus:border-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Interval Cek Pembaruan (Detik)</label>
+                        <input type="number" id="input-gsheet-interval" min="5" max="300" value="10" class="w-full px-3 py-2 rounded-xl bg-[#061022] border border-slate-700 text-xs sm:text-sm text-white font-mono focus:border-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 pt-1">
+                    <button onclick="connectGoogleSheet()" class="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg transition cursor-pointer">
+                        <i class="fa-solid fa-plug-circle-check mr-1.5"></i> Hubungkan & Sinkronkan
+                    </button>
+                    <button onclick="fetchGoogleSheetData(true)" class="py-2.5 px-3.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs uppercase tracking-wider transition cursor-pointer" title="Tarik data terbaru sekarang">
+                        <i class="fa-solid fa-rotate mr-1"></i> Refresh Data
+                    </button>
+                    <button onclick="downloadTemplateCSV()" class="py-2.5 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-600 font-bold text-xs transition cursor-pointer" title="Unduh contoh file template untuk diimpor ke Google Sheets">
+                        <i class="fa-solid fa-download mr-1"></i> Template
+                    </button>
+                    <button onclick="disconnectGoogleSheet()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-red-900/70 text-slate-300 border border-slate-700 text-xs font-bold transition cursor-pointer">
+                        Putus
+                    </button>
+                </div>
+
+                <div id="gsheet-error-box" class="hidden p-3 rounded-xl bg-red-950/80 border border-red-500/70 text-xs text-red-200 leading-relaxed"></div>
+            </section>
+
+            <!-- BAGIAN 2: EXPORT LAPORAN EXCEL & PDF -->
+            <section class="bg-slate-900/80 rounded-2xl p-4 border border-slate-700/80 space-y-3">
+                <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-file-export"></i> 2. Unduh Laporan Jadwal Tampil
+                </h3>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="exportDataExcel()" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-file-excel"></i> Export Excel (.xlsx)
+                    </button>
+                    <button onclick="exportDataPDF()" class="flex-1 py-2.5 px-3 rounded-xl bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-file-pdf"></i> Export PDF (.pdf)
+                    </button>
+                </div>
+            </section>
+
+            <!-- BAGIAN 3: PENGATURAN HEADER, RUNNING TEXT & SLIDE -->
+            <section class="bg-slate-900/80 rounded-2xl p-4 border border-slate-700/80 space-y-3.5">
+                <h3 class="text-xs font-extrabold uppercase tracking-wider text-cyan-300 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders"></i> 3. Kustomisasi Header & Layar TV
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Judul Utama Header</label>
+                        <input type="text" id="setting-header-title" class="w-full px-3 py-2 rounded-xl bg-[#061022] border border-slate-700 text-sm text-white focus:border-kai-orange focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Subjudul / Nama LSP</label>
+                        <input type="text" id="setting-header-subtitle" class="w-full px-3 py-2 rounded-xl bg-[#061022] border border-slate-700 text-sm text-white focus:border-kai-orange focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Teks Badge</label>
+                        <input type="text" id="setting-header-badge" class="w-full px-3 py-2 rounded-xl bg-[#061022] border border-slate-700 text-sm text-white focus:border-kai-orange focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Emoji / URL Logo</label>
+                        <input type="text" id="setting-header-logo" class="w-full px-3 py-2 rounded-xl bg-[#061022] border border-slate-700 text-sm text-white focus:border-kai-orange focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Tema Warna Header</label>
+                        <select id="setting-header-theme" class="w-full px-3 py-2 rounded-xl bg-[#061022] border border-slate-700 text-sm text-white focus:border-kai-orange focus:outline-none">
+                            <option value="kai">KAI Navy - Orange</option>
+                            <option value="emerald">Emerald - Hijau</option>
+                            <option value="royal">Royal Blue - Cyan</option>
+                            <option value="charcoal">Charcoal - Emas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Baris per Halaman TV</label>
+                        <input type="number" id="setting-rows-per-page" min="3" max="15" value="6" class="w-full px-3 py-2 rounded-xl bg-[#061022] border border-slate-700 text-sm text-white font-mono focus:border-kai-orange focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Interval Auto-Slide (Detik)</label>
+                        <input type="number" id="setting-slide-seconds" min="3" max="120" value="10" class="w-full px-3 py-2 rounded-xl bg-[#061022] border border-slate-700 text-sm text-white font-mono focus:border-kai-orange focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Teks Pengumuman Berjalan (Running Text)</label>
+                    <textarea id="setting-running-text" rows="2" class="w-full px-3 py-2 rounded-xl bg-[#061022] border border-slate-700 text-sm text-white focus:border-kai-orange focus:outline-none"></textarea>
+                </div>
+
+                <button onclick="saveDisplaySettings()" class="w-full py-2.5 px-4 rounded-xl bg-kai-blue hover:bg-blue-600 text-white font-bold text-xs uppercase tracking-wider shadow-md transition cursor-pointer">
+                    <i class="fa-solid fa-check mr-1.5"></i> Simpan Pengaturan Tampilan
+                </button>
+            </section>
+        </div>
+
+        <!-- Footer Drawer -->
+        <div class="px-5 py-3 bg-[#061022] border-t border-slate-700 flex items-center justify-between text-xs text-slate-400">
+            <span>Shortcut: Tekan <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-600 text-slate-200 font-mono">Alt + A</kbd> untuk buka/tutup panel</span>
+            <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-table mr-1"></i> Google Sheets Ready</span>
+        </div>
+    </aside>
+
+    <!-- Notifikasi Toast -->
+    <div id="toast-container" class="fixed bottom-14 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ===================================================================== -->
+    <!-- LOGIKA JAVASCRIPT (GOOGLE SHEETS PARSER + FIDS DISPLAY ENGINE)        -->
+    <!-- ===================================================================== -->
+    <script>
+        const STORAGE_KEY = 'lsp_fids_gsheets_v1';
+
+        const HEADER_THEMES = {
+            kai: {
+                headerClass: 'bg-gradient-to-r from-[#061329] via-[#0C234B] to-[#061329] border-b-4 border-kai-orange shadow-2xl px-4 sm:px-8 py-3.5 sm:py-4 transition-colors duration-300',
+                logoClass: 'w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-kai-orange to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 border border-orange-300/30 shrink-0',
+                badgeClass: 'px-2.5 py-0.5 text-[11px] sm:text-xs font-extrabold tracking-widest uppercase bg-kai-orange text-white rounded-md shadow-sm'
+            },
+            emerald: {
+                headerClass: 'bg-gradient-to-r from-[#041C15] via-[#093628] to-[#041C15] border-b-4 border-emerald-500 shadow-2xl px-4 sm:px-8 py-3.5 sm:py-4 transition-colors duration-300',
+                logoClass: 'w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center shadow-lg shadow-emerald-500/20 border border-emerald-300/30 shrink-0',
+                badgeClass: 'px-2.5 py-0.5 text-[11px] sm:text-xs font-extrabold tracking-widest uppercase bg-emerald-600 text-white rounded-md shadow-sm'
+            },
+            royal: {
+                headerClass: 'bg-gradient-to-r from-[#071530] via-[#102E66] to-[#071530] border-b-4 border-cyan-400 shadow-2xl px-4 sm:px-8 py-3.5 sm:py-4 transition-colors duration-300',
+                logoClass: 'w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-700 flex items-center justify-center shadow-lg shadow-cyan-500/20 border border-cyan-300/30 shrink-0',
+                badgeClass: 'px-2.5 py-0.5 text-[11px] sm:text-xs font-extrabold tracking-widest uppercase bg-cyan-600 text-white rounded-md shadow-sm'
+            },
+            charcoal: {
+                headerClass: 'bg-gradient-to-r from-[#111317] via-[#1F242D] to-[#111317] border-b-4 border-amber-400 shadow-2xl px-4 sm:px-8 py-3.5 sm:py-4 transition-colors duration-300',
+                logoClass: 'w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-yellow-700 flex items-center justify-center shadow-lg shadow-amber-500/20 border border-amber-300/30 shrink-0',
+                badgeClass: 'px-2.5 py-0.5 text-[11px] sm:text-xs font-extrabold tracking-widest uppercase bg-amber-500 text-slate-950 rounded-md shadow-sm'
+            }
+        };
+
+        const DEFAULT_SCHEDULES = [
+            {
+                id: 'demo-1',
+                tanggalUjk: '2026-11-18',
+                tuk: 'TUK Mandiri - Ruang Asesmen Utama',
+                asesorList: ['Drs. Ahmad Fauzi, M.M.', 'Dewi Anggraini, S.ST.Par.']
+            },
+            {
+                id: 'demo-2',
+                tanggalUjk: '2026-11-19',
+                tuk: 'TUK Sewaktu - Lab Komputer Administrasi 1',
+                asesorList: ['Ir. Bambang Sutrisno, M.Agr.']
+            },
+            {
+                id: 'demo-3',
+                tanggalUjk: '2026-11-20',
+                tuk: 'TUK Mandiri - Aula Nusantara Lantai 2',
+                asesorList: ['Ir. Rudi Hartono, M.T., IPM', 'Dimas Pratama, S.E.']
+            }
+        ];
+
+        const DEFAULT_STATE = {
+            settings: {
+                headerTitle: 'JADWAL PELAKSANAAN UJI KOMPETENSI',
+                headerSubtitle: 'LEMBAGA SERTIFIKASI PROFESI',
+                headerBadge: 'INFO JADWAL UJK',
+                headerLogo: '🚆',
+                headerTheme: 'kai',
+                rowsPerPage: 6,
+                slideSeconds: 10,
+                runningText: 'Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan bukti pendaftaran.'
+            },
+            gsheet: {
+                url: '',
+                sheetName: '',
+                pollSeconds: 10
+            },
+            schedules: DEFAULT_SCHEDULES
+        };
+
+        let appState = loadAppState();
+        let currentPage = 1;
+        let slideTimer = null;
+        let gsheetPollTimer = null;
+
+        function loadAppState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
+                const parsed = JSON.parse(raw);
+                return {
+                    settings: { ...DEFAULT_STATE.settings, ...(parsed.settings || {}) },
+                    gsheet: { ...DEFAULT_STATE.gsheet, ...(parsed.gsheet || {}) },
+                    schedules: Array.isArray(parsed.schedules) ? parsed.schedules : DEFAULT_SCHEDULES
+                };
+            } catch (e) {
+                return JSON.parse(JSON.stringify(DEFAULT_STATE));
+            }
+        }
+
+        function persistAppState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+            } catch (e) {
+                console.warn('Gagal menyimpan ke localStorage:', e);
+            }
+        }
+
+        // --- DETEKSI PERANGKAT (KOMPUTER ADMIN VS TV DISPLAY) ---
+        function isDesktopComputerBrowser() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('admin') === '1') return true;
+            if (params.get('tv') === '1' || params.get('display') === '1') return false;
+
+            const ua = navigator.userAgent || '';
+            const isTVOrMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|SmartTV|SMART-TV|Tizen|Web0S|BRAVIA|AFT|CrKey|Roku|Viera|NetCast|TV Bro|BrowseHere/i.test(ua);
+            const hasTouchOnly = (navigator.maxTouchPoints > 1) && !/Windows NT|Macintosh|X11|CrOS/i.test(ua);
+            return !isTVOrMobile && !hasTouchOnly;
+        }
+
+        function configureDeviceAccessMode() {
+            const isComputer = isDesktopComputerBrowser();
+            window.isComputerAdminMode = isComputer;
+
+            const desktopControls = document.getElementById('desktop-control-buttons');
+            const mobileControls = document.getElementById('mobile-control-buttons');
+            const adminDrawer = document.getElementById('admin-drawer');
+            const adminBackdrop = document.getElementById('admin-backdrop');
+
+            if (!isComputer) {
+                if (desktopControls) desktopControls.style.display = 'none';
+                if (mobileControls) mobileControls.style.display = 'none';
+                if (adminDrawer) adminDrawer.classList.add('hidden');
+                if (adminBackdrop) adminBackdrop.classList.add('hidden');
+            } else {
+                if (mobileControls) mobileControls.style.display = 'none';
+                if (desktopControls) {
+                    desktopControls.classList.remove('hidden');
+                    desktopControls.classList.add('flex');
+                }
+            }
+        }
+
+        // --- INISIALISASI SAAT HALAMAN DIMUAT ---
+        window.addEventListener('DOMContentLoaded', () => {
+            configureDeviceAccessMode();
+            applySettingsToUI();
+            populateAdminInputs();
+            renderScheduleTable();
+            startLiveClock();
+            startAutoPagination();
+
+            // Jika URL Google Sheets sudah tersimpan (atau dikirim lewat ?sheet=URL), langsung hubungkan
+            const params = new URLSearchParams(window.location.search);
+            const paramSheetUrl = params.get('sheet');
+            if (paramSheetUrl) {
+                appState.gsheet.url = decodeURIComponent(paramSheetUrl);
+                persistAppState();
+                populateAdminInputs();
+            }
+
+            if (appState.gsheet.url) {
+                startGoogleSheetPolling();
+            }
+        });
+
+        // --- EKSTRAKSI ID & PEMBACAAN DATA GOOGLE SHEETS (GVIZ JSON) ---
+        function extractSpreadsheetId(urlOrId) {
+            if (!urlOrId) return null;
+            const trimmed = urlOrId.trim();
+            const match = trimmed.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+            if (match && match[1]) return match[1];
+            if (/^[a-zA-Z0-9-_]{25,}$/.test(trimmed)) return trimmed;
+            return null;
+        }
+
+        function extractGid(url) {
+            if (!url) return null;
+            const match = url.match(/[#&?]gid=([0-9]+)/);
+            return match ? match[1] : null;
+        }
+
+        function connectGoogleSheet() {
+            const urlInput = document.getElementById('input-gsheet-url').value.trim();
+            const sheetNameInput = document.getElementById('input-gsheet-name').value.trim();
+            const intervalInput = Math.max(5, Math.min(300, parseInt(document.getElementById('input-gsheet-interval').value, 10) || 10));
+
+            const sheetId = extractSpreadsheetId(urlInput);
+            if (!sheetId) {
+                showGsheetError('Tautan Google Sheets tidak valid. Pastikan Anda menyalin URL lengkap dari address bar browser (contoh: https://docs.google.com/spreadsheets/d/xxxx/edit).');
+                return;
+            }
+
+            hideGsheetError();
+            appState.gsheet = {
+                url: urlInput,
+                sheetName: sheetNameInput,
+                pollSeconds: intervalInput
+            };
+            persistAppState();
+            startGoogleSheetPolling();
+            showToast('Menghubungkan ke Google Sheets...', 'info');
+        }
+
+        function disconnectGoogleSheet() {
+            if (gsheetPollTimer) clearInterval(gsheetPollTimer);
+            gsheetPollTimer = null;
+            appState.gsheet.url = '';
+            appState.schedules = DEFAULT_SCHEDULES;
+            persistAppState();
+            populateAdminInputs();
+            updateGsheetStatusUI(false, 'Mode Contoh (Terputus dari Google Sheets)');
+            renderScheduleTable();
+            showToast('Koneksi Google Sheets diputuskan.', 'info');
+        }
+
+        function startGoogleSheetPolling() {
+            if (gsheetPollTimer) clearInterval(gsheetPollTimer);
+            fetchGoogleSheetData(true);
+            const intervalMs = Math.max(5, appState.gsheet.pollSeconds || 10) * 1000;
+            gsheetPollTimer = setInterval(() => {
+                fetchGoogleSheetData(false);
+            }, intervalMs);
+        }
+
+        async function fetchGoogleSheetData(isManual = false) {
+            const url = appState.gsheet.url;
+            const sheetId = extractSpreadsheetId(url);
+            if (!sheetId) return;
+
+            let gvizUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+            if (appState.gsheet.sheetName) {
+                gvizUrl += `&sheet=${encodeURIComponent(appState.gsheet.sheetName)}`;
+            } else {
+                const gid = extractGid(url);
+                if (gid) gvizUrl += `&gid=${encodeURIComponent(gid)}`;
+            }
+
+            try {
+                const response = await fetch(gvizUrl, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status} — Pastikan akses Google Sheets sudah diatur ke "Siapa saja yang memiliki link (Viewer)".`);
+                }
+
+                const text = await response.text();
+                const jsonMatch = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+                if (!jsonMatch || !jsonMatch[1]) {
+                    throw new Error('Google Sheets belum dibagikan secara publik (Viewer). Ubah pengaturan Bagikan / Share menjadi "Siapa saja yang memiliki link".');
+                }
+
+                const gvizData = JSON.parse(jsonMatch[1]);
+                if (gvizData.status === 'error') {
+                    const errMsg = (gvizData.errors && gvizData.errors[0] && gvizData.errors[0].detailed_message) || 'Terjadi kesalahan membaca sheet.';
+                    throw new Error(errMsg);
+                }
+
+                const parsedSchedules = parseGvizTable(gvizData.table);
+                appState.schedules = parsedSchedules;
+                persistAppState();
+                hideGsheetError();
+
+                const nowStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                updateGsheetStatusUI(true, `Terhubung Google Sheets (${parsedSchedules.length} Baris)`, nowStr);
+                renderScheduleTable();
+
+                if (isManual) {
+                    showToast(`Berhasil memuat ${parsedSchedules.length} jadwal dari Google Sheets!`, 'success');
+                }
+            } catch (err) {
+                console.error('Google Sheets Sync Error:', err);
+                updateGsheetStatusUI(false, 'Gagal Sinkronisasi Google Sheets');
+                showGsheetError(err.message || 'Gagal mengambil data dari Google Sheets.');
+                if (isManual) {
+                    showToast('Gagal mengambil data Google Sheets. Periksa izin berbagi.', 'error');
+                }
+            }
+        }
+
+        function parseGvizTable(table) {
+            if (!table || !Array.isArray(table.rows)) return [];
+
+            // Deteksi indeks kolom dari label header atau dari baris pertama jika label kosong
+            const cols = table.cols || [];
+            let idxTanggal = -1;
+            let idxTuk = -1;
+            let idxAsesor = -1;
+
+            cols.forEach((col, idx) => {
+                const label = (col.label || '').toLowerCase().trim();
+                if (label.includes('tanggal') || label.includes('tgl') || label.includes('date')) idxTanggal = idx;
+                else if (label.includes('tuk') || label.includes('tempat') || label.includes('ruang')) idxTuk = idx;
+                else if (label.includes('asesor') || label.includes('penguji')) idxAsesor = idx;
+            });
+
+            let startRow = 0;
+            // Jika Google Sheets tidak otomatis menganggap baris 1 sebagai header, cek baris pertama
+            if (idxTanggal === -1 && idxTuk === -1 && table.rows.length > 0) {
+                const firstRowCells = table.rows[0].c || [];
+                firstRowCells.forEach((cell, idx) => {
+                    const val = getCellText(cell).toLowerCase().trim();
+                    if (val.includes('tanggal') || val.includes('tgl')) idxTanggal = idx;
+                    else if (val.includes('tuk') || val.includes('tempat')) idxTuk = idx;
+                    else if (val.includes('asesor')) idxAsesor = idx;
+                });
+                if (idxTanggal !== -1 || idxTuk !== -1) {
+                    startRow = 1;
+                } else {
+                    // Fallback urutan kolom standar: Kolom A = Tanggal, Kolom B = TUK, Kolom C = Asesor
+                    idxTanggal = 0;
+                    idxTuk = 1;
+                    idxAsesor = 2;
+                }
+            } else {
+                if (idxTanggal === -1) idxTanggal = 0;
+                if (idxTuk === -1) idxTuk = 1;
+                if (idxAsesor === -1) idxAsesor = 2;
+            }
+
+            const results = [];
+            for (let r = startRow; r < table.rows.length; r++) {
+                const cells = table.rows[r].c || [];
+                const rawTanggal = getCellText(cells[idxTanggal]);
+                const rawTuk = getCellText(cells[idxTuk]);
+                const rawAsesor = getCellText(cells[idxAsesor]);
+
+                if (!rawTanggal && !rawTuk && !rawAsesor) continue;
+
+                // Pisahkan multi-asesor jika dipisahkan baris baru (\n), titik koma (;), atau tanda pipa (|)
+                // (Koma biasa tetap dipertahankan untuk gelar akademik seperti ", S.T., M.M." kecuali dipisah baris baru / ;)
+                let asesorList = rawAsesor
+                    .split(/\r?\n|;|\|/)
+                    .map(s => s.trim())
+                    .filter(Boolean);
+
+                if (asesorList.length === 0) asesorList = ['-'];
+
+                results.push({
+                    id: `gs-${r}`,
+                    tanggalUjk: rawTanggal || '-',
+                    tuk: rawTuk || '-',
+                    asesorList: asesorList
+                });
+            }
+
+            return results;
+        }
+
+        function getCellText(cell) {
+            if (!cell || cell.v === null || cell.v === undefined) return '';
+            // Gunakan nilai terformat (.f) dari Google Sheets jika tersedia (misal format tanggal Indonesia)
+            if (cell.f && String(cell.f).trim() !== '') {
+                return String(cell.f).trim();
+            }
+            // Tangani format objek Date khas GViz: "Date(2026,10,18)"
+            const valStr = String(cell.v).trim();
+            const dateMatch = valStr.match(/^Date\((\d+),(\d+),(\d+)/);
+            if (dateMatch) {
+                const y = dateMatch[1];
+                const m = String(parseInt(dateMatch[2], 10) + 1).padStart(2, '0');
+                const d = String(parseInt(dateMatch[3], 10)).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+            return valStr;
+        }
+
+        function updateGsheetStatusUI(isConnected, statusLabel, timeStr = '') {
+            const dot = document.getElementById('gsheet-status-dot');
+            const text = document.getElementById('gsheet-status-text');
+            const drawerBadge = document.getElementById('drawer-gsheet-badge');
+            const syncTimeEl = document.getElementById('last-sync-time');
+
+            if (text) text.textContent = statusLabel;
+            if (dot) {
+                dot.className = isConnected
+                    ? 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse'
+                    : 'w-2.5 h-2.5 rounded-full bg-amber-400';
+            }
+            if (drawerBadge) {
+                drawerBadge.textContent = isConnected ? 'Terhubung Aktif' : 'Belum Terhubung';
+                drawerBadge.className = isConnected
+                    ? 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/50'
+                    : 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-amber-300 border border-slate-700';
+            }
+            if (syncTimeEl && timeStr) {
+                syncTimeEl.textContent = `Update: ${timeStr}`;
+            }
+        }
+
+        function showGsheetError(msg) {
+            const box = document.getElementById('gsheet-error-box');
+            if (!box) return;
+            box.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1.5 text-red-400"></i> ${escapeHTML(msg)}`;
+            box.classList.remove('hidden');
+        }
+
+        function hideGsheetError() {
+            const box = document.getElementById('gsheet-error-box');
+            if (box) box.classList.add('hidden');
+        }
+
+        // --- FORMAT TANGGAL & RENDER TABEL DISPLAY ---
+        function formatTanggalIndonesia(dateStr) {
+            if (!dateStr) return '-';
+            const str = String(dateStr).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+                const [y, m, d] = str.split('-').map(Number);
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                return `${String(d).padStart(2, '0')} ${months[m - 1]} ${y}`;
+            }
+            return str;
+        }
+
+        function renderScheduleTable() {
+            const tbody = document.getElementById('schedule-table-body');
+            const emptyState = document.getElementById('empty-state');
+            const totalCountEl = document.getElementById('total-sessions-count');
+            const pageIndicator = document.getElementById('page-indicator');
+
+            const schedules = appState.schedules || [];
+            if (totalCountEl) totalCountEl.textContent = schedules.length;
+
+            const rowsPerPage = Math.max(3, parseInt(appState.settings.rowsPerPage, 10) || 6);
+            const totalPages = Math.max(1, Math.ceil(schedules.length / rowsPerPage));
+            if (currentPage > totalPages) currentPage = 1;
+
+            if (pageIndicator) {
+                pageIndicator.textContent = `HALAMAN ${currentPage} / ${totalPages}`;
+            }
+
+            if (schedules.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            emptyState.classList.remove('flex');
+
+            const startIdx = (currentPage - 1) * rowsPerPage;
+            const visibleItems = schedules.slice(startIdx, startIdx + rowsPerPage);
+
+            tbody.innerHTML = visibleItems.map((item, index) => {
+                const rowBg = index % 2 === 0 ? 'bg-kai-rowEven/90' : 'bg-kai-rowOdd/90';
+                const formattedDate = formatTanggalIndonesia(item.tanggalUjk);
+                const asesorList = Array.isArray(item.asesorList) ? item.asesorList : [item.asesor || '-'];
+
+                const asesorHTML = asesorList.length === 1
+                    ? `<div class="flex items-center gap-2.5 text-slate-100">
+                           <span class="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-mono text-xs font-extrabold flex items-center justify-center shrink-0">1</span>
+                           <span>${escapeHTML(asesorList[0])}</span>
+                       </div>`
+                    : `<div class="space-y-1.5">
+                           ${asesorList.map((nama, i) => `
+                               <div class="flex items-center gap-2.5 text-slate-100">
+                                   <span class="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-mono text-xs font-extrabold flex items-center justify-center shrink-0">${i + 1}</span>
+                                   <span>${escapeHTML(nama)}</span>
+                               </div>
+                           `).join('')}
+                       </div>`;
+
+                return `
+                    <tr class="${rowBg} hover:bg-[#143061] transition-colors page-fade-in">
+                        <td class="py-4 sm:py-5 px-4 sm:px-6 font-mono text-amber-300 font-extrabold tracking-wide align-top">
+                            <div class="inline-flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-amber-400/30">
+                                <i class="fa-regular fa-calendar text-kai-orange text-sm"></i>
+                                <span>${escapeHTML(formattedDate)}</span>
+                            </div>
+                        </td>
+                        <td class="py-4 sm:py-5 px-4 sm:px-6 text-white font-bold align-top">
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-building-user text-kai-orange mt-1 shrink-0"></i>
+                                <span>${escapeHTML(item.tuk)}</span>
+                            </div>
+                        </td>
+                        <td class="py-4 sm:py-5 px-4 sm:px-6 align-top">
+                            ${asesorHTML}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // --- PAGINASI OTOMATIS (AUTO-SLIDE) ---
+        function startAutoPagination() {
+            if (slideTimer) clearInterval(slideTimer);
+            const sec = Math.max(3, parseInt(appState.settings.slideSeconds, 10) || 10);
+            const label = document.getElementById('slide-interval-label');
+            if (label) label.textContent = `${sec} dtk`;
+
+            slideTimer = setInterval(() => {
+                const rowsPerPage = Math.max(3, parseInt(appState.settings.rowsPerPage, 10) || 6);
+                const totalPages = Math.max(1, Math.ceil((appState.schedules || []).length / rowsPerPage));
+                if (totalPages > 1) {
+                    currentPage = currentPage >= totalPages ? 1 : currentPage + 1;
+                    renderScheduleTable();
+                }
+            }, sec * 1000);
+        }
+
+        function nextPage() {
+            const rowsPerPage = Math.max(3, parseInt(appState.settings.rowsPerPage, 10) || 6);
+            const totalPages = Math.max(1, Math.ceil((appState.schedules || []).length / rowsPerPage));
+            currentPage = currentPage >= totalPages ? 1 : currentPage + 1;
+            renderScheduleTable();
+        }
+
+        function prevPage() {
+            const rowsPerPage = Math.max(3, parseInt(appState.settings.rowsPerPage, 10) || 6);
+            const totalPages = Math.max(1, Math.ceil((appState.schedules || []).length / rowsPerPage));
+            currentPage = currentPage <= 1 ? totalPages : currentPage - 1;
+            renderScheduleTable();
+        }
+
+        // --- JAM DIGITAL WIB REAL-TIME ---
+        function startLiveClock() {
+            const updateClock = () => {
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric',
+                    timeZone: 'Asia/Jakarta'
+                });
+                const timeStr = now.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false,
+                    timeZone: 'Asia/Jakarta'
+                }).replace(/\./g, ':');
+
+                const dateEl = document.getElementById('live-date');
+                const clockEl = document.getElementById('live-clock');
+                if (dateEl) dateEl.textContent = dateStr.toUpperCase();
+                if (clockEl) clockEl.textContent = timeStr;
+            };
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        // --- PENGATURAN HEADER & RUNNING TEXT ---
+        function applySettingsToUI() {
+            const s = appState.settings;
+            document.getElementById('header-title').textContent = s.headerTitle;
+            document.getElementById('header-subtitle').textContent = s.headerSubtitle;
+            document.getElementById('header-badge').textContent = s.headerBadge;
+            document.getElementById('running-text-display').textContent = s.runningText;
+
+            const logoContainer = document.getElementById('header-logo-content');
+            const logoVal = (s.headerLogo || '🚆').trim();
+            if (/^https?:\/\//i.test(logoVal)) {
+                logoContainer.innerHTML = `<img src="${escapeHTML(logoVal)}" alt="Logo" class="w-9 h-9 object-contain rounded-lg" onerror="this.outerHTML='🚆'">`;
+            } else {
+                logoContainer.textContent = logoVal;
+            }
+
+            const theme = HEADER_THEMES[s.headerTheme] || HEADER_THEMES.kai;
+            document.getElementById('main-header').className = theme.headerClass;
+            document.getElementById('header-logo-box').className = theme.logoClass;
+            document.getElementById('header-badge').className = theme.badgeClass;
+        }
+
+        function populateAdminInputs() {
+            const s = appState.settings;
+            document.getElementById('setting-header-title').value = s.headerTitle;
+            document.getElementById('setting-header-subtitle').value = s.headerSubtitle;
+            document.getElementById('setting-header-badge').value = s.headerBadge;
+            document.getElementById('setting-header-logo').value = s.headerLogo;
+            document.getElementById('setting-header-theme').value = s.headerTheme;
+            document.getElementById('setting-rows-per-page').value = s.rowsPerPage;
+            document.getElementById('setting-slide-seconds').value = s.slideSeconds;
+            document.getElementById('setting-running-text').value = s.runningText;
+
+            document.getElementById('input-gsheet-url').value = appState.gsheet.url || '';
+            document.getElementById('input-gsheet-name').value = appState.gsheet.sheetName || '';
+            document.getElementById('input-gsheet-interval').value = appState.gsheet.pollSeconds || 10;
+        }
+
+        function saveDisplaySettings() {
+            appState.settings = {
+                headerTitle: document.getElementById('setting-header-title').value.trim() || DEFAULT_STATE.settings.headerTitle,
+                headerSubtitle: document.getElementById('setting-header-subtitle').value.trim() || DEFAULT_STATE.settings.headerSubtitle,
+                headerBadge: document.getElementById('setting-header-badge').value.trim() || DEFAULT_STATE.settings.headerBadge,
+                headerLogo: document.getElementById('setting-header-logo').value.trim() || '🚆',
+                headerTheme: document.getElementById('setting-header-theme').value || 'kai',
+                rowsPerPage: Math.max(3, Math.min(15, parseInt(document.getElementById('setting-rows-per-page').value, 10) || 6)),
+                slideSeconds: Math.max(3, Math.min(120, parseInt(document.getElementById('setting-slide-seconds').value, 10) || 10)),
+                runningText: document.getElementById('setting-running-text').value.trim() || DEFAULT_STATE.settings.runningText
+            };
+            persistAppState();
+            applySettingsToUI();
+            startAutoPagination();
+            renderScheduleTable();
+            showToast('Pengaturan tampilan berhasil disimpan!', 'success');
+        }
+
+        // --- EXPORT EXCEL, PDF & TEMPLATE CSV GOOGLE SHEETS ---
+        function downloadTemplateCSV() {
+            const csvContent = [
+                'Tanggal UJK,Nama TUK,Nama Asesor',
+                '"18 November 2026","TUK Mandiri - Ruang Asesmen Utama","Drs. Ahmad Fauzi, M.M.; Dewi Anggraini, S.ST.Par."',
+                '"19 November 2026","TUK Sewaktu - Lab Komputer 1","Ir. Bambang Sutrisno, M.Agr."',
+                '"20 November 2026","TUK Mandiri - Aula Nusantara","Ir. Rudi Hartono, M.T.; Dimas Pratama, S.E."'
+            ].join('\n');
+
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Template_Google_Sheets_Jadwal_UJK.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('File template CSV berhasil diunduh! Silakan unggah/impor ke Google Sheets.', 'success');
+        }
+
+        function exportDataExcel() {
+            try {
+                const rows = (appState.schedules || []).map((item, idx) => ({
+                    'No': idx + 1,
+                    'Tanggal Uji Kompetensi': formatTanggalIndonesia(item.tanggalUjk),
+                    'Nama TUK': item.tuk,
+                    'Nama Asesor Kompetensi': (item.asesorList || []).join('; ')
+                }));
+                const ws = XLSX.utils.json_to_sheet(rows);
+                ws['!cols'] = [{ wch: 6 }, { wch: 26 }, { wch: 40 }, { wch: 45 }];
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Jadwal UJK');
+                XLSX.writeFile(wb, `Jadwal_UJK_${new Date().toISOString().slice(0, 10)}.xlsx`);
+                showToast('File Excel (.xlsx) berhasil diunduh!', 'success');
+            } catch (err) {
+                showToast('Gagal mengekspor Excel.', 'error');
+            }
+        }
+
+        function exportDataPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text(appState.settings.headerTitle, 14, 16);
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text(appState.settings.headerSubtitle, 14, 22);
+
+                const bodyRows = (appState.schedules || []).map((item, idx) => [
+                    idx + 1,
+                    formatTanggalIndonesia(item.tanggalUjk),
+                    item.tuk,
+                    (item.asesorList || []).map((a, i) => `${i + 1}. ${a}`).join('\n')
+                ]);
+
+                doc.autoTable({
+                    startY: 28,
+                    head: [['No', 'Tanggal Uji Kompetensi', 'Nama TUK', 'Nama Asesor Kompetensi']],
+                    body: bodyRows,
+                    theme: 'grid',
+                    headStyles: { fillColor: [12, 35, 75], textColor: [255, 255, 255], fontStyle: 'bold' },
+                    styles: { fontSize: 9, cellPadding: 3 }
+                });
+
+                doc.save(`Jadwal_UJK_${new Date().toISOString().slice(0, 10)}.pdf`);
+                showToast('File PDF (.pdf) berhasil diunduh!', 'success');
+            } catch (err) {
+                showToast('Gagal mengekspor PDF.', 'error');
+            }
+        }
+
+        // --- KONTROL DRAWER, FULLSCREEN & TOAST ---
+        function toggleAdminDrawer() {
+            if (!window.isComputerAdminMode) return;
+            const drawer = document.getElementById('admin-drawer');
+            const backdrop = document.getElementById('admin-backdrop');
+            const isClosed = drawer.classList.contains('translate-x-full');
+            if (isClosed) {
+                drawer.classList.remove('translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                drawer.classList.add('translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        async function toggleFullscreen() {
+            try {
+                if (!document.fullscreenElement) {
+                    if (document.documentElement.requestFullscreen) {
+                        await document.documentElement.requestFullscreen();
+                    }
+                } else if (document.exitFullscreen) {
+                    await document.exitFullscreen();
+                }
+            } catch (err) {
+                showToast('Tekan tombol F11 pada keyboard untuk mode layar penuh penuh.', 'info');
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+                e.preventDefault();
+                toggleAdminDrawer();
+            }
+        });
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const colors = {
+                success: 'bg-emerald-950/95 border-emerald-500 text-emerald-200',
+                error: 'bg-red-950/95 border-red-500 text-red-200',
+                info: 'bg-slate-900/95 border-cyan-500 text-cyan-200'
+            };
+            const el = document.createElement('div');
+            el.className = `pointer-events-auto px-4 py-3 rounded-xl border shadow-xl text-xs sm:text-sm font-semibold flex items-center gap-2.5 transition-all duration-300 ${colors[type] || colors.info}`;
+            el.innerHTML = `<i class="fa-solid fa-circle-info"></i><span>${escapeHTML(message)}</span>`;
+            container.appendChild(el);
+            setTimeout(() => {
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 300);
+            }, 3500);
+        }
+
+        function escapeHTML(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+    </script>
+</body>
+</html>
