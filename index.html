@@ -1,12 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Display Jadwal Uji Kompetensi (UJK) - Real-Time Board</title>
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Display Jadwal UJK - Sistem Informasi Pelaksanaan Asesmen</title>
 
     <!-- Google Fonts: Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,13 +13,11 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- SheetJS (Export Excel) & jsPDF (Export PDF) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -31,102 +26,174 @@
                     }
                 }
             }
-        }
+        };
     </script>
 
+    <!-- SheetJS (Excel) & jsPDF (PDF Export) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
     <style>
-        /* Animasi Pita Pengumuman (Running Text) */
-        @keyframes marquee {
+        /* Latar Kisi Geometris Steel Slate Bergerak Halus */
+        @keyframes gridDrift {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 0 0, 48px 48px, 48px 48px; }
+        }
+        .bg-motion-grid {
+            background-color: #2c3142;
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08) 0%, transparent 65%),
+                linear-gradient(to right, rgba(84, 91, 114, 0.35) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(84, 91, 114, 0.35) 1px, transparent 1px);
+            background-size: 100% 100%, 48px 48px, 48px 48px;
+            animation: gridDrift 24s linear infinite;
+        }
+
+        /* Sapuan Kilau & Garis Pemindai Header */
+        @keyframes headerShimmer {
+            0% { transform: translateX(-100%) skewX(-20deg); }
+            50%, 100% { transform: translateX(250%) skewX(-20deg); }
+        }
+        .header-shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 35%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+            animation: headerShimmer 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanBeam {
+            0% { left: -20%; opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+        .scan-beam {
+            position: absolute;
+            bottom: 0;
+            width: 22%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #FFFFFF, transparent);
+            animation: scanBeam 6s linear infinite;
+            pointer-events: none;
+        }
+
+        /* Animasi Baris Masuk Bertahap */
+        @keyframes rowReveal {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-row-in {
+            opacity: 0;
+            animation: rowReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* Equalizer Backsound Hidup */
+        @keyframes eqPulse {
+            0%, 100% { height: 25%; }
+            50% { height: 100%; }
+        }
+        .eq-bar {
+            width: 2.5px;
+            background-color: #2c3142;
+            border-radius: 9999px;
+            animation: eqPulse 0.85s ease-in-out infinite;
+        }
+        .eq-bar:nth-child(2) { animation-delay: 0.2s; }
+        .eq-bar:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Running Text Pengumuman Bawah */
+        @keyframes marqueeScroll {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
         }
         .animate-marquee {
             display: inline-block;
             padding-left: 100%;
-            animation: marquee 28s linear infinite;
+            animation: marqueeScroll 32s linear infinite;
         }
         .animate-marquee:hover {
             animation-play-state: paused;
         }
 
-        /* Scrollbar Halus Dark Mode */
+        /* Scrollbar Halus Steel Slate */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0b1120;
+            background: #2c3142;
         }
         ::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #545b72;
             border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
-
-        /* Sorotan Baris Saat Dibacakan Suara AI */
-        .speaking-row {
-            background: linear-gradient(90deg, rgba(2, 132, 199, 0.28) 0%, rgba(56, 189, 248, 0.14) 100%) !important;
-            box-shadow: inset 4px 0 0 #38bdf8;
+            background: #6c748f;
         }
     </style>
 </head>
-<body class="bg-[#0b1120] text-[#f1f5f9] font-sans antialiased selection:bg-[#38bdf8] selection:text-[#0b1120] overflow-x-hidden">
+<body class="bg-motion-grid text-[#FFFFFF] font-sans antialiased selection:bg-[#FFFFFF] selection:text-[#2c3142] overflow-x-hidden">
 
     <!-- Wrapper Utama Layar Penuh (100dvh Anti-Potong pada Smart TV & Desktop) -->
     <div class="min-h-[100dvh] flex flex-col justify-between">
 
         <!-- HEADER UTAMA -->
-        <header id="main-header" class="bg-[#131c31] border-b border-[#334155] px-4 sm:px-6 lg:px-8 py-3.5 shadow-lg shrink-0">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <header id="main-header" class="relative overflow-hidden header-shimmer bg-[#2c3142]/95 backdrop-blur-md border-b border-[#545b72] px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_10px_30px_rgba(20,23,32,0.55)] shrink-0">
+            <div class="scan-beam"></div>
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
 
                 <!-- Kiri: Identitas Lembaga & Judul Board -->
                 <div class="flex items-center gap-3.5 min-w-0">
-                    <div id="header-icon-box" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#0284c7] to-[#0369a1] flex items-center justify-center text-white shadow-md shrink-0 border border-[#38bdf8]/30">
-                        <i id="header-icon-class" class="fa-solid fa-award text-2xl sm:text-3xl"></i>
+                    <div id="header-icon-box" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#545b72] via-[#464c5e] to-[#2c3142] flex items-center justify-center text-[#FFFFFF] shadow-lg shrink-0 border border-[#545b72] transition-transform duration-500 hover:scale-105">
+                        <i id="header-icon-class" class="fa-solid fa-award text-2xl sm:text-3xl text-[#FFFFFF]"></i>
                     </div>
                     <div class="min-w-0">
                         <div class="flex flex-wrap items-center gap-2 mb-0.5">
-                            <span id="header-badge-text" class="px-2.5 py-0.5 rounded-md bg-[#0284c7]/20 text-[#38bdf8] border border-[#38bdf8]/40 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider">
+                            <span id="header-badge-text" class="px-2.5 py-0.5 rounded-md bg-[#393e51] text-[#FFFFFF] border border-[#545b72] text-[11px] sm:text-xs font-extrabold uppercase tracking-wider">
                                 LSP / TUK RESMI
                             </span>
-                            <span id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#0b1120] border border-[#334155] text-[11px] sm:text-xs font-semibold text-[#94a3b8]">
-                                <span id="connection-dot" class="w-2 h-2 rounded-full bg-[#38bdf8] animate-pulse"></span>
+                            <span id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#2c3142] border border-[#505567] text-[11px] sm:text-xs font-semibold text-[#E2E8F0]">
+                                <span id="connection-dot" class="w-2 h-2 rounded-full bg-[#FFFFFF] animate-pulse"></span>
                                 <span id="connection-label">Mode Siap Pakai</span>
                             </span>
                         </div>
-                        <h1 id="header-main-title" class="text-lg sm:text-2xl lg:text-3xl font-black tracking-tight text-white truncate">
+                        <h1 id="header-main-title" class="text-lg sm:text-2xl lg:text-3xl font-black tracking-tight text-[#FFFFFF] truncate">
                             JADWAL UJI KOMPETENSI (UJK)
                         </h1>
-                        <p id="header-subtitle" class="text-xs sm:text-sm font-medium text-[#94a3b8] truncate">
+                        <p id="header-subtitle" class="text-xs sm:text-sm font-medium text-[#CBD5E1] truncate">
                             Lembaga Sertifikasi Profesi • Informasi Pelaksanaan Asesmen Real-Time
                         </p>
                     </div>
                 </div>
 
                 <!-- Kanan: Jam Digital Real-Time WIB & Tombol Ikon -->
-                <div class="flex items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 border-[#1e293b] pt-2.5 lg:pt-0">
+                <div class="flex items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 border-[#464c5e] pt-2.5 lg:pt-0">
                     <div class="text-left lg:text-right">
-                        <div id="live-date" class="text-xs sm:text-sm font-bold text-[#38bdf8] uppercase tracking-wider">
+                        <div id="live-date" class="text-xs sm:text-sm font-bold text-[#CBD5E1] uppercase tracking-wider">
                             MEMUAT TANGGAL...
                         </div>
                         <div class="flex items-baseline gap-1.5 justify-start lg:justify-end">
-                            <span id="live-clock" class="font-mono text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#f8fafc] tracking-wider">
+                            <span id="live-clock" class="font-mono text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#FFFFFF] tracking-wider drop-shadow-[0_0_14px_rgba(255,255,255,0.2)]">
                                 00:00:00
                             </span>
-                            <span class="text-xs font-extrabold text-[#38bdf8] bg-[#0b1120] px-2 py-0.5 rounded-md border border-[#334155]">
+                            <span class="text-xs font-extrabold text-[#FFFFFF] bg-[#393e51] px-2 py-0.5 rounded-md border border-[#545b72]">
                                 WIB
                             </span>
                         </div>
                     </div>
 
-                    <!-- Tombol Ikon Kontrol (Hanya Ikon Tanpa Teks) -->
-                    <div id="header-control-buttons" class="flex items-center gap-2 pl-3 border-l border-[#334155]">
-                        <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Layar Penuh (F11)" aria-label="Layar Penuh" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#0b1120] hover:bg-[#1e293b] text-[#e2e8f0] border border-[#334155] flex items-center justify-center transition cursor-pointer shadow-sm">
+                    <!-- Tombol Ikon Kontrol -->
+                    <div id="header-control-buttons" class="flex items-center gap-2 pl-3 border-l border-[#464c5e]">
+                        <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Layar Penuh (F11)" aria-label="Layar Penuh" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#393e51] hover:bg-[#505567] text-[#FFFFFF] border border-[#545b72] flex items-center justify-center transition-all duration-300 hover:scale-105 cursor-pointer shadow-sm">
                             <i id="icon-fullscreen" class="fa-solid fa-expand text-base sm:text-lg"></i>
                         </button>
-                        <button id="btn-admin-drawer" onclick="toggleAdminDrawer()" title="Pengaturan & Google Sheets (Alt + A)" aria-label="Pengaturan Google Sheets" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white flex items-center justify-center transition cursor-pointer shadow-md">
+                        <button id="btn-admin-drawer" onclick="toggleAdminDrawer()" title="Pengaturan & Google Sheets (Alt + A)" aria-label="Pengaturan Google Sheets" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-b from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] flex items-center justify-center transition-all duration-300 hover:scale-105 cursor-pointer shadow-[0_4px_14px_rgba(255,255,255,0.2)]">
                             <i class="fa-solid fa-table-cells text-base sm:text-lg"></i>
                         </button>
                     </div>
@@ -136,18 +203,17 @@
 
         <!-- KONTEN UTAMA: PAPAN TABEL JADWAL UJK -->
         <main class="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 py-3 sm:py-4 min-h-0">
-            <div class="flex-1 flex flex-col bg-[#131c31] border border-[#334155] rounded-2xl shadow-2xl overflow-hidden min-h-0">
+            <div class="flex-1 flex flex-col bg-[#393e51]/92 backdrop-blur-md border border-[#545b72] rounded-2xl shadow-[0_24px_60px_rgba(20,23,32,0.65)] overflow-hidden min-h-0">
 
                 <!-- Bilah Filter Tanggal UJK & Status Sinkronisasi -->
-                <div class="bg-[#1e293b]/80 border-b border-[#334155] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <div class="bg-[#2c3142]/85 border-b border-[#545b72] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
                     <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                        <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#e2e8f0]">
-                            <i class="fa-solid fa-filter text-[#38bdf8]"></i>
+                        <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#FFFFFF]">
+                            <i class="fa-solid fa-filter text-[#CBD5E1]"></i>
                             <span>Filter Jadwal:</span>
                         </span>
 
-                        <!-- Dropdown Mode Tanggal -->
-                        <select id="quick-filter-mode" onchange="handleQuickFilterChange()" class="bg-[#0b1120] text-[#f1f5f9] border border-[#334155] rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#38bdf8] cursor-pointer">
+                        <select id="quick-filter-mode" onchange="handleQuickFilterChange()" class="bg-[#2c3142] text-[#FFFFFF] border border-[#545b72] rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#FFFFFF] transition cursor-pointer">
                             <option value="today_tomorrow">Hari Ini & Besok</option>
                             <option value="today">Hari Ini Saja</option>
                             <option value="specific">Pilih Tanggal UJK Tertentu</option>
@@ -155,79 +221,82 @@
                             <option value="all">Semua Tanggal UJK</option>
                         </select>
 
-                        <!-- Pemilih Tanggal Spesifik (Muncul Saat Dipilih) -->
-                        <input type="date" id="quick-specific-date" onchange="handleQuickSpecificDateChange()" class="hidden bg-[#0b1120] text-[#f1f5f9] border border-[#38bdf8]/60 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#38bdf8] cursor-pointer">
+                        <input type="date" id="quick-specific-date" onchange="handleQuickSpecificDateChange()" class="hidden bg-[#2c3142] text-[#FFFFFF] border border-[#545b72] rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#FFFFFF] cursor-pointer">
 
-                        <span id="active-filter-badge" class="px-2.5 py-1 rounded-lg bg-[#0284c7]/15 text-[#38bdf8] border border-[#38bdf8]/30 text-xs font-bold">
+                        <span id="active-filter-badge" class="px-2.5 py-1 rounded-lg bg-[#464c5e] text-[#FFFFFF] border border-[#545b72] text-xs font-bold">
                             Hari Ini & Besok
                         </span>
                     </div>
 
-                    <!-- Status Sinkronisasi -->
                     <div class="flex items-center gap-2">
-                        <span id="last-sync-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0b1120] border border-[#334155] text-xs text-[#94a3b8] font-mono">
-                            <i class="fa-solid fa-circle-check text-[11px] text-[#2dd4bf]"></i>
+                        <span id="last-sync-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#2c3142] border border-[#505567] text-xs text-[#E2E8F0] font-mono">
+                            <i class="fa-solid fa-circle-check text-[11px] text-[#FFFFFF]"></i>
                             <span id="last-sync-time">Data Siap</span>
                         </span>
-                        <button id="btn-manual-sync" onclick="manualSyncNow()" title="Sinkronkan Data Google Sheets Sekarang" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0b1120] hover:bg-[#1e293b] text-[#38bdf8] border border-[#38bdf8]/40 text-xs font-bold transition cursor-pointer">
+                        <button id="btn-manual-sync" onclick="manualSyncNow()" title="Sinkronkan Data Google Sheets Sekarang" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#464c5e] hover:bg-[#545b72] text-[#FFFFFF] border border-[#545b72] text-xs font-bold transition cursor-pointer">
                             <i id="icon-manual-sync" class="fa-solid fa-arrows-rotate text-[11px]"></i>
                             <span>Sync</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Tabel Utama Display (3 Kolom: Tanggal + Hari, Nama TUK, Nama Asesor) -->
+                <!-- Tabel Utama Display (3 Kolom dengan Palet Steel Slate) -->
                 <div class="flex-1 overflow-auto min-h-0">
                     <table class="w-full table-fixed text-left border-collapse">
-                        <thead class="sticky top-0 z-10 bg-[#1e293b] text-[#94a3b8] text-xs sm:text-sm uppercase tracking-wider border-b border-[#334155]">
+                        <thead class="sticky top-0 z-10 text-xs sm:text-sm uppercase tracking-wider border-b border-[#545b72]">
                             <tr>
-                                <th class="w-[27%] py-3.5 px-4 sm:px-6 font-extrabold">
-                                    <i class="fa-regular fa-calendar-days text-[#38bdf8] mr-2"></i>Tanggal UJK
+                                <th class="w-[27%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#393e51] text-[#FFFFFF] border-r border-[#545b72]">
+                                    <i class="fa-regular fa-calendar-days text-[#CBD5E1] mr-2"></i>Tanggal UJK
                                 </th>
-                                <th class="w-[36%] py-3.5 px-4 sm:px-6 font-extrabold">
-                                    <i class="fa-solid fa-location-dot text-[#38bdf8] mr-2"></i>Nama TUK / Ruang
+                                <th class="w-[36%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#464c5e] text-[#FFFFFF] border-r border-[#545b72]">
+                                    <i class="fa-solid fa-location-dot text-[#E2E8F0] mr-2"></i>Nama TUK / Ruang
                                 </th>
-                                <th class="w-[37%] py-3.5 px-4 sm:px-6 font-extrabold">
-                                    <i class="fa-solid fa-user-tie text-[#38bdf8] mr-2"></i>Nama Asesor Kompetensi
+                                <th class="w-[37%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#545b72] text-[#FFFFFF]">
+                                    <i class="fa-solid fa-user-tie text-[#FFFFFF] mr-2"></i>Nama Asesor Kompetensi
                                 </th>
                             </tr>
                         </thead>
-                        <tbody id="schedule-table-body" class="divide-y divide-[#1e293b]/90 text-[#f1f5f9]">
+                        <tbody id="schedule-table-body" class="divide-y divide-[#545b72]/70 text-[#FFFFFF]">
                             <!-- Baris jadwal dirender otomatis oleh JavaScript -->
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Footer Tabel: Statistik, Audio Backsound, Pengumuman Suara & Navigasi Halaman -->
-                <div class="bg-[#1e293b]/70 border-t border-[#334155] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
-                    <div class="flex items-center gap-2 text-xs sm:text-sm text-[#94a3b8]">
-                        <span id="total-count-label" class="font-bold text-[#e2e8f0]">Menampilkan 0 jadwal</span>
-                        <span class="hidden sm:inline text-[#475569]">•</span>
-                        <span id="auto-slide-info" class="hidden sm:inline text-xs text-[#64748b]">Auto-slide aktif (10 dtk)</span>
+                <!-- Footer Tabel: Statistik, Audio Backsound, Pembaca AI & Navigasi Halaman -->
+                <div class="bg-[#2c3142]/85 border-t border-[#545b72] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                    <div class="flex items-center gap-2 text-xs sm:text-sm text-[#CBD5E1]">
+                        <span id="total-count-label" class="font-bold text-[#FFFFFF]">Menampilkan 0 jadwal</span>
+                        <span class="hidden sm:inline text-[#545b72]">•</span>
+                        <span id="auto-slide-info" class="hidden sm:inline text-xs text-[#CBD5E1]">Auto-slide aktif (10 dtk)</span>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
                         <!-- Tombol Backsound Instrumen Stasiun KAI -->
-                        <button id="btn-toggle-bgm" onclick="toggleBackgroundMusic()" title="Nyalakan / Matikan Backsound Instrumen Stasiun (Alt + M)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0b1120] hover:bg-[#1e293b] text-[#94a3b8] border border-[#334155] text-xs font-bold transition cursor-pointer">
-                            <i id="icon-bgm-status" class="fa-solid fa-music text-[#38bdf8]"></i>
+                        <button id="btn-toggle-bgm" onclick="toggleBackgroundMusic()" title="Nyalakan / Matikan Backsound Instrumen Stasiun (Alt + M)" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#393e51] hover:bg-[#505567] text-[#E2E8F0] border border-[#545b72] text-xs font-bold transition-all duration-300 cursor-pointer">
+                            <span id="bgm-eq-bars" class="hidden items-end gap-0.5 h-3">
+                                <span class="eq-bar"></span>
+                                <span class="eq-bar"></span>
+                                <span class="eq-bar"></span>
+                            </span>
+                            <i id="icon-bgm-status" class="fa-solid fa-music text-[#FFFFFF]"></i>
                             <span id="text-bgm-status">Backsound</span>
                         </button>
 
-                        <!-- Tombol Pengumuman Suara AI -->
-                        <button id="btn-announce-audio" onclick="toggleScheduleAnnouncement()" title="Bacakan Jadwal UJK dengan Suara AI (Alt + S)" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold shadow transition cursor-pointer">
+                        <!-- Tombol Pembaca Jadwal AI Bahasa Indonesia (Kompatibel Remote Smart TV) -->
+                        <button id="btn-announce-audio" onclick="toggleScheduleAnnouncement()" title="Bacakan Jadwal UJK Bahasa Indonesia (Alt + S)" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] border border-[#FFFFFF] text-xs font-extrabold transition-all duration-300 cursor-pointer shadow">
                             <i id="icon-audio-status" class="fa-solid fa-volume-high"></i>
-                            <span id="text-audio-status">Bacakan Jadwal</span>
+                            <span id="text-audio-status">Bacakan Jadwal (ID)</span>
                         </button>
 
                         <!-- Navigasi Halaman -->
-                        <div class="flex items-center gap-1.5 pl-1 border-l border-[#334155]" id="pagination-nav-buttons">
-                            <button onclick="prevPage()" title="Halaman Sebelumnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-[#0b1120] hover:bg-[#1e293b] text-[#e2e8f0] border border-[#334155] transition cursor-pointer">
+                        <div class="flex items-center gap-1.5 pl-1 border-l border-[#545b72]" id="pagination-nav-buttons">
+                            <button onclick="prevPage()" title="Halaman Sebelumnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-[#393e51] hover:bg-[#505567] text-[#FFFFFF] border border-[#545b72] transition cursor-pointer">
                                 <i class="fa-solid fa-chevron-left text-xs"></i>
                             </button>
-                            <span id="page-indicator" class="font-mono text-xs sm:text-sm font-extrabold px-2.5 py-1 rounded-lg bg-[#0b1120] text-[#38bdf8] border border-[#38bdf8]/40">
+                            <span id="page-indicator" class="font-mono text-xs sm:text-sm font-extrabold px-2.5 py-1 rounded-lg bg-[#2c3142] text-[#FFFFFF] border border-[#545b72]">
                                 HALAMAN 1 / 1
                             </span>
-                            <button onclick="nextPage()" title="Halaman Berikutnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-[#0b1120] hover:bg-[#1e293b] text-[#e2e8f0] border border-[#334155] transition cursor-pointer">
+                            <button onclick="nextPage()" title="Halaman Berikutnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-[#393e51] hover:bg-[#505567] text-[#FFFFFF] border border-[#545b72] transition cursor-pointer">
                                 <i class="fa-solid fa-chevron-right text-xs"></i>
                             </button>
                         </div>
@@ -237,12 +306,12 @@
         </main>
 
         <!-- PITA PENGUMUMAN BAWAH (RUNNING TEXT) -->
-        <footer class="bg-[#131c31] border-t border-[#334155] px-4 py-2 flex items-center gap-3 shrink-0 overflow-hidden">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0284c7] text-white text-xs font-extrabold uppercase tracking-wider shrink-0">
+        <footer class="bg-[#2c3142]/95 border-t border-[#545b72] px-4 py-2 flex items-center gap-3 shrink-0 overflow-hidden">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-gradient-to-r from-[#545b72] to-[#464c5e] text-[#FFFFFF] border border-[#545b72] text-xs font-extrabold uppercase tracking-wider shrink-0 shadow-sm">
                 <i class="fa-solid fa-bullhorn"></i> INFO UJK
             </span>
             <div class="relative flex-1 overflow-hidden whitespace-nowrap">
-                <div id="running-text-content" class="animate-marquee text-sm sm:text-base font-medium text-[#e2e8f0]">
+                <div id="running-text-content" class="animate-marquee text-sm sm:text-base font-medium text-[#E2E8F0]">
                     Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan kelengkapan portofolio.
                 </div>
             </div>
@@ -250,52 +319,52 @@
     </div>
 
     <!-- BACKDROP & DRAWER PENGATURAN OPERATOR -->
-    <div id="admin-backdrop" onclick="toggleAdminDrawer()" class="fixed inset-0 bg-black/70 backdrop-blur-xs z-40 hidden transition-opacity"></div>
+    <div id="admin-backdrop" onclick="toggleAdminDrawer()" class="fixed inset-0 bg-[#2c3142]/80 backdrop-blur-xs z-40 hidden transition-opacity"></div>
 
-    <aside id="admin-drawer" class="fixed top-0 right-0 h-[100dvh] w-full max-w-xl bg-[#131c31] border-l border-[#334155] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <aside id="admin-drawer" class="fixed top-0 right-0 h-[100dvh] w-full max-w-xl bg-[#2c3142] border-l border-[#545b72] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
         <!-- Header Drawer -->
-        <div class="px-5 py-4 bg-[#0b1120] border-b border-[#334155] flex items-center justify-between shrink-0">
+        <div class="px-5 py-4 bg-[#393e51] border-b border-[#545b72] flex items-center justify-between shrink-0">
             <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-[#0284c7] text-white flex items-center justify-center">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FFFFFF] to-[#E2E8F0] text-[#2c3142] flex items-center justify-center shadow">
                     <i class="fa-solid fa-sliders"></i>
                 </div>
                 <div>
-                    <h2 class="text-base font-extrabold text-white">Pengaturan Display & Google Sheets</h2>
-                    <p class="text-xs text-[#94a3b8]">Sinkronisasi Data, Suara AI & Kustomisasi Layar</p>
+                    <h2 class="text-base font-extrabold text-[#FFFFFF]">Pengaturan Display & Google Sheets</h2>
+                    <p class="text-xs text-[#CBD5E1]">Sinkronisasi Data, Pembaca AI & Kustomisasi Layar</p>
                 </div>
             </div>
-            <button onclick="toggleAdminDrawer()" class="w-9 h-9 rounded-xl bg-[#1e293b] hover:bg-[#334155] text-[#e2e8f0] flex items-center justify-center transition cursor-pointer">
+            <button onclick="toggleAdminDrawer()" class="w-9 h-9 rounded-xl bg-[#464c5e] hover:bg-[#545b72] text-[#FFFFFF] flex items-center justify-center transition cursor-pointer">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
         <!-- Isi Scrollable Drawer -->
-        <div class="flex-1 overflow-y-auto p-5 space-y-6">
+        <div class="flex-1 overflow-y-auto p-5 space-y-5">
 
             <!-- BAGIAN 1: KONEKSI GOOGLE SHEETS -->
-            <section class="bg-[#0b1120] border border-[#334155] rounded-2xl p-4 space-y-3.5">
+            <section class="bg-[#393e51]/80 border border-[#545b72] rounded-2xl p-4 space-y-3.5">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-extrabold text-[#38bdf8] uppercase tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-table"></i> 1. Koneksi Google Sheets (Real-Time)
+                    <h3 class="text-sm font-extrabold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-table text-[#CBD5E1]"></i> 1. Koneksi Google Sheets (Real-Time)
                     </h3>
-                    <span id="gsheet-drawer-status" class="text-[11px] font-bold px-2 py-0.5 rounded bg-[#1e293b] text-[#94a3b8]">
+                    <span id="gsheet-drawer-status" class="text-[11px] font-bold px-2 py-0.5 rounded bg-[#464c5e] text-[#E2E8F0]">
                         Belum Terhubung
                     </span>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Link Google Sheets (Publik / Siapa saja yang memiliki link)</label>
-                    <input type="url" id="gsheet-url-input" placeholder="https://docs.google.com/spreadsheets/d/..." class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
+                    <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Link Google Sheets (Publik / Siapa saja yang memiliki link)</label>
+                    <input type="url" id="gsheet-url-input" placeholder="https://docs.google.com/spreadsheets/d/..." class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Nama Tab Sheet</label>
-                        <input type="text" id="gsheet-sheet-name" value="Jadwal_UJK" placeholder="Jadwal_UJK" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Nama Tab Sheet</label>
+                        <input type="text" id="gsheet-sheet-name" value="Jadwal_UJK" placeholder="Jadwal_UJK" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Interval Sinkronisasi</label>
-                        <select id="gsheet-sync-interval" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Interval Sinkronisasi</label>
+                        <select id="gsheet-sync-interval" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
                             <option value="10">Setiap 10 Detik (Real-Time)</option>
                             <option value="30">Setiap 30 Detik</option>
                             <option value="60">Setiap 1 Menit</option>
@@ -304,71 +373,49 @@
                 </div>
 
                 <div class="flex flex-wrap gap-2 pt-1">
-                    <button onclick="connectGoogleSheet()" class="flex-1 bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5">
+                    <button onclick="connectGoogleSheet()" class="flex-1 bg-gradient-to-r from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] font-extrabold text-xs py-2.5 px-4 rounded-xl shadow transition cursor-pointer flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-link"></i> Hubungkan & Sinkronkan
                     </button>
-                    <button onclick="disconnectGoogleSheet()" class="bg-[#1e293b] hover:bg-[#334155] text-[#f87171] font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer">
+                    <button onclick="disconnectGoogleSheet()" class="bg-[#464c5e] hover:bg-[#545b72] text-[#FFFFFF] border border-[#545b72] font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer">
                         Putuskan
                     </button>
-                    <button onclick="downloadTemplateCSV()" class="bg-[#1e293b] hover:bg-[#334155] text-[#2dd4bf] font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center gap-1.5">
+                    <button onclick="downloadTemplateCSV()" class="bg-[#2c3142] hover:bg-[#464c5e] text-[#E2E8F0] border border-[#545b72] font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center gap-1.5">
                         <i class="fa-solid fa-file-csv"></i> Template CSV
                     </button>
                 </div>
-                <p class="text-[11px] text-[#64748b] leading-relaxed">
-                    Format 3 kolom pada Google Sheets: <strong>Tanggal UJK</strong> (YYYY-MM-DD), <strong>Nama TUK</strong>, dan <strong>Nama Asesor</strong> (pisahkan multi-asesor dengan titik koma <code class="text-[#38bdf8]">;</code>).
-                </p>
             </section>
 
-            <!-- BAGIAN 2: PENGUMUMAN SUARA AI & BACKSOUND STASIUN -->
-            <section class="bg-[#0b1120] border border-[#334155] rounded-2xl p-4 space-y-3.5">
-                <h3 class="text-sm font-extrabold text-[#38bdf8] uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-volume-high"></i> 2. Suara Pengumuman AI & Backsound Stasiun
+            <!-- BAGIAN 2: PEMBACA AI OTOMATIS & BACKSOUND STASIUN -->
+            <section class="bg-[#393e51]/80 border border-[#545b72] rounded-2xl p-4 space-y-3.5">
+                <h3 class="text-sm font-extrabold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-volume-high text-[#CBD5E1]"></i> 2. Audio AI Otomatis & Backsound Stasiun
                 </h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Karakter Suara AI Gemini</label>
-                        <select id="setting-gemini-voice" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
-                            <option value="Aoede">Aoede (Wanita • Ramah & Jernih)</option>
-                            <option value="Sulafat">Sulafat (Wanita • Hangat & Lembut)</option>
-                            <option value="Kore">Kore (Wanita • Tegas & Berwibawa)</option>
-                            <option value="Leda">Leda (Wanita • Muda & Segar)</option>
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Mode Pembaca AI Otomatis (TV)</label>
+                        <select id="setting-ai-auto-mode" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                            <option value="on_slide">Otomatis Setiap Ganti Halaman</option>
+                            <option value="interval_5">Otomatis Setiap 5 Menit</option>
+                            <option value="interval_15">Otomatis Setiap 15 Menit</option>
+                            <option value="manual">Manual (Klik Tombol Saja)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Bahasa Pengumuman</label>
-                        <select id="setting-audio-lang" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
-                            <option value="id">Bahasa Indonesia Saja</option>
-                            <option value="bilingual">Dwibahasa (Indonesia & Inggris)</option>
-                            <option value="en">Bahasa Inggris Saja</option>
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Karakter Suara AI</label>
+                        <select id="setting-ai-voice" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                            <option value="Aoede">Aoede — Wanita Ramah & Jernih</option>
+                            <option value="Sulafat">Sulafat — Wanita Hangat & Lembut</option>
+                            <option value="Kore">Kore — Wanita Tegas & Berwibawa</option>
+                            <option value="Leda">Leda — Wanita Muda & Segar</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Mode Otomatis Pembacaan</label>
-                        <select id="setting-audio-mode" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
-                            <option value="manual">Manual (Klik Tombol)</option>
-                            <option value="auto_page">Otomatis Setiap Ganti Halaman</option>
-                            <option value="interval_5">Otomatis Setiap 5 Menit</option>
-                            <option value="interval_15">Otomatis Setiap 15 Menit</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Kecepatan Bicara Cadangan</label>
-                        <select id="setting-audio-rate" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
-                            <option value="0.95">Normal Tenang (0.95x)</option>
-                            <option value="0.85">Perlahan Jelas (0.85x)</option>
-                            <option value="1.05">Sedikit Cepat (1.05x)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-[#1e293b]">
-                    <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Instrumen Backsound Stasiun KAI</label>
-                        <select id="setting-station-melody" onchange="handleMelodySelectChange()" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Instrumen Backsound Stasiun KAI</label>
+                        <select id="setting-station-melody" onchange="handleMelodySelectChange()" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
                             <option value="playlist">Semua Lagu Stasiun (Playlist Otomatis)</option>
                             <option value="sepasang_mata_bola">Sepasang Mata Bola (Yogyakarta)</option>
                             <option value="bengawan_solo">Bengawan Solo (Solo Balapan/Jebres)</option>
@@ -385,8 +432,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Volume Backsound</label>
-                        <select id="setting-bgm-volume" onchange="handleBgmVolumeChange()" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Volume Backsound</label>
+                        <select id="setting-bgm-volume" onchange="handleBgmVolumeChange()" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
                             <option value="0.08">Sangat Lembut (8%)</option>
                             <option value="0.14" selected>Lembut Ruang Tunggu (14%)</option>
                             <option value="0.22">Sedang (22%)</option>
@@ -397,39 +444,39 @@
             </section>
 
             <!-- BAGIAN 3: KUSTOMISASI TAMPILAN & RUNNING TEXT -->
-            <section class="bg-[#0b1120] border border-[#334155] rounded-2xl p-4 space-y-3.5">
-                <h3 class="text-sm font-extrabold text-[#38bdf8] uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-desktop"></i> 3. Kustomisasi Header & Layar TV
+            <section class="bg-[#393e51]/80 border border-[#545b72] rounded-2xl p-4 space-y-3.5">
+                <h3 class="text-sm font-extrabold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-desktop text-[#CBD5E1]"></i> 3. Kustomisasi Header & Layar TV
                 </h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Badge Lembaga</label>
-                        <input type="text" id="setting-badge" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Badge Lembaga</label>
+                        <input type="text" id="setting-badge" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Judul Utama Layar</label>
-                        <input type="text" id="setting-title" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Judul Utama Layar</label>
+                        <input type="text" id="setting-title" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Subjudul Lembaga / Keterangan</label>
-                    <input type="text" id="setting-subtitle" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
+                    <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Subjudul Lembaga / Keterangan</label>
+                    <input type="text" id="setting-subtitle" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Baris per Halaman TV</label>
-                        <select id="setting-rows-per-page" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Baris per Halaman TV</label>
+                        <select id="setting-rows-per-page" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
                             <option value="5">5 Baris (Huruf Sangat Besar)</option>
                             <option value="7">7 Baris (Standar TV 43"-55")</option>
                             <option value="10">10 Baris (Layar Besar)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Durasi Auto-Slide Halaman</label>
-                        <select id="setting-slide-interval" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Durasi Auto-Slide Halaman</label>
+                        <select id="setting-slide-interval" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
                             <option value="8">8 Detik</option>
                             <option value="10">10 Detik</option>
                             <option value="15">15 Detik</option>
@@ -439,136 +486,124 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-[#cbd5e1] mb-1">Teks Pengumuman Berjalan (Running Text)</label>
-                    <textarea id="setting-running-text" rows="2" class="w-full bg-[#131c31] border border-[#334155] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#38bdf8]"></textarea>
+                    <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Teks Pengumuman Berjalan (Running Text)</label>
+                    <textarea id="setting-running-text" rows="2" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]"></textarea>
                 </div>
 
-                <button onclick="saveDisplaySettings()" class="w-full bg-[#0284c7] hover:bg-[#0369a1] text-white font-extrabold text-xs py-2.5 px-4 rounded-xl shadow transition cursor-pointer flex items-center justify-center gap-2">
+                <button onclick="saveDisplaySettings()" class="w-full bg-gradient-to-r from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] font-extrabold text-xs py-2.5 px-4 rounded-xl shadow transition cursor-pointer flex items-center justify-center gap-2">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan Semua Pengaturan
                 </button>
             </section>
 
             <!-- BAGIAN 4: EXPORT LAPORAN -->
-            <section class="bg-[#0b1120] border border-[#334155] rounded-2xl p-4 space-y-3">
-                <h3 class="text-sm font-extrabold text-[#38bdf8] uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-file-export"></i> 4. Unduh Laporan Jadwal
+            <section class="bg-[#393e51]/80 border border-[#545b72] rounded-2xl p-4 space-y-3">
+                <h3 class="text-sm font-extrabold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-file-export text-[#CBD5E1]"></i> 4. Unduh Laporan Jadwal
                 </h3>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="exportToExcel()" class="bg-[#1e293b] hover:bg-[#334155] text-[#2dd4bf] border border-[#2dd4bf]/30 font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-excel"></i> Export Excel (.xlsx)
+                    <button onclick="exportToExcel()" class="bg-[#464c5e] hover:bg-[#545b72] text-[#FFFFFF] border border-[#545b72] font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-excel text-emerald-300"></i> Export Excel (.xlsx)
                     </button>
-                    <button onclick="exportToPDF()" class="bg-[#1e293b] hover:bg-[#334155] text-[#38bdf8] border border-[#38bdf8]/30 font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-pdf"></i> Export PDF (.pdf)
+                    <button onclick="exportToPDF()" class="bg-[#464c5e] hover:bg-[#545b72] text-[#FFFFFF] border border-[#545b72] font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-pdf text-rose-300"></i> Export PDF (.pdf)
                     </button>
                 </div>
             </section>
         </div>
     </aside>
 
-    <!-- TOAST NOTIFIKASI -->
-    <div id="toast-container" class="fixed bottom-14 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <!-- BANNER AKTIVASI SUARA AI KHUSUS SMART TV (MENGATASI BLOKIR AUTOPLAY BROWSER TV) -->
+    <div id="tv-audio-unlock-banner" onclick="unlockTvAudioAndSpeak()" class="hidden fixed bottom-14 right-4 z-40 max-w-sm bg-[#393e51]/95 backdrop-blur-md border-2 border-[#FFFFFF] rounded-2xl p-4 shadow-2xl cursor-pointer transition-transform hover:scale-105">
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-[#FFFFFF] text-[#2c3142] flex items-center justify-center shrink-0 animate-pulse">
+                <i class="fa-solid fa-volume-high text-lg"></i>
+            </div>
+            <div>
+                <p class="text-xs sm:text-sm font-extrabold text-[#FFFFFF]">Aktifkan Pembaca AI Otomatis TV</p>
+                <p class="text-[11px] text-[#CBD5E1]">Tekan OK pada remote TV sekali agar suara pengumuman otomatis aktif.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- WADAH NOTIFIKASI TOAST -->
+    <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <script>
         /* =====================================================================
            A. KONFIGURASI DEFAULT & STATE APLIKASI
         ===================================================================== */
-        const STORAGE_KEY = 'ujk_display_state_v5';
+        const STORAGE_KEY = 'lsp_ujk_steel_slate_v1';
+        const GEMINI_API_KEY = ""; // Otomatis diisi oleh environment jika tersedia
 
         function getRelativeIsoDate(offsetDays = 0) {
-            const d = new Date();
-            d.setDate(d.getDate() + offsetDays);
-            const yyyy = d.getFullYear();
-            const mm = String(d.getMonth() + 1).padStart(2, '0');
-            const dd = String(d.getDate()).padStart(2, '0');
-            return `${yyyy}-${mm}-${dd}`;
+            const now = new Date();
+            now.setDate(now.getDate() + offsetDays);
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
         }
 
         const DEFAULT_SCHEDULES = [
-            {
-                id: 'demo-1',
-                date: getRelativeIsoDate(0),
-                tuk: 'TUK Sewaktu - Ruang Asesmen 01 (Gedung Utama)',
-                assessors: ['Ir. Budi Santoso, M.T.', 'Dra. Siti Aminah, M.M.']
-            },
-            {
-                id: 'demo-2',
-                date: getRelativeIsoDate(0),
-                tuk: 'TUK Mandiri - Laboratorium Komputer & Jaringan',
-                assessors: ['Ahmad Fauzi, S.Kom., M.Cs.']
-            },
-            {
-                id: 'demo-3',
-                date: getRelativeIsoDate(1),
-                tuk: 'TUK Sewaktu - Aula Pertemuan Lantai 2',
-                assessors: ['Dr. Hendra Wijaya, S.E., Ak.', 'Rina Kartika, S.Psi., M.Psi.']
-            }
+            { id: '1', date: getRelativeIsoDate(0), tuk: 'TUK Sewaktu Lab Komputer 01', assessors: ['Ir. Budi Santoso, M.Kom.', 'Dr. Siti Aminah, S.T., M.T.'] },
+            { id: '2', date: getRelativeIsoDate(0), tuk: 'TUK Mandiri Ruang Praktik Utama', assessors: ['Ahmad Fauzi, S.Kom., M.M.'] },
+            { id: '3', date: getRelativeIsoDate(0), tuk: 'TUK Sewaktu Gedung B Lantai 2', assessors: ['Rina Marlina, S.E., M.Ak.', 'Hendra Wijaya, S.T.'] },
+            { id: '4', date: getRelativeIsoDate(1), tuk: 'TUK Mandiri Studio Multimedia', assessors: ['Dewi Lestari, S.Ds., M.Sn.'] },
+            { id: '5', date: getRelativeIsoDate(1), tuk: 'TUK Sewaktu Aula Sertifikasi', assessors: ['Drs. Bambang Sutrisno, M.Pd.', 'Nadia Putri, S.Psi., M.Psi.'] }
         ];
-
-        const DEFAULT_SETTINGS = {
-            badge: 'LSP / TUK RESMI',
-            title: 'JADWAL UJI KOMPETENSI (UJK)',
-            subtitle: 'Lembaga Sertifikasi Profesi • Informasi Pelaksanaan Asesmen Real-Time',
-            rowsPerPage: 7,
-            slideInterval: 10,
-            runningText: 'Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan kelengkapan portofolio.',
-            filterMode: 'today_tomorrow',
-            specificDate: getRelativeIsoDate(0),
-            geminiVoice: 'Aoede',
-            audioLang: 'id',
-            audioMode: 'manual',
-            audioRate: 0.95,
-            stationMelody: 'playlist',
-            bgmVolume: 0.14
-        };
 
         let appState = {
             schedules: [...DEFAULT_SCHEDULES],
-            settings: { ...DEFAULT_SETTINGS },
+            currentPage: 1,
+            lastKnownToday: getRelativeIsoDate(0),
             gsheet: {
                 url: '',
                 sheetName: 'Jadwal_UJK',
-                syncInterval: 10,
-                connected: false
+                syncInterval: 10
+            },
+            settings: {
+                badge: 'LSP / TUK RESMI',
+                title: 'JADWAL UJI KOMPETENSI (UJK)',
+                subtitle: 'Lembaga Sertifikasi Profesi • Informasi Pelaksanaan Asesmen Real-Time',
+                rowsPerPage: 7,
+                slideInterval: 10,
+                filterMode: 'today_tomorrow',
+                specificDate: getRelativeIsoDate(0),
+                runningText: 'Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan kelengkapan portofolio.',
+                stationMelody: 'playlist',
+                bgmVolume: 0.14,
+                aiAutoMode: 'on_slide',
+                aiVoice: 'Aoede'
             }
         };
 
-        let currentPage = 1;
-        let slideTimer = null;
-        let syncTimer = null;
-        let audioIntervalTimer = null;
-        let lastKnownTodayIso = getRelativeIsoDate(0);
+        let syncTimerId = null;
+        let slideTimerId = null;
+        let aiPeriodicTimerId = null;
+        let isAnnouncing = false;
+        let announcementAbortController = null;
+        let currentlyReadingRowId = null;
+        let tvAudioUnlocked = false;
+        let activeSpeechUtterance = null;
+        let speechKeepAliveTimer = null;
 
         /* =====================================================================
-           B. HELPER DOM AMAN & PENYIMPANAN LOKAL
+           B. PERSISTENSI LOCALSTORAGE & PENYEGARAN TANGGAL HARIAN
         ===================================================================== */
-        function setElValue(id, value) {
-            const el = document.getElementById(id);
-            if (el) el.value = value;
-        }
-
-        function getElValue(id, fallback = '') {
-            const el = document.getElementById(id);
-            return el ? el.value : fallback;
-        }
-
         function loadAppState() {
             try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    if (parsed.settings) appState.settings = { ...DEFAULT_SETTINGS, ...parsed.settings };
-                    if (parsed.gsheet) appState.gsheet = { ...appState.gsheet, ...parsed.gsheet };
-                    if (Array.isArray(parsed.schedules) && parsed.schedules.length > 0 && appState.gsheet.connected) {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed.schedules) && parsed.schedules.length > 0) {
                         appState.schedules = parsed.schedules;
                     }
-                }
-
-                // Cek parameter URL (?tanggal=YYYY-MM-DD, ?tv=1, ?admin=1)
-                const params = new URLSearchParams(window.location.search);
-                const urlDate = params.get('tanggal') || params.get('date');
-                if (urlDate && /^\d{4}-\d{2}-\d{2}$/.test(urlDate)) {
-                    appState.settings.filterMode = 'specific';
-                    appState.settings.specificDate = urlDate;
+                    if (parsed.gsheet) {
+                        appState.gsheet = { ...appState.gsheet, ...parsed.gsheet };
+                    }
+                    if (parsed.settings) {
+                        appState.settings = { ...appState.settings, ...parsed.settings };
+                    }
                 }
             } catch (e) {
                 console.warn('Gagal memuat state tersimpan:', e);
@@ -584,110 +619,114 @@
         }
 
         /* =====================================================================
-           C. FORMAT TANGGAL & HARI INDONESIA
+           C. JAM DIGITAL WIB & PERGANTIAN HARI OTOMATIS 24/7
         ===================================================================== */
         const HARI_ID = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         const BULAN_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
-        function formatTanggalDenganHari(isoDate) {
-            if (!isoDate || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return isoDate || '-';
-            const [y, m, d] = isoDate.split('-').map(Number);
-            const dateObj = new Date(y, m - 1, d);
-            const namaHari = HARI_ID[dateObj.getDay()];
-            const namaBulan = BULAN_ID[m - 1];
-            return `${namaHari}, ${d} ${namaBulan} ${y}`;
+        function formatTanggalDenganHari(isoStr) {
+            if (!isoStr) return '-';
+            const parts = String(isoStr).split('-');
+            if (parts.length !== 3) return isoStr;
+            const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+            if (isNaN(d.getTime())) return isoStr;
+            return `${HARI_ID[d.getDay()]}, ${d.getDate()} ${BULAN_ID[d.getMonth()]} ${d.getFullYear()}`;
         }
 
-        function parseFlexibleDateToIso(rawVal) {
-            if (!rawVal) return '';
-            const str = String(rawVal).trim();
-            if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+        function startLiveClock() {
+            const updateClock = () => {
+                const now = new Date();
+                const dateEl = document.getElementById('live-date');
+                const clockEl = document.getElementById('live-clock');
 
-            // Format Google Visualization Date(YYYY,M,D)
-            const gvizMatch = str.match(/Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})\)/i);
-            if (gvizMatch) {
-                const y = gvizMatch[1];
-                const m = String(Number(gvizMatch[2]) + 1).padStart(2, '0');
-                const d = String(Number(gvizMatch[3])).padStart(2, '0');
-                return `${y}-${m}-${d}`;
-            }
+                if (dateEl) {
+                    dateEl.textContent = `${HARI_ID[now.getDay()]}, ${now.getDate()} ${BULAN_ID[now.getMonth()]} ${now.getFullYear()}`;
+                }
+                if (clockEl) {
+                    const hh = String(now.getHours()).padStart(2, '0');
+                    const mm = String(now.getMinutes()).padStart(2, '0');
+                    const ss = String(now.getSeconds()).padStart(2, '0');
+                    clockEl.textContent = `${hh}:${mm}:${ss}`;
+                }
 
-            // Format DD/MM/YYYY atau DD-MM-YYYY
-            const dmyMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-            if (dmyMatch) {
-                return `${dmyMatch[3]}-${dmyMatch[2].padStart(2, '0')}-${dmyMatch[1].padStart(2, '0')}`;
-            }
-
-            const parsed = new Date(str);
-            if (!isNaN(parsed.getTime())) {
-                return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
-            }
-            return str;
+                const todayIso = getRelativeIsoDate(0);
+                if (todayIso !== appState.lastKnownToday) {
+                    appState.lastKnownToday = todayIso;
+                    if (!appState.gsheet.url) {
+                        appState.schedules = DEFAULT_SCHEDULES.map((item, i) => ({
+                            ...item,
+                            date: getRelativeIsoDate(i < 3 ? 0 : 1)
+                        }));
+                    }
+                    renderScheduleTable();
+                }
+            };
+            updateClock();
+            setInterval(updateClock, 1000);
         }
 
         /* =====================================================================
-           D. FILTER DATA & RENDER TABEL JADWAL
+           D. FILTER TANGGAL, PAGINASI & RENDER TABEL STEEL SLATE
         ===================================================================== */
         function getFilteredSchedules() {
             const mode = appState.settings.filterMode || 'today_tomorrow';
-            const todayIso = getRelativeIsoDate(0);
-            const tomorrowIso = getRelativeIsoDate(1);
-            const yesterdayIso = getRelativeIsoDate(-1);
-            const specificIso = appState.settings.specificDate || todayIso;
+            const today = getRelativeIsoDate(0);
+            const tomorrow = getRelativeIsoDate(1);
+            const yesterday = getRelativeIsoDate(-1);
 
-            const filtered = appState.schedules.filter(item => {
-                if (mode === 'today') return item.date === todayIso;
-                if (mode === 'today_tomorrow') return item.date === todayIso || item.date === tomorrowIso;
-                if (mode === 'yesterday') return item.date === yesterdayIso;
-                if (mode === 'specific') return item.date === specificIso;
+            return appState.schedules.filter(item => {
+                if (mode === 'today') return item.date === today;
+                if (mode === 'today_tomorrow') return item.date === today || item.date === tomorrow;
+                if (mode === 'yesterday') return item.date === yesterday;
+                if (mode === 'specific') return item.date === appState.settings.specificDate;
                 return true;
             });
-
-            return filtered.sort((a, b) => a.date.localeCompare(b.date) || a.tuk.localeCompare(b.tuk));
         }
 
-        function updateFilterBadgeUI() {
-            const mode = appState.settings.filterMode;
+        function updateFilterBadge() {
             const badge = document.getElementById('active-filter-badge');
-            const dateInput = document.getElementById('quick-specific-date');
-            const selectEl = document.getElementById('quick-filter-mode');
-
-            if (selectEl) selectEl.value = mode;
-            if (dateInput) {
-                dateInput.value = appState.settings.specificDate || getRelativeIsoDate(0);
-                if (mode === 'specific') {
-                    dateInput.classList.remove('hidden');
-                } else {
-                    dateInput.classList.add('hidden');
-                }
-            }
-
+            const mode = appState.settings.filterMode;
             if (!badge) return;
-            if (mode === 'today') badge.textContent = `Hari Ini (${formatTanggalDenganHari(getRelativeIsoDate(0))})`;
-            else if (mode === 'today_tomorrow') badge.textContent = 'Hari Ini & Besok';
-            else if (mode === 'yesterday') badge.textContent = `Kemarin (${formatTanggalDenganHari(getRelativeIsoDate(-1))})`;
-            else if (mode === 'specific') badge.textContent = `Tanggal: ${formatTanggalDenganHari(appState.settings.specificDate)}`;
-            else badge.textContent = 'Semua Tanggal UJK';
+
+            const labels = {
+                today_tomorrow: 'Hari Ini & Besok',
+                today: 'Hari Ini Saja',
+                yesterday: 'Hari Kemarin',
+                all: 'Semua Tanggal UJK',
+                specific: formatTanggalDenganHari(appState.settings.specificDate)
+            };
+            badge.textContent = labels[mode] || 'Hari Ini & Besok';
         }
 
         function handleQuickFilterChange() {
-            appState.settings.filterMode = getElValue('quick-filter-mode', 'today_tomorrow');
-            currentPage = 1;
+            const sel = document.getElementById('quick-filter-mode');
+            const dateInput = document.getElementById('quick-specific-date');
+            if (!sel) return;
+
+            appState.settings.filterMode = sel.value;
+            if (sel.value === 'specific') {
+                if (dateInput) {
+                    dateInput.classList.remove('hidden');
+                    dateInput.value = appState.settings.specificDate || getRelativeIsoDate(0);
+                }
+            } else if (dateInput) {
+                dateInput.classList.add('hidden');
+            }
+
+            appState.currentPage = 1;
+            updateFilterBadge();
             saveAppState();
-            updateFilterBadgeUI();
             renderScheduleTable();
         }
 
         function handleQuickSpecificDateChange() {
-            const picked = getElValue('quick-specific-date', getRelativeIsoDate(0));
-            if (picked) {
-                appState.settings.specificDate = picked;
-                appState.settings.filterMode = 'specific';
-                currentPage = 1;
-                saveAppState();
-                updateFilterBadgeUI();
-                renderScheduleTable();
-            }
+            const dateInput = document.getElementById('quick-specific-date');
+            if (!dateInput || !dateInput.value) return;
+            appState.settings.specificDate = dateInput.value;
+            appState.currentPage = 1;
+            updateFilterBadge();
+            saveAppState();
+            renderScheduleTable();
         }
 
         function renderScheduleTable() {
@@ -695,15 +734,20 @@
             if (!tbody) return;
 
             const filtered = getFilteredSchedules();
-            const rowsPerPage = Number(appState.settings.rowsPerPage) || 7;
-            const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
-            if (currentPage > totalPages) currentPage = 1;
+            const perPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
+            const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
 
-            const startIdx = (currentPage - 1) * rowsPerPage;
-            const pageItems = filtered.slice(startIdx, startIdx + rowsPerPage);
+            if (appState.currentPage > totalPages) {
+                appState.currentPage = 1;
+            }
 
-            document.getElementById('total-count-label').textContent = `Menampilkan ${filtered.length} jadwal UJK`;
-            document.getElementById('page-indicator').textContent = `HALAMAN ${currentPage} / ${totalPages}`;
+            const startIdx = (appState.currentPage - 1) * perPage;
+            const pageItems = filtered.slice(startIdx, startIdx + perPage);
+
+            const totalLabel = document.getElementById('total-count-label');
+            const pageIndicator = document.getElementById('page-indicator');
+            if (totalLabel) totalLabel.textContent = `Menampilkan ${filtered.length} jadwal`;
+            if (pageIndicator) pageIndicator.textContent = `HALAMAN ${appState.currentPage} / ${totalPages}`;
 
             if (pageItems.length === 0) {
                 const labelTanggal = appState.settings.filterMode === 'specific'
@@ -711,14 +755,14 @@
                     : 'periode filter yang dipilih';
 
                 tbody.innerHTML = `
-                    <tr>
+                    <tr class="animate-row-in">
                         <td colspan="3" class="py-16 px-6 text-center">
                             <div class="inline-flex flex-col items-center max-w-md mx-auto">
-                                <div class="w-14 h-14 rounded-2xl bg-[#1e293b] text-[#38bdf8] flex items-center justify-center mb-3 border border-[#334155]">
+                                <div class="w-14 h-14 rounded-2xl bg-[#2c3142] text-[#FFFFFF] flex items-center justify-center mb-3 border border-[#545b72]">
                                     <i class="fa-regular fa-calendar-xmark text-2xl"></i>
                                 </div>
-                                <p class="text-base sm:text-lg font-extrabold text-white mb-1">Tidak Ada Jadwal UJK</p>
-                                <p class="text-xs sm:text-sm text-[#94a3b8]">Belum terdapat jadwal Uji Kompetensi untuk ${escapeHtml(labelTanggal)}.</p>
+                                <p class="text-base sm:text-lg font-extrabold text-[#FFFFFF] mb-1">Tidak Ada Jadwal UJK</p>
+                                <p class="text-xs sm:text-sm text-[#CBD5E1]">Belum terdapat jadwal Uji Kompetensi untuk ${escapeHtml(labelTanggal)}.</p>
                             </div>
                         </td>
                     </tr>
@@ -727,42 +771,44 @@
             }
 
             tbody.innerHTML = pageItems.map((item, idx) => {
-                const globalIndex = startIdx + idx;
-                const isSpeaking = currentSpeakingIndex === globalIndex;
-                const rowBg = idx % 2 === 0 ? 'bg-[#131c31]' : 'bg-[#0f172a]/70';
-                const assessorsList = Array.isArray(item.assessors) && item.assessors.length > 0
-                    ? item.assessors
-                    : ['-'];
+                const isReading = currentlyReadingRowId === item.id;
+                const isOddRow = idx % 2 === 0;
+                const rowBg = isReading
+                    ? 'bg-[#545b72] ring-2 ring-inset ring-[#FFFFFF]'
+                    : (isOddRow ? 'bg-[#393e51] hover:bg-[#464c5e]' : 'bg-[#2c3142] hover:bg-[#464c5e]');
+                const badgeBg = isReading
+                    ? 'bg-[#FFFFFF] border-[#FFFFFF] text-[#2c3142]'
+                    : (isOddRow ? 'bg-[#2c3142] border-[#545b72] text-[#FFFFFF]' : 'bg-[#505567] border-[#545b72] text-[#FFFFFF]');
+                const delayMs = idx * 65;
 
-                const assessorsHtml = assessorsList.length === 1
-                    ? `<div class="font-bold text-sm sm:text-base lg:text-lg text-[#f1f5f9] break-words">${escapeHtml(assessorsList[0])}</div>`
-                    : `<ol class="space-y-1">
-                        ${assessorsList.map((asr, i) => `
-                            <li class="flex items-start gap-2 text-sm sm:text-base font-bold text-[#f1f5f9]">
-                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-[#0284c7]/25 text-[#38bdf8] text-xs font-mono shrink-0 mt-0.5">${i + 1}</span>
-                                <span class="break-words">${escapeHtml(asr)}</span>
-                            </li>
-                        `).join('')}
-                       </ol>`;
+                const assessorsHtml = (item.assessors || []).map((name, aIdx) => `
+                    <div class="flex items-start gap-2 ${aIdx > 0 ? 'mt-1.5 pt-1.5 border-t border-white/15' : ''}">
+                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-white/15 text-[#FFFFFF] font-mono text-[11px] font-bold shrink-0 mt-0.5">
+                            ${aIdx + 1}
+                        </span>
+                        <span class="font-semibold text-sm sm:text-base lg:text-lg text-[#FFFFFF] break-words leading-snug">
+                            ${escapeHtml(name)}
+                        </span>
+                    </div>
+                `).join('');
 
                 return `
-                    <tr id="schedule-row-${globalIndex}" class="${rowBg} ${isSpeaking ? 'speaking-row' : ''} hover:bg-[#1e293b]/80 transition-colors">
-                        <td class="py-3.5 px-4 sm:px-6 align-top">
-                            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0b1120] border border-[#334155] text-[#38bdf8] font-bold text-xs sm:text-sm lg:text-base">
-                                <i class="fa-regular fa-calendar text-xs"></i>
-                                <span>${escapeHtml(formatTanggalDenganHari(item.date))}</span>
+                    <tr style="animation-delay: ${delayMs}ms" class="animate-row-in ${rowBg} transition-colors duration-200">
+                        <td class="py-4 px-4 sm:px-6 align-top border-r border-[#545b72]/70">
+                            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border ${badgeBg} shadow-xs">
+                                <i class="fa-regular ${isReading ? 'fa-volume-high animate-pulse text-[#2c3142]' : 'fa-calendar text-[#E2E8F0]'} text-xs sm:text-sm"></i>
+                                <span class="font-bold text-xs sm:text-sm lg:text-base tracking-tight">
+                                    ${escapeHtml(formatTanggalDenganHari(item.date))}
+                                </span>
                             </div>
                         </td>
-                        <td class="py-3.5 px-4 sm:px-6 align-top">
-                            <div class="flex items-start gap-2">
-                                ${isSpeaking ? '<i class="fa-solid fa-volume-high text-[#38bdf8] animate-pulse mt-1 shrink-0"></i>' : ''}
-                                <div class="font-extrabold text-sm sm:text-base lg:text-lg text-white break-words leading-snug">
-                                    ${escapeHtml(item.tuk)}
-                                </div>
+                        <td class="py-4 px-4 sm:px-6 align-top border-r border-[#545b72]/70">
+                            <div class="font-extrabold text-sm sm:text-base lg:text-xl text-[#FFFFFF] break-words leading-snug">
+                                ${escapeHtml(item.tuk)}
                             </div>
                         </td>
-                        <td class="py-3.5 px-4 sm:px-6 align-top">
-                            ${assessorsHtml}
+                        <td class="py-4 px-4 sm:px-6 align-top">
+                            ${assessorsHtml || '<span class="text-sm text-[#CBD5E1] italic">-</span>'}
                         </td>
                     </tr>
                 `;
@@ -771,744 +817,250 @@
 
         function prevPage() {
             const filtered = getFilteredSchedules();
-            const rowsPerPage = Number(appState.settings.rowsPerPage) || 7;
-            const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
-            currentPage = currentPage <= 1 ? totalPages : currentPage - 1;
+            const perPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
+            const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+            appState.currentPage = appState.currentPage <= 1 ? totalPages : appState.currentPage - 1;
             renderScheduleTable();
         }
 
-        function nextPage(isAuto = false) {
+        function nextPage(isAutoSlide = false) {
             const filtered = getFilteredSchedules();
-            const rowsPerPage = Number(appState.settings.rowsPerPage) || 7;
-            const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
-            currentPage = currentPage >= totalPages ? 1 : currentPage + 1;
+            const perPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
+            const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+            if (totalPages <= 1 && isAutoSlide) return;
+
+            appState.currentPage = appState.currentPage >= totalPages ? 1 : appState.currentPage + 1;
             renderScheduleTable();
 
-            if (isAuto && appState.settings.audioMode === 'auto_page' && !isAnnouncingAudio && filtered.length > 0) {
-                startScheduleAnnouncement();
+            // Jika mode otomatis tiap pergantian halaman aktif & tidak sedang berbicara, bacakan halaman baru
+            if (isAutoSlide && appState.settings.aiAutoMode === 'on_slide' && !isAnnouncing) {
+                announceCurrentPageSchedules(true);
             }
         }
 
         function startAutoPagination() {
-            if (slideTimer) clearInterval(slideTimer);
-            const sec = Number(appState.settings.slideInterval) || 0;
+            if (slideTimerId) clearInterval(slideTimerId);
+            const sec = parseInt(appState.settings.slideInterval, 10);
             const infoEl = document.getElementById('auto-slide-info');
-
-            if (sec <= 0) {
+            if (!sec || sec <= 0) {
                 if (infoEl) infoEl.textContent = 'Auto-slide nonaktif';
                 return;
             }
             if (infoEl) infoEl.textContent = `Auto-slide aktif (${sec} dtk)`;
-
-            slideTimer = setInterval(() => {
-                const filtered = getFilteredSchedules();
-                const rowsPerPage = Number(appState.settings.rowsPerPage) || 7;
-                if (filtered.length > rowsPerPage) {
+            slideTimerId = setInterval(() => {
+                // Tunggu pembacaan selesai sebelum pindah halaman agar pengumuman tidak terpotong
+                if (!isAnnouncing) {
                     nextPage(true);
                 }
             }, sec * 1000);
         }
 
         /* =====================================================================
-           E. SINKRONISASI GOOGLE SHEETS (JSONP ANTI-CORS)
+           E. SINKRONISASI GOOGLE SHEETS REAL-TIME (JSONP BEBAS CORS)
         ===================================================================== */
         function extractSpreadsheetId(url) {
             const match = String(url || '').match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
             return match ? match[1] : null;
         }
 
-        function connectGoogleSheet() {
-            const url = getElValue('gsheet-url-input').trim();
-            const sheetName = getElValue('gsheet-sheet-name', 'Jadwal_UJK').trim() || 'Jadwal_UJK';
-            const interval = Number(getElValue('gsheet-sync-interval', 10)) || 10;
-
-            const sheetId = extractSpreadsheetId(url);
-            if (!sheetId) {
-                showToast('Tautan Google Sheets tidak valid. Pastikan menyalin URL lengkap.', 'error');
-                return;
+        function normalizeDateValue(raw) {
+            if (!raw) return '';
+            const str = String(raw).trim();
+            const gvizDateMatch = str.match(/^Date\((\d+),\s*(\d+),\s*(\d+)\)/);
+            if (gvizDateMatch) {
+                const y = gvizDateMatch[1];
+                const m = String(Number(gvizDateMatch[2]) + 1).padStart(2, '0');
+                const d = String(Number(gvizDateMatch[3])).padStart(2, '0');
+                return `${y}-${m}-${d}`;
             }
+            if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+            const dmyMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+            if (dmyMatch) {
+                return `${dmyMatch[3]}-${dmyMatch[2].padStart(2, '0')}-${dmyMatch[1].padStart(2, '0')}`;
+            }
+            return str;
+        }
 
-            appState.gsheet = {
-                url,
-                sheetName,
-                syncInterval: interval,
-                connected: true
+        function fetchGoogleSheetData(isManual = false) {
+            const sheetId = extractSpreadsheetId(appState.gsheet.url);
+            if (!sheetId) return;
+
+            const syncIcon = document.getElementById('icon-manual-sync');
+            if (syncIcon) syncIcon.classList.add('fa-spin');
+
+            const callbackName = 'gvizCallback_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+            const script = document.createElement('script');
+            const sheetParam = encodeURIComponent(appState.gsheet.sheetName || 'Jadwal_UJK');
+
+            const cleanup = () => {
+                if (syncIcon) syncIcon.classList.remove('fa-spin');
+                delete window[callbackName];
+                if (script.parentNode) script.parentNode.removeChild(script);
             };
-            saveAppState();
-            updateConnectionStatusUI();
-            startGoogleSheetSync();
-            fetchGoogleSheetData(true);
-        }
 
-        function disconnectGoogleSheet() {
-            if (syncTimer) clearInterval(syncTimer);
-            appState.gsheet.connected = false;
-            appState.schedules = [...DEFAULT_SCHEDULES];
-            saveAppState();
-            updateConnectionStatusUI();
-            renderScheduleTable();
-            showToast('Koneksi Google Sheets diputuskan. Kembali ke data contoh.', 'info');
-        }
-
-        function manualSyncNow() {
-            if (!appState.gsheet.connected) return;
-            const icon = document.getElementById('icon-manual-sync');
-            if (icon) icon.classList.add('fa-spin');
-            fetchGoogleSheetData(true).finally(() => {
-                if (icon) setTimeout(() => icon.classList.remove('fa-spin'), 400);
-            });
-        }
-
-        function startGoogleSheetSync() {
-            if (syncTimer) clearInterval(syncTimer);
-            if (!appState.gsheet.connected) return;
-            const intervalMs = Math.max(5, Number(appState.gsheet.syncInterval) || 10) * 1000;
-            syncTimer = setInterval(() => fetchGoogleSheetData(false), intervalMs);
-        }
-
-        function fetchGoogleSheetData(notifySuccess = false) {
-            return new Promise((resolve) => {
-                const sheetId = extractSpreadsheetId(appState.gsheet.url);
-                if (!sheetId) {
-                    resolve(false);
-                    return;
-                }
-
-                const callbackName = 'gvizCallback_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
-                const script = document.createElement('script');
-                const sheetParam = encodeURIComponent(appState.gsheet.sheetName || 'Jadwal_UJK');
-
-                const cleanup = () => {
-                    delete window[callbackName];
-                    if (script.parentNode) script.parentNode.removeChild(script);
-                };
-
-                const timeoutId = setTimeout(() => {
-                    cleanup();
-                    resolve(false);
-                }, 8000);
-
-                window[callbackName] = (response) => {
-                    clearTimeout(timeoutId);
-                    cleanup();
-                    try {
-                        if (!response || !response.table || !Array.isArray(response.table.rows)) {
-                            throw new Error('Struktur tabel Google Sheets kosong atau tidak publik.');
-                        }
-
-                        const parsedRows = [];
-                        response.table.rows.forEach((row, index) => {
-                            const cells = row.c || [];
-                            const rawDate = cells[0] ? (cells[0].f || cells[0].v) : '';
-                            const rawTuk = cells[1] ? (cells[1].v || '') : '';
-                            const rawAssessors = cells[2] ? (cells[2].v || '') : '';
-
-                            const isoDate = parseFlexibleDateToIso(rawDate);
-                            const tukText = String(rawTuk).trim();
-                            if (!isoDate || !tukText || tukText.toLowerCase() === 'nama tuk') return;
-
-                            const assessors = String(rawAssessors)
-                                .split(/[;\n|]+/)
-                                .map(s => s.trim())
-                                .filter(Boolean);
-
-                            parsedRows.push({
-                                id: `gs-${index}`,
-                                date: isoDate,
-                                tuk: tukText,
-                                assessors: assessors.length > 0 ? assessors : ['-']
-                            });
-                        });
-
-                        appState.schedules = parsedRows;
-                        saveAppState();
-                        renderScheduleTable();
-
-                        const nowStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                        const syncLabel = document.getElementById('last-sync-time');
-                        if (syncLabel) syncLabel.textContent = `Sync ${nowStr}`;
-                        if (notifySuccess) showToast(`Berhasil memuat ${parsedRows.length} jadwal dari Google Sheets.`, 'success');
-                        resolve(true);
-                    } catch (err) {
-                        if (notifySuccess) showToast('Gagal membaca Google Sheets. Pastikan akses dibuka untuk "Siapa saja yang memiliki link".', 'error');
-                        resolve(false);
+            window[callbackName] = function(response) {
+                cleanup();
+                try {
+                    if (!response || !response.table || !Array.isArray(response.table.rows)) {
+                        throw new Error('Struktur sheet tidak terbaca');
                     }
-                };
+                    const parsedRows = [];
+                    response.table.rows.forEach((row, idx) => {
+                        const cells = row.c || [];
+                        const rawDate = cells[0] ? (cells[0].f || cells[0].v) : '';
+                        const rawTuk = cells[1] ? (cells[1].v || '') : '';
+                        const rawAssessor = cells[2] ? (cells[2].v || '') : '';
 
-                script.onerror = () => {
-                    clearTimeout(timeoutId);
-                    cleanup();
-                    if (notifySuccess) showToast('Koneksi ke Google Sheets gagal.', 'error');
-                    resolve(false);
-                };
+                        const dateIso = normalizeDateValue(rawDate);
+                        const tukName = String(rawTuk).trim();
+                        if (!dateIso || !tukName || tukName.toLowerCase().includes('nama tuk')) return;
 
-                script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=${sheetParam}&tqx=responseHandler:${callbackName}&_=${Date.now()}`;
-                document.body.appendChild(script);
-            });
+                        const assessors = String(rawAssessor)
+                            .split(/[;\n]+/)
+                            .map(s => s.trim())
+                            .filter(Boolean);
+
+                        parsedRows.push({
+                            id: `gs_${idx}_${dateIso}`,
+                            date: dateIso,
+                            tuk: tukName,
+                            assessors
+                        });
+                    });
+
+                    appState.schedules = parsedRows;
+                    saveAppState();
+                    renderScheduleTable();
+                    updateConnectionUI(true);
+                    if (isManual) showToast(`Sinkronisasi berhasil (${parsedRows.length} jadwal).`, 'success');
+                } catch (err) {
+                    console.error('Error parsing Google Sheet:', err);
+                    if (isManual) showToast('Gagal membaca data Google Sheets. Pastikan akses publik aktif.', 'error');
+                }
+            };
+
+            script.onerror = () => {
+                cleanup();
+                if (isManual) showToast('Koneksi ke Google Sheets gagal.', 'error');
+            };
+
+            script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json;responseHandler:${callbackName}&sheet=${sheetParam}&_ts=${Date.now()}`;
+            document.body.appendChild(script);
         }
 
-        function updateConnectionStatusUI() {
-            const dot = document.getElementById('connection-dot');
+        function updateConnectionUI(connected) {
             const label = document.getElementById('connection-label');
-            const drawerStatus = document.getElementById('gsheet-drawer-status');
+            const syncTime = document.getElementById('last-sync-time');
             const manualBtn = document.getElementById('btn-manual-sync');
+            const drawerStatus = document.getElementById('gsheet-drawer-status');
 
-            if (appState.gsheet.connected) {
-                if (dot) dot.className = 'w-2 h-2 rounded-full bg-[#2dd4bf] animate-pulse';
-                if (label) label.textContent = 'Google Sheets Live';
-                if (drawerStatus) {
-                    drawerStatus.textContent = 'Terhubung Live';
-                    drawerStatus.className = 'text-[11px] font-bold px-2 py-0.5 rounded bg-[#2dd4bf]/20 text-[#2dd4bf]';
-                }
-                if (manualBtn) {
+            if (label) label.textContent = connected ? 'Google Sheets Live' : 'Mode Siap Pakai';
+            if (syncTime) {
+                const now = new Date();
+                const hh = String(now.getHours()).padStart(2, '0');
+                const mm = String(now.getMinutes()).padStart(2, '0');
+                const ss = String(now.getSeconds()).padStart(2, '0');
+                syncTime.textContent = connected ? `Sync ${hh}:${mm}:${ss}` : 'Data Siap';
+            }
+            if (manualBtn) {
+                if (connected) {
                     manualBtn.classList.remove('hidden');
                     manualBtn.classList.add('inline-flex');
-                }
-            } else {
-                if (dot) dot.className = 'w-2 h-2 rounded-full bg-[#38bdf8]';
-                if (label) label.textContent = 'Mode Siap Pakai';
-                if (drawerStatus) {
-                    drawerStatus.textContent = 'Mode Lokal';
-                    drawerStatus.className = 'text-[11px] font-bold px-2 py-0.5 rounded bg-[#1e293b] text-[#94a3b8]';
-                }
-                if (manualBtn) {
+                } else {
                     manualBtn.classList.add('hidden');
                     manualBtn.classList.remove('inline-flex');
                 }
             }
-        }
-
-        function downloadTemplateCSV() {
-            const today = getRelativeIsoDate(0);
-            const tomorrow = getRelativeIsoDate(1);
-            const csvContent = [
-                'Tanggal UJK,Nama TUK,Nama Asesor',
-                `${today},"TUK Sewaktu - Ruang Asesmen 01","Ir. Budi Santoso, M.T.; Dra. Siti Aminah, M.M."`,
-                `${today},"TUK Mandiri - Lab Komputer Utama","Ahmad Fauzi, S.Kom."`,
-                `${tomorrow},"TUK Sewaktu - Aula Lantai 2","Dr. Hendra Wijaya, S.E."`
-            ].join('\n');
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'Template_Jadwal_UJK_GoogleSheets.csv';
-            link.click();
-            showToast('Template CSV berhasil diunduh.', 'success');
-        }
-
-        /* =====================================================================
-           F. INSTRUMEN MELODI STASIUN KAI (BACKSOUND WEB AUDIO API)
-        ===================================================================== */
-        let sharedAudioCtx = null;
-        let isBgmPlaying = false;
-        let bgmLoopTimeout = null;
-        let bgmCurrentIndex = 0;
-        let bgmDuckingMultiplier = 1.0;
-
-        function getAudioContext() {
-            if (!sharedAudioCtx) {
-                const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                sharedAudioCtx = new AudioCtx();
-            }
-            if (sharedAudioCtx.state === 'suspended') {
-                sharedAudioCtx.resume();
-            }
-            return sharedAudioCtx;
-        }
-
-        const STATION_MELODIES = {
-            sepasang_mata_bola: {
-                name: 'Sepasang Mata Bola (Yogyakarta)',
-                notes: [
-                    [329.63, 0.5], [392.00, 0.5], [440.00, 0.75], [392.00, 0.25], [329.63, 0.75],
-                    [293.66, 0.5], [329.63, 0.5], [392.00, 1.0],
-                    [440.00, 0.5], [493.88, 0.5], [523.25, 0.75], [493.88, 0.25], [440.00, 0.75],
-                    [392.00, 0.5], [329.63, 0.5], [293.66, 1.1]
-                ]
-            },
-            bengawan_solo: {
-                name: 'Bengawan Solo (Solo)',
-                notes: [
-                    [261.63, 0.45], [329.63, 0.45], [392.00, 0.8], [440.00, 0.45], [392.00, 0.8],
-                    [329.63, 0.45], [293.66, 0.45], [261.63, 0.9],
-                    [293.66, 0.45], [349.23, 0.45], [440.00, 0.8], [392.00, 0.45], [329.63, 0.9]
-                ]
-            },
-            sabilulungan: {
-                name: 'Sabilulungan (Bandung)',
-                notes: [
-                    [392.00, 0.35], [440.00, 0.35], [523.25, 0.5], [440.00, 0.35], [392.00, 0.5],
-                    [329.63, 0.35], [392.00, 0.35], [440.00, 0.7],
-                    [523.25, 0.35], [587.33, 0.35], [523.25, 0.5], [440.00, 0.35], [392.00, 0.8]
-                ]
-            },
-            manuk_dadali: {
-                name: 'Manuk Dadali (Bandung)',
-                notes: [
-                    [392.00, 0.3], [392.00, 0.3], [440.00, 0.45], [392.00, 0.3], [523.25, 0.6],
-                    [493.88, 0.3], [440.00, 0.3], [392.00, 0.6],
-                    [329.63, 0.3], [349.23, 0.3], [392.00, 0.45], [329.63, 0.3], [293.66, 0.75]
-                ]
-            },
-            karatagan_pahlawan: {
-                name: 'Karatagan Pahlawan (Bandung)',
-                notes: [
-                    [261.63, 0.4], [329.63, 0.4], [392.00, 0.6], [523.25, 0.6],
-                    [493.88, 0.4], [440.00, 0.4], [392.00, 0.8],
-                    [349.23, 0.4], [392.00, 0.4], [440.00, 0.6], [392.00, 0.8]
-                ]
-            },
-            ayun_ambing: {
-                name: 'Ayun-Ayun Ambing (Gamelan Daop 2)',
-                notes: [
-                    [440.00, 0.55], [392.00, 0.55], [329.63, 0.7], [293.66, 0.55],
-                    [329.63, 0.55], [392.00, 0.7], [440.00, 0.55], [523.25, 0.9]
-                ]
-            },
-            rek_ayo_rek: {
-                name: 'Rek Ayo Rek (Surabaya Gubeng)',
-                notes: [
-                    [392.00, 0.3], [440.00, 0.3], [392.00, 0.3], [329.63, 0.45],
-                    [392.00, 0.3], [440.00, 0.3], [523.25, 0.6],
-                    [493.88, 0.3], [440.00, 0.3], [392.00, 0.45], [329.63, 0.6]
-                ]
-            },
-            surabaya_oh_surabaya: {
-                name: 'Surabaya Oh Surabaya (Pasar Turi)',
-                notes: [
-                    [329.63, 0.45], [392.00, 0.45], [523.25, 0.75], [493.88, 0.45], [440.00, 0.75],
-                    [392.00, 0.45], [349.23, 0.45], [329.63, 0.85]
-                ]
-            },
-            sungai_serayu: {
-                name: 'Di Tepinya Sungai Serayu (Purwokerto)',
-                notes: [
-                    [329.63, 0.5], [349.23, 0.5], [392.00, 0.8], [440.00, 0.5], [392.00, 0.8],
-                    [349.23, 0.5], [329.63, 0.5], [293.66, 0.9]
-                ]
-            },
-            gambang_semarang: {
-                name: 'Gambang Semarang (Semarang)',
-                notes: [
-                    [523.25, 0.35], [493.88, 0.35], [440.00, 0.35], [392.00, 0.5],
-                    [440.00, 0.35], [523.25, 0.35], [587.33, 0.6],
-                    [523.25, 0.35], [440.00, 0.35], [392.00, 0.7]
-                ]
-            },
-            kota_cirebon: {
-                name: 'Kota Cirebon (Stasiun Cirebon)',
-                notes: [
-                    [392.00, 0.45], [440.00, 0.45], [493.88, 0.7], [440.00, 0.45], [392.00, 0.7],
-                    [329.63, 0.45], [392.00, 0.45], [440.00, 0.85]
-                ]
-            },
-            chime: {
-                name: 'Nada Chime Stasiun',
-                notes: [
-                    [523.25, 0.55], [659.25, 0.55], [783.99, 0.55], [1046.50, 1.1]
-                ]
-            }
-        };
-
-        const BGM_PLAYLIST_KEYS = [
-            'sepasang_mata_bola', 'bengawan_solo', 'sabilulungan', 'manuk_dadali',
-            'karatagan_pahlawan', 'ayun_ambing', 'rek_ayo_rek', 'surabaya_oh_surabaya',
-            'sungai_serayu', 'gambang_semarang', 'kota_cirebon'
-        ];
-
-        function playMelodySequence(melodyKey, isLoopStep = false) {
-            if (isLoopStep && !isBgmPlaying) return;
-            const ctx = getAudioContext();
-            const entry = STATION_MELODIES[melodyKey] || STATION_MELODIES.sepasang_mata_bola;
-            const baseVol = (Number(appState.settings.bgmVolume) || 0.14) * bgmDuckingMultiplier;
-
-            let timeCursor = ctx.currentTime + 0.05;
-            entry.notes.forEach(([freq, dur]) => {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, timeCursor);
-
-                gain.gain.setValueAtTime(0.0001, timeCursor);
-                gain.gain.exponentialRampToValueAtTime(Math.max(0.001, baseVol), timeCursor + 0.06);
-                gain.gain.exponentialRampToValueAtTime(0.0001, timeCursor + dur * 0.95);
-
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(timeCursor);
-                osc.stop(timeCursor + dur);
-
-                timeCursor += dur * 1.08;
-            });
-
-            const totalDurationMs = (timeCursor - ctx.currentTime) * 1000;
-            if (isLoopStep && isBgmPlaying) {
-                bgmLoopTimeout = setTimeout(() => {
-                    if (!isBgmPlaying) return;
-                    const chosen = appState.settings.stationMelody || 'playlist';
-                    if (chosen === 'playlist') {
-                        bgmCurrentIndex = (bgmCurrentIndex + 1) % BGM_PLAYLIST_KEYS.length;
-                        playMelodySequence(BGM_PLAYLIST_KEYS[bgmCurrentIndex], true);
-                    } else {
-                        playMelodySequence(chosen, true);
-                    }
-                }, totalDurationMs + 1400);
+            if (drawerStatus) {
+                drawerStatus.textContent = connected ? 'Terhubung Real-Time' : 'Belum Terhubung';
+                drawerStatus.className = connected
+                    ? 'text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200 border border-emerald-400/40'
+                    : 'text-[11px] font-bold px-2 py-0.5 rounded bg-[#464c5e] text-[#E2E8F0]';
             }
         }
 
-        function toggleBackgroundMusic() {
-            if (isBgmPlaying) {
-                isBgmPlaying = false;
-                if (bgmLoopTimeout) clearTimeout(bgmLoopTimeout);
-                updateBgmButtonUI(false);
-                showToast('Backsound instrumen dimatikan.', 'info');
-            } else {
-                isBgmPlaying = true;
-                updateBgmButtonUI(true);
-                const chosen = appState.settings.stationMelody || 'playlist';
-                const startKey = chosen === 'playlist' ? BGM_PLAYLIST_KEYS[bgmCurrentIndex] : chosen;
-                playMelodySequence(startKey, true);
-                showToast(`Memutar backsound: ${STATION_MELODIES[startKey].name}`, 'success');
+        function startSyncPolling() {
+            if (syncTimerId) clearInterval(syncTimerId);
+            if (!extractSpreadsheetId(appState.gsheet.url)) {
+                updateConnectionUI(false);
+                return;
             }
+            fetchGoogleSheetData(false);
+            const sec = Math.max(5, parseInt(appState.gsheet.syncInterval, 10) || 10);
+            syncTimerId = setInterval(() => fetchGoogleSheetData(false), sec * 1000);
         }
 
-        function handleMelodySelectChange() {
-            appState.settings.stationMelody = getElValue('setting-station-melody', 'playlist');
-            saveAppState();
-            if (isBgmPlaying) {
-                if (bgmLoopTimeout) clearTimeout(bgmLoopTimeout);
-                const chosen = appState.settings.stationMelody;
-                const nextKey = chosen === 'playlist' ? BGM_PLAYLIST_KEYS[bgmCurrentIndex] : chosen;
-                playMelodySequence(nextKey, true);
-            }
+        function manualSyncNow() {
+            fetchGoogleSheetData(true);
         }
 
-        function handleBgmVolumeChange() {
-            appState.settings.bgmVolume = Number(getElValue('setting-bgm-volume', 0.14));
-            saveAppState();
-        }
+        function connectGoogleSheet() {
+            const urlInput = document.getElementById('gsheet-url-input');
+            const sheetInput = document.getElementById('gsheet-sheet-name');
+            const intervalInput = document.getElementById('gsheet-sync-interval');
 
-        function updateBgmButtonUI(active) {
-            const btn = document.getElementById('btn-toggle-bgm');
-            const icon = document.getElementById('icon-bgm-status');
-            const text = document.getElementById('text-bgm-status');
-            if (!btn) return;
-            if (active) {
-                btn.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2dd4bf]/20 text-[#2dd4bf] border border-[#2dd4bf]/50 text-xs font-bold transition cursor-pointer';
-                if (icon) icon.className = 'fa-solid fa-music animate-bounce text-[#2dd4bf]';
-                if (text) text.textContent = 'Backsound Aktif';
-            } else {
-                btn.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0b1120] hover:bg-[#1e293b] text-[#94a3b8] border border-[#334155] text-xs font-bold transition cursor-pointer';
-                if (icon) icon.className = 'fa-solid fa-music text-[#38bdf8]';
-                if (text) text.textContent = 'Backsound';
-            }
-        }
-
-        function playStationChime() {
-            return new Promise((resolve) => {
-                try {
-                    const ctx = getAudioContext();
-                    const notes = [523.25, 659.25, 783.99, 1046.50];
-                    let t = ctx.currentTime + 0.05;
-                    notes.forEach((freq, i) => {
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, t);
-                        const dur = i === notes.length - 1 ? 0.7 : 0.32;
-                        gain.gain.setValueAtTime(0.001, t);
-                        gain.gain.exponentialRampToValueAtTime(0.18, t + 0.04);
-                        gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.start(t);
-                        osc.stop(t + dur);
-                        t += dur * 0.85;
-                    });
-                    setTimeout(resolve, 1550);
-                } catch (e) {
-                    resolve();
-                }
-            });
-        }
-
-        /* =====================================================================
-           G. PENGUMUMAN SUARA AI GEMINI TTS (+ FALLBACK BROWSER NATURAL)
-        ===================================================================== */
-        let isAnnouncingAudio = false;
-        let currentSpeakingIndex = -1;
-        let activeAudioPlayer = null;
-        let activeUtterance = null;
-        let abortAnnouncementFlag = false;
-
-        function buildAnnouncementSegments(items, startIdx) {
-            const langMode = appState.settings.audioLang || 'id';
-            const segments = [];
-
-            if (langMode === 'id' || langMode === 'bilingual') {
-                segments.push({
-                    rowIndex: -1,
-                    lang: 'id-ID',
-                    text: 'Perhatian. Informasi jadwal pelaksanaan Uji Kompetensi.'
-                });
-            }
-            if (langMode === 'en' || langMode === 'bilingual') {
-                segments.push({
-                    rowIndex: -1,
-                    lang: 'en-US',
-                    text: 'May I have your attention please. Here is the Competency Assessment schedule.'
-                });
-            }
-
-            items.forEach((item, idx) => {
-                const rowIndex = startIdx + idx;
-                const tanggalText = formatTanggalDenganHari(item.date);
-                const asesorText = (item.assessors || []).join(', dan ');
-
-                if (langMode === 'id' || langMode === 'bilingual') {
-                    segments.push({
-                        rowIndex,
-                        lang: 'id-ID',
-                        text: `Jadwal nomor ${idx + 1}. Hari ${tanggalText}. Bertempat di ${item.tuk}. Dengan Asesor Kompetensi: ${asesorText}.`
-                    });
-                }
-                if (langMode === 'en' || langMode === 'bilingual') {
-                    segments.push({
-                        rowIndex,
-                        lang: 'en-US',
-                        text: `Schedule number ${idx + 1}. Date: ${item.date}. Venue: ${item.tuk}. Competency Assessor: ${asesorText}.`
-                    });
-                }
-            });
-
-            if (langMode === 'id' || langMode === 'bilingual') {
-                segments.push({
-                    rowIndex: -1,
-                    lang: 'id-ID',
-                    text: 'Demikian informasi jadwal Uji Kompetensi. Terima kasih.'
-                });
-            }
-            if (langMode === 'en' || langMode === 'bilingual') {
-                segments.push({
-                    rowIndex: -1,
-                    lang: 'en-US',
-                    text: 'Thank you for your attention.'
-                });
-            }
-
-            return segments;
-        }
-
-        function base64ToArrayBuffer(base64) {
-            const binaryString = atob(base64);
-            const len = binaryString.length;
-            const bytes = new Uint8Array(len);
-            for (let i = 0; i < len; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            return bytes.buffer;
-        }
-
-        function pcmToWav(pcm16, sampleRate = 24000) {
-            const numChannels = 1;
-            const byteRate = sampleRate * numChannels * 2;
-            const blockAlign = numChannels * 2;
-            const dataSize = pcm16.byteLength;
-            const buffer = new ArrayBuffer(44 + dataSize);
-            const view = new DataView(buffer);
-
-            const writeStr = (offset, str) => {
-                for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
-            };
-
-            writeStr(0, 'RIFF');
-            view.setUint32(4, 36 + dataSize, true);
-            writeStr(8, 'WAVE');
-            writeStr(12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, numChannels, true);
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, byteRate, true);
-            view.setUint16(32, blockAlign, true);
-            view.setUint16(34, 16, true);
-            writeStr(36, 'data');
-            view.setUint32(40, dataSize, true);
-
-            const offsetView = new Uint8Array(buffer, 44);
-            offsetView.set(new Uint8Array(pcm16.buffer));
-            return new Blob([buffer], { type: 'audio/wav' });
-        }
-
-        async function synthesizeWithGeminiTTS(text) {
-            const apiKey = '';
-            const voiceName = appState.settings.geminiVoice || 'Aoede';
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{
-                    parts: [{ text: `Bacakan pengumuman ini dengan suara penyiar yang ramah, tenang, jelas, dan natural: ${text}` }]
-                }],
-                generationConfig: {
-                    responseModalities: ['AUDIO'],
-                    speechConfig: {
-                        voiceConfig: {
-                            prebuiltVoiceConfig: { voiceName }
-                        }
-                    }
-                },
-                model: 'gemini-2.5-flash-preview-tts'
-            };
-
-            const res = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            const result = await res.json();
-            const part = result?.candidates?.[0]?.content?.parts?.[0];
-            const audioData = part?.inlineData?.data;
-            const mimeType = part?.inlineData?.mimeType || '';
-
-            if (!audioData || !mimeType.startsWith('audio/')) throw new Error('Audio kosong');
-            const rateMatch = mimeType.match(/rate=(\d+)/);
-            const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
-            const pcm16 = new Int16Array(base64ToArrayBuffer(audioData));
-            const wavBlob = pcmToWav(pcm16, sampleRate);
-            return URL.createObjectURL(wavBlob);
-        }
-
-        function playAudioUrlPromise(url) {
-            return new Promise((resolve) => {
-                if (abortAnnouncementFlag) {
-                    URL.revokeObjectURL(url);
-                    resolve();
-                    return;
-                }
-                const audio = new Audio(url);
-                activeAudioPlayer = audio;
-                audio.onended = () => {
-                    URL.revokeObjectURL(url);
-                    activeAudioPlayer = null;
-                    resolve();
-                };
-                audio.onerror = () => {
-                    URL.revokeObjectURL(url);
-                    activeAudioPlayer = null;
-                    resolve();
-                };
-                audio.play().catch(() => resolve());
-            });
-        }
-
-        function getBestNaturalVoice(langPrefix) {
-            if (!('speechSynthesis' in window)) return null;
-            const voices = window.speechSynthesis.getVoices() || [];
-            const matching = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(langPrefix.toLowerCase()));
-            if (matching.length === 0) return null;
-
-            const femalePreferred = matching.find(v =>
-                /gadis|damayanti|google bahasa indonesia|jenny|aria|natural|online/i.test(v.name) &&
-                !/ardi|male|pria/i.test(v.name)
-            );
-            return femalePreferred || matching[0];
-        }
-
-        function speakSegmentWithBrowserFallback(segment) {
-            return new Promise((resolve) => {
-                if (!('speechSynthesis' in window) || abortAnnouncementFlag) {
-                    resolve();
-                    return;
-                }
-                window.speechSynthesis.cancel();
-                const utter = new SpeechSynthesisUtterance(segment.text);
-                activeUtterance = utter;
-                const prefix = segment.lang.startsWith('en') ? 'en' : 'id';
-                const voice = getBestNaturalVoice(prefix);
-                if (voice) utter.voice = voice;
-                utter.lang = segment.lang;
-                utter.rate = Number(appState.settings.audioRate) || 0.95;
-                utter.pitch = 1.03;
-
-                utter.onend = () => {
-                    activeUtterance = null;
-                    resolve();
-                };
-                utter.onerror = () => {
-                    activeUtterance = null;
-                    resolve();
-                };
-                window.speechSynthesis.speak(utter);
-            });
-        }
-
-        async function startScheduleAnnouncement() {
-            const filtered = getFilteredSchedules();
-            if (filtered.length === 0) {
-                showToast('Tidak ada jadwal yang tampil untuk dibacakan.', 'info');
+            const url = urlInput ? urlInput.value.trim() : '';
+            if (!extractSpreadsheetId(url)) {
+                showToast('Masukkan link Google Sheets yang valid.', 'error');
                 return;
             }
 
-            const rowsPerPage = Number(appState.settings.rowsPerPage) || 7;
-            const startIdx = (currentPage - 1) * rowsPerPage;
-            const pageItems = filtered.slice(startIdx, startIdx + rowsPerPage);
-            const segments = buildAnnouncementSegments(pageItems, startIdx);
+            appState.gsheet.url = url;
+            appState.gsheet.sheetName = (sheetInput && sheetInput.value.trim()) || 'Jadwal_UJK';
+            appState.gsheet.syncInterval = parseInt(intervalInput ? intervalInput.value : '10', 10) || 10;
+            saveAppState();
+            startSyncPolling();
+            showToast('Menghubungkan ke Google Sheets...', 'info');
+        }
 
-            isAnnouncingAudio = true;
-            abortAnnouncementFlag = false;
-            bgmDuckingMultiplier = 0.25;
-            updateAudioButtonUI(true);
+        function disconnectGoogleSheet() {
+            appState.gsheet.url = '';
+            if (syncTimerId) clearInterval(syncTimerId);
+            saveAppState();
+            updateConnectionUI(false);
+            showToast('Koneksi Google Sheets diputuskan.', 'info');
+        }
 
-            await playStationChime();
+        function downloadTemplateCSV() {
+            const csv = [
+                'Tanggal UJK,Nama TUK,Nama Asesor',
+                `${getRelativeIsoDate(0)},TUK Sewaktu Lab Komputer 01,Ir. Budi Santoso; Dr. Siti Aminah`,
+                `${getRelativeIsoDate(1)},TUK Mandiri Ruang Praktik Utama,Ahmad Fauzi`
+            ].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Template_Jadwal_UJK.csv';
+            link.click();
+        }
 
-            for (const seg of segments) {
-                if (abortAnnouncementFlag) break;
-                currentSpeakingIndex = seg.rowIndex;
-                renderScheduleTable();
+        /* =====================================================================
+           F. PEMBACA JADWAL AI OTOMATIS (KOMPATIBEL SMART TV & BROWSER)
+        ===================================================================== */
+        function unlockTvAudioAndSpeak() {
+            tvAudioUnlocked = true;
+            const banner = document.getElementById('tv-audio-unlock-banner');
+            if (banner) banner.classList.add('hidden');
 
-                try {
-                    const wavUrl = await synthesizeWithGeminiTTS(seg.text);
-                    if (!abortAnnouncementFlag) {
-                        await playAudioUrlPromise(wavUrl);
-                    }
-                } catch (err) {
-                    if (!abortAnnouncementFlag) {
-                        await speakSegmentWithBrowserFallback(seg);
-                    }
+            try {
+                const ctx = ensureAudioContext();
+                if (ctx && ctx.state === 'suspended') ctx.resume();
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const warmUp = new SpeechSynthesisUtterance(' ');
+                    warmUp.volume = 0;
+                    window.speechSynthesis.speak(warmUp);
                 }
-            }
+            } catch (e) {}
 
-            stopScheduleAnnouncement(true);
+            showToast('Pembaca AI otomatis diaktifkan untuk TV.', 'success');
+            announceCurrentPageSchedules(false);
         }
 
-        function stopScheduleAnnouncement(completedNaturally = false) {
-            abortAnnouncementFlag = true;
-            isAnnouncingAudio = false;
-            currentSpeakingIndex = -1;
-            bgmDuckingMultiplier = 1.0;
-
-            if (activeAudioPlayer) {
-                try { activeAudioPlayer.pause(); } catch (e) {}
-                activeAudioPlayer = null;
-            }
-            if ('speechSynthesis' in window) {
-                try { window.speechSynthesis.cancel(); } catch (e) {}
-            }
-
-            updateAudioButtonUI(false);
-            renderScheduleTable();
-            if (!completedNaturally) {
-                showToast('Pengumuman suara dihentikan.', 'info');
-            }
-        }
-
-        function toggleScheduleAnnouncement() {
-            if (isAnnouncingAudio) {
-                stopScheduleAnnouncement(false);
-            } else {
-                startScheduleAnnouncement();
+        function showTvUnlockPromptIfBlocked() {
+            const banner = document.getElementById('tv-audio-unlock-banner');
+            if (banner && !tvAudioUnlocked) {
+                banner.classList.remove('hidden');
             }
         }
 
@@ -1517,195 +1069,697 @@
             const icon = document.getElementById('icon-audio-status');
             const text = document.getElementById('text-audio-status');
             if (!btn) return;
+
             if (playing) {
-                btn.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#ef4444] hover:bg-[#dc2626] text-white text-xs font-bold shadow transition cursor-pointer';
+                btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-400 text-[#2c3142] border border-emerald-200 text-xs font-extrabold transition-all duration-300 cursor-pointer shadow-lg animate-pulse';
                 if (icon) icon.className = 'fa-solid fa-stop';
                 if (text) text.textContent = 'Hentikan Suara';
             } else {
-                btn.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold shadow transition cursor-pointer';
+                btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] border border-[#FFFFFF] text-xs font-extrabold transition-all duration-300 cursor-pointer shadow';
                 if (icon) icon.className = 'fa-solid fa-volume-high';
-                if (text) text.textContent = 'Bacakan Jadwal';
+                if (text) text.textContent = 'Bacakan Jadwal (ID)';
             }
         }
 
-        function setupAudioIntervalMode() {
-            if (audioIntervalTimer) clearInterval(audioIntervalTimer);
-            const mode = appState.settings.audioMode;
+        function stopScheduleAnnouncement() {
+            isAnnouncing = false;
+            currentlyReadingRowId = null;
+            if (announcementAbortController) {
+                try { announcementAbortController.abort(); } catch (e) {}
+                announcementAbortController = null;
+            }
+            if (speechKeepAliveTimer) {
+                clearInterval(speechKeepAliveTimer);
+                speechKeepAliveTimer = null;
+            }
+            if ('speechSynthesis' in window) {
+                try { window.speechSynthesis.cancel(); } catch (e) {}
+            }
+            activeSpeechUtterance = null;
+            restoreBgmVolumeAfterDucking();
+            updateAudioButtonUI(false);
+            renderScheduleTable();
+        }
+
+        function toggleScheduleAnnouncement() {
+            tvAudioUnlocked = true;
+            const banner = document.getElementById('tv-audio-unlock-banner');
+            if (banner) banner.classList.add('hidden');
+
+            if (isAnnouncing) {
+                stopScheduleAnnouncement();
+                return;
+            }
+            announceCurrentPageSchedules(false);
+        }
+
+        function playAnnouncementChime() {
+            return new Promise(resolve => {
+                try {
+                    const ctx = ensureAudioContext();
+                    if (!ctx) return resolve();
+                    if (ctx.state === 'suspended') {
+                        ctx.resume().catch(() => {});
+                    }
+                    const notes = [523.25, 659.25, 783.99, 1046.5];
+                    notes.forEach((freq, i) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        const t = ctx.currentTime + i * 0.22;
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, t);
+                        gain.gain.setValueAtTime(0.001, t);
+                        gain.gain.exponentialRampToValueAtTime(0.14, t + 0.04);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(t);
+                        osc.stop(t + 0.58);
+                    });
+                    setTimeout(resolve, 950);
+                } catch (e) {
+                    resolve();
+                }
+            });
+        }
+
+        function buildAnnouncementSegments() {
+            const filtered = getFilteredSchedules();
+            const perPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
+            const startIdx = (appState.currentPage - 1) * perPage;
+            const pageItems = filtered.slice(startIdx, startIdx + perPage);
+
+            if (pageItems.length === 0) return [];
+
+            const lembaga = formatIndonesianSpeechText(appState.settings.badge || 'Lembaga Sertifikasi Profesi');
+            const segments = [
+                {
+                    rowId: null,
+                    text: `Perhatian. Informasi jadwal pelaksanaan Uji Kompetensi, ${lembaga}.`
+                }
+            ];
+
+            pageItems.forEach((item, idx) => {
+                const tanggal = formatTanggalDenganHari(item.date);
+                const tukSpoken = formatIndonesianSpeechText(item.tuk);
+                const asesorSpokenList = (item.assessors || []).map(a => formatIndonesianSpeechText(a));
+                const asesorText = asesorSpokenList.length > 0
+                    ? `dengan asesor kompetensi: ${asesorSpokenList.join(', dan ')}.`
+                    : '';
+                segments.push({
+                    rowId: item.id,
+                    text: `Jadwal nomor ${idx + 1}. Hari ${tanggal}, bertempat di ${tukSpoken}, ${asesorText}`
+                });
+            });
+
+            segments.push({
+                rowId: null,
+                text: 'Kepada seluruh peserta uji kompetensi, dimohon mempersiapkan kelengkapan dokumen dan hadir tiga puluh menit sebelum asesmen dimulai. Terima kasih.'
+            });
+
+            return segments;
+        }
+
+        function formatIndonesianSpeechText(rawText) {
+            let text = String(rawText || '');
+            const replacements = [
+                [/\bTUK\b/g, 'Tempat Uji Kompetensi'],
+                [/\bUJK\b/g, 'Uji Kompetensi'],
+                [/\bLSP\b/g, 'Lembaga Sertifikasi Profesi'],
+                [/\bIr\.\s*/g, 'Insinyur '],
+                [/\bDrs\.\s*/g, 'Doktorandus '],
+                [/\bDra\.\s*/g, 'Doktoranda '],
+                [/\bDr\.\s*/g, 'Doktor '],
+                [/\bProf\.\s*/g, 'Profésor '],
+                [/\bS\.Kom\.?/gi, 'Sarjana Komputer'],
+                [/\bM\.Kom\.?/gi, 'Magister Komputer'],
+                [/\bS\.T\.?/g, 'Sarjana Teknik'],
+                [/\bM\.T\.?/g, 'Magister Teknik'],
+                [/\bS\.E\.?/g, 'Sarjana Ekonomi'],
+                [/\bM\.Ak\.?/gi, 'Magister Akuntansi'],
+                [/\bM\.M\.?/g, 'Magister Manajemen'],
+                [/\bS\.Ds\.?/gi, 'Sarjana Desain'],
+                [/\bM\.Sn\.?/gi, 'Magister Seni'],
+                [/\bS\.Pd\.?/gi, 'Sarjana Pendidikan'],
+                [/\bM\.Pd\.?/gi, 'Magister Pendidikan'],
+                [/\bS\.Psi\.?/gi, 'Sarjana Psikologi'],
+                [/\bM\.Psi\.?/gi, 'Magister Psikologi'],
+                [/\bS\.Si\.?/gi, 'Sarjana Sains'],
+                [/\bM\.Si\.?/gi, 'Magister Sains'],
+                [/\bS\.H\.?/g, 'Sarjana Hukum'],
+                [/\bM\.H\.?/g, 'Magister Hukum'],
+                [/\b0(\d)\b/g, 'nol $1'],
+                [/\//g, ' atau ']
+            ];
+            replacements.forEach(([pattern, spoken]) => {
+                text = text.replace(pattern, spoken);
+            });
+            return text.replace(/\s+/g, ' ').trim();
+        }
+
+        function pcmToWavBlob(base64Pcm, sampleRate = 24000) {
+            const binary = atob(base64Pcm);
+            const pcmLen = binary.length;
+            const buffer = new ArrayBuffer(44 + pcmLen);
+            const view = new DataView(buffer);
+
+            const writeStr = (offset, str) => {
+                for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+            };
+
+            writeStr(0, 'RIFF');
+            view.setUint32(4, 36 + pcmLen, true);
+            view.setUint32(8, 0x45564157, true);
+            writeStr(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeStr(36, 'data');
+            view.setUint32(40, pcmLen, true);
+
+            const bytes = new Uint8Array(buffer, 44);
+            for (let i = 0; i < pcmLen; i++) bytes[i] = binary.charCodeAt(i);
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        async function speakWithGeminiTTS(text, signal) {
+            if (!GEMINI_API_KEY) return false;
+            try {
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${GEMINI_API_KEY}`;
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal,
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Bacakan pengumuman ini dengan suara wanita Indonesia yang ramah, jernih, dan profesional seperti penyiar ruang tunggu resmi: ${text}` }] }],
+                        generationConfig: {
+                            responseModalities: ['AUDIO'],
+                            speechConfig: {
+                                voiceConfig: {
+                                    prebuiltVoiceConfig: { voiceName: appState.settings.aiVoice || 'Aoede' }
+                                }
+                            }
+                        }
+                    })
+                });
+                if (!res.ok) return false;
+                const data = await res.json();
+                const inline = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+                if (!inline || !inline.data) return false;
+
+                const wavBlob = pcmToWavBlob(inline.data, 24000);
+                const audioUrl = URL.createObjectURL(wavBlob);
+
+                return await new Promise(resolve => {
+                    const audio = new Audio(audioUrl);
+                    audio.onended = () => {
+                        URL.revokeObjectURL(audioUrl);
+                        resolve(true);
+                    };
+                    audio.onerror = () => {
+                        URL.revokeObjectURL(audioUrl);
+                        resolve(false);
+                    };
+                    audio.play().then(() => {
+                        tvAudioUnlocked = true;
+                    }).catch(() => {
+                        URL.revokeObjectURL(audioUrl);
+                        showTvUnlockPromptIfBlocked();
+                        resolve(false);
+                    });
+                });
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function getBestIndonesianFemaleVoice() {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = window.speechSynthesis.getVoices() || [];
+            const idVoices = voices.filter(v => (v.lang || '').toLowerCase().startsWith('id'));
+            if (idVoices.length === 0) return null;
+
+            const femaleHint = /gadis|damayanti|google bahasa indonesia|female|woman|natural|online/i;
+            const maleHint = /ardi|male|man\b/i;
+
+            return idVoices.find(v => femaleHint.test(v.name) && !maleHint.test(v.name))
+                || idVoices.find(v => !maleHint.test(v.name))
+                || idVoices[0];
+        }
+
+        function speakWithBrowserTTS(text, isAutoTriggered) {
+            return new Promise(resolve => {
+                if (!('speechSynthesis' in window)) {
+                    resolve(false);
+                    return;
+                }
+
+                const voice = getBestIndonesianFemaleVoice();
+                // Jika Smart TV tidak punya voice lokal Bahasa Indonesia, gunakan suara daring Bahasa Indonesia
+                if (!voice) {
+                    resolve(false);
+                    return;
+                }
+
+                try {
+                    window.speechSynthesis.cancel();
+                    const utter = new SpeechSynthesisUtterance(text);
+                    utter.lang = 'id-ID';
+                    utter.rate = 0.94;
+                    utter.pitch = 1.03;
+                    utter.volume = 1.0;
+                    utter.voice = voice;
+
+                    let started = false;
+                    let settled = false;
+
+                    const finish = (ok) => {
+                        if (settled) return;
+                        settled = true;
+                        if (speechKeepAliveTimer) {
+                            clearInterval(speechKeepAliveTimer);
+                            speechKeepAliveTimer = null;
+                        }
+                        activeSpeechUtterance = null;
+                        resolve(ok);
+                    };
+
+                    utter.onstart = () => {
+                        started = true;
+                        tvAudioUnlocked = true;
+                        const banner = document.getElementById('tv-audio-unlock-banner');
+                        if (banner) banner.classList.add('hidden');
+                    };
+
+                    utter.onend = () => finish(true);
+                    utter.onerror = (ev) => {
+                        if (ev && (ev.error === 'not-allowed' || ev.error === 'synthesis-failed')) {
+                            if (isAutoTriggered) showTvUnlockPromptIfBlocked();
+                        }
+                        finish(false);
+                    };
+
+                    activeSpeechUtterance = utter;
+
+                    speechKeepAliveTimer = setInterval(() => {
+                        if (!isAnnouncing || !window.speechSynthesis.speaking) {
+                            clearInterval(speechKeepAliveTimer);
+                            speechKeepAliveTimer = null;
+                            return;
+                        }
+                        try {
+                            window.speechSynthesis.pause();
+                            window.speechSynthesis.resume();
+                        } catch (e) {}
+                    }, 9000);
+
+                    window.speechSynthesis.speak(utter);
+
+                    setTimeout(() => {
+                        if (!started && !settled && isAutoTriggered) {
+                            showTvUnlockPromptIfBlocked();
+                            try { window.speechSynthesis.cancel(); } catch (e) {}
+                            finish(false);
+                        }
+                    }, 1800);
+
+                    setTimeout(() => finish(true), 35000);
+                } catch (e) {
+                    if (isAutoTriggered) showTvUnlockPromptIfBlocked();
+                    resolve(false);
+                }
+            });
+        }
+
+        function speakWithOnlineIndonesianFallback(text, isAutoTriggered) {
+            return new Promise(resolve => {
+                try {
+                    const clean = String(text || '').slice(0, 195);
+                    const url = `https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=id&q=${encodeURIComponent(clean)}`;
+                    const audio = new Audio(url);
+                    audio.playbackRate = 0.96;
+
+                    let settled = false;
+                    const done = (ok) => {
+                        if (settled) return;
+                        settled = true;
+                        resolve(ok);
+                    };
+
+                    audio.onended = () => done(true);
+                    audio.onerror = () => done(false);
+
+                    audio.play().then(() => {
+                        tvAudioUnlocked = true;
+                        const banner = document.getElementById('tv-audio-unlock-banner');
+                        if (banner) banner.classList.add('hidden');
+                    }).catch(() => {
+                        if (isAutoTriggered) showTvUnlockPromptIfBlocked();
+                        done(false);
+                    });
+
+                    setTimeout(() => done(true), 25000);
+                } catch (e) {
+                    resolve(false);
+                }
+            });
+        }
+
+        async function announceCurrentPageSchedules(isAutoTriggered = false) {
+            if (isAnnouncing) return;
+            const segments = buildAnnouncementSegments();
+            if (segments.length === 0) {
+                if (!isAutoTriggered) showToast('Tidak ada jadwal pada halaman ini untuk dibacakan.', 'info');
+                return;
+            }
+
+            isAnnouncing = true;
+            announcementAbortController = new AbortController();
+            updateAudioButtonUI(true);
+            duckBgmVolumeForAnnouncement();
+
+            await playAnnouncementChime();
+
+            for (const seg of segments) {
+                if (!isAnnouncing) break;
+
+                currentlyReadingRowId = seg.rowId;
+                renderScheduleTable();
+
+                let spoke = await speakWithGeminiTTS(seg.text, announcementAbortController.signal);
+                if (!spoke && isAnnouncing) {
+                    spoke = await speakWithBrowserTTS(seg.text, isAutoTriggered);
+                }
+                if (!spoke && isAnnouncing) {
+                    spoke = await speakWithOnlineIndonesianFallback(seg.text, isAutoTriggered);
+                }
+
+                if (!spoke && isAutoTriggered && !tvAudioUnlocked) {
+                    break;
+                }
+
+                if (isAnnouncing) {
+                    await new Promise(r => setTimeout(r, 380));
+                }
+            }
+
+            stopScheduleAnnouncement();
+        }
+
+        function startAiPeriodicAnnouncement() {
+            if (aiPeriodicTimerId) clearInterval(aiPeriodicTimerId);
+            const mode = appState.settings.aiAutoMode || 'on_slide';
+
             if (mode === 'interval_5' || mode === 'interval_15') {
                 const mins = mode === 'interval_5' ? 5 : 15;
-                audioIntervalTimer = setInterval(() => {
-                    if (!isAnnouncingAudio && getFilteredSchedules().length > 0) {
-                        startScheduleAnnouncement();
-                    }
+                aiPeriodicTimerId = setInterval(() => {
+                    if (!isAnnouncing) announceCurrentPageSchedules(true);
                 }, mins * 60 * 1000);
             }
         }
 
         /* =====================================================================
-           H. PENGATURAN TAMPILAN, JAM WIB & EXPORT EXCEL / PDF
+           G. BACKSOUND INSTRUMEN LAGU STASIUN KAI (WEB AUDIO SYNTHESIZER)
         ===================================================================== */
+        const STATION_MELODIES = {
+            sepasang_mata_bola: [
+                [392.00, 0.5], [440.00, 0.5], [493.88, 1.0], [523.25, 0.5], [493.88, 0.5], [440.00, 1.0],
+                [392.00, 0.5], [329.63, 0.5], [392.00, 1.5], [0, 0.5]
+            ],
+            bengawan_solo: [
+                [329.63, 0.5], [392.00, 0.5], [440.00, 1.0], [523.25, 1.0], [493.88, 0.5], [440.00, 0.5],
+                [392.00, 1.5], [0, 0.5]
+            ],
+            sabilulungan: [
+                [392.00, 0.4], [440.00, 0.4], [523.25, 0.6], [587.33, 0.6], [523.25, 0.4], [440.00, 0.4],
+                [392.00, 1.0], [0, 0.4]
+            ],
+            manuk_dadali: [
+                [261.63, 0.4], [329.63, 0.4], [392.00, 0.6], [392.00, 0.4], [440.00, 0.4], [392.00, 0.8],
+                [329.63, 0.8], [0, 0.4]
+            ],
+            karatagan_pahlawan: [
+                [293.66, 0.4], [369.99, 0.4], [440.00, 0.8], [493.88, 0.4], [440.00, 0.4], [369.99, 0.8],
+                [293.66, 1.0], [0, 0.4]
+            ],
+            ayun_ambing: [
+                [440.00, 0.6], [392.00, 0.6], [329.63, 0.6], [293.66, 0.8], [329.63, 0.6], [392.00, 1.2],
+                [0, 0.6]
+            ],
+            rek_ayo_rek: [
+                [392.00, 0.35], [392.00, 0.35], [440.00, 0.5], [392.00, 0.5], [329.63, 0.5], [261.63, 0.7],
+                [293.66, 0.7], [0, 0.4]
+            ],
+            surabaya_oh_surabaya: [
+                [329.63, 0.5], [392.00, 0.5], [523.25, 1.0], [493.88, 0.5], [440.00, 0.5], [392.00, 1.2],
+                [0, 0.5]
+            ],
+            sungai_serayu: [
+                [349.23, 0.5], [440.00, 0.5], [523.25, 1.0], [493.88, 0.5], [440.00, 0.5], [392.00, 1.2],
+                [0, 0.5]
+            ],
+            gambang_semarang: [
+                [392.00, 0.4], [493.88, 0.4], [587.33, 0.6], [523.25, 0.4], [493.88, 0.4], [440.00, 0.8],
+                [392.00, 0.8], [0, 0.4]
+            ],
+            kota_cirebon: [
+                [329.63, 0.5], [392.00, 0.5], [440.00, 0.8], [392.00, 0.5], [329.63, 0.5], [293.66, 1.0],
+                [0, 0.5]
+            ],
+            chime: [
+                [523.25, 0.5], [659.25, 0.5], [783.99, 0.8], [0, 1.2]
+            ]
+        };
+
+        const BGM_PLAYLIST_KEYS = [
+            'sepasang_mata_bola', 'bengawan_solo', 'sabilulungan', 'manuk_dadali',
+            'karatagan_pahlawan', 'ayun_ambing', 'rek_ayo_rek', 'surabaya_oh_surabaya',
+            'sungai_serayu', 'gambang_semarang', 'kota_cirebon'
+        ];
+
+        let audioCtx = null;
+        let bgmMasterGain = null;
+        let isBgmPlaying = false;
+        let bgmLoopTimeout = null;
+        let playlistIdx = 0;
+
+        function ensureAudioContext() {
+            if (!audioCtx) {
+                const Ctx = window.AudioContext || window.webkitAudioContext;
+                if (Ctx) {
+                    audioCtx = new Ctx();
+                    bgmMasterGain = audioCtx.createGain();
+                    bgmMasterGain.gain.value = parseFloat(appState.settings.bgmVolume) || 0.14;
+                    bgmMasterGain.connect(audioCtx.destination);
+                }
+            }
+            return audioCtx;
+        }
+
+        function duckBgmVolumeForAnnouncement() {
+            if (!bgmMasterGain || !audioCtx || !isBgmPlaying) return;
+            try {
+                bgmMasterGain.gain.setTargetAtTime(0.02, audioCtx.currentTime, 0.15);
+            } catch (e) {}
+        }
+
+        function restoreBgmVolumeAfterDucking() {
+            if (!bgmMasterGain || !audioCtx || !isBgmPlaying) return;
+            try {
+                const target = parseFloat(appState.settings.bgmVolume) || 0.14;
+                bgmMasterGain.gain.setTargetAtTime(target, audioCtx.currentTime, 0.25);
+            } catch (e) {}
+        }
+
+        function playMelodySequence(notes) {
+            const ctx = ensureAudioContext();
+            if (!ctx || !isBgmPlaying) return 2000;
+            if (ctx.state === 'suspended') ctx.resume();
+
+            let offset = 0;
+            const tempo = 0.62;
+            notes.forEach(([freq, dur]) => {
+                const durationSec = dur * tempo;
+                if (freq > 0) {
+                    const osc = ctx.createOscillator();
+                    const noteGain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + offset);
+
+                    noteGain.gain.setValueAtTime(0.001, ctx.currentTime + offset);
+                    noteGain.gain.exponentialRampToValueAtTime(0.8, ctx.currentTime + offset + 0.06);
+                    noteGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + offset + durationSec * 0.95);
+
+                    osc.connect(noteGain);
+                    noteGain.connect(bgmMasterGain);
+                    osc.start(ctx.currentTime + offset);
+                    osc.stop(ctx.currentTime + offset + durationSec);
+                }
+                offset += durationSec;
+            });
+            return (offset + 1.2) * 1000;
+        }
+
+        function scheduleNextBgmLoop() {
+            if (!isBgmPlaying) return;
+            const selected = appState.settings.stationMelody || 'playlist';
+            let key = selected;
+            if (selected === 'playlist') {
+                key = BGM_PLAYLIST_KEYS[playlistIdx % BGM_PLAYLIST_KEYS.length];
+                playlistIdx++;
+            }
+            const notes = STATION_MELODIES[key] || STATION_MELODIES.sepasang_mata_bola;
+            const waitMs = playMelodySequence(notes);
+            bgmLoopTimeout = setTimeout(scheduleNextBgmLoop, waitMs);
+        }
+
+        function toggleBackgroundMusic() {
+            isBgmPlaying = !isBgmPlaying;
+            if (isBgmPlaying) {
+                ensureAudioContext();
+                scheduleNextBgmLoop();
+            } else if (bgmLoopTimeout) {
+                clearTimeout(bgmLoopTimeout);
+                bgmLoopTimeout = null;
+            }
+            updateBgmButtonUI();
+        }
+
+        function handleMelodySelectChange() {
+            const sel = document.getElementById('setting-station-melody');
+            if (!sel) return;
+            appState.settings.stationMelody = sel.value;
+            saveAppState();
+            if (isBgmPlaying) {
+                if (bgmLoopTimeout) clearTimeout(bgmLoopTimeout);
+                scheduleNextBgmLoop();
+            }
+        }
+
+        function handleBgmVolumeChange() {
+            const sel = document.getElementById('setting-bgm-volume');
+            if (!sel) return;
+            const vol = parseFloat(sel.value) || 0.14;
+            appState.settings.bgmVolume = vol;
+            saveAppState();
+            if (bgmMasterGain && audioCtx) {
+                bgmMasterGain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            }
+        }
+
+        function updateBgmButtonUI() {
+            const btn = document.getElementById('btn-toggle-bgm');
+            const eqBars = document.getElementById('bgm-eq-bars');
+            const icon = document.getElementById('icon-bgm-status');
+            const text = document.getElementById('text-bgm-status');
+            if (!btn) return;
+
+            if (isBgmPlaying) {
+                btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FFFFFF] text-[#2c3142] border border-[#FFFFFF] text-xs font-extrabold transition-all duration-300 cursor-pointer shadow';
+                if (eqBars) {
+                    eqBars.classList.remove('hidden');
+                    eqBars.classList.add('inline-flex');
+                }
+                if (icon) icon.classList.add('hidden');
+                if (text) text.textContent = 'Backsound Aktif';
+            } else {
+                btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#393e51] hover:bg-[#505567] text-[#E2E8F0] border border-[#545b72] text-xs font-bold transition-all duration-300 cursor-pointer';
+                if (eqBars) {
+                    eqBars.classList.add('hidden');
+                    eqBars.classList.remove('inline-flex');
+                }
+                if (icon) icon.classList.remove('hidden');
+                if (text) text.textContent = 'Backsound';
+            }
+        }
+
+        /* =====================================================================
+           H. PENGATURAN TAMPILAN, DRAWER ADMIN & DETEKSI PERANGKAT TV
+        ===================================================================== */
+        function isSmartTvDevice() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('admin') === '1') return false;
+            if (params.get('tv') === '1') return true;
+            const ua = navigator.userAgent || '';
+            return /SmartTV|SMART-TV|Tizen|Web0S|BRAVIA|AFT|CrKey|Roku|Viera|NetCast|TV Bro|BrowseHere/i.test(ua);
+        }
+
+        function configureDeviceMode() {
+            const adminBtn = document.getElementById('btn-admin-drawer');
+            if (adminBtn && isSmartTvDevice()) {
+                adminBtn.style.display = 'none';
+            }
+        }
+
         function applySettingsToUI() {
-            const s = appState.settings;
-            document.getElementById('header-badge-text').textContent = s.badge || DEFAULT_SETTINGS.badge;
-            document.getElementById('header-main-title').textContent = s.title || DEFAULT_SETTINGS.title;
-            document.getElementById('header-subtitle').textContent = s.subtitle || DEFAULT_SETTINGS.subtitle;
-            document.getElementById('running-text-content').textContent = s.runningText || DEFAULT_SETTINGS.runningText;
+            const badgeEl = document.getElementById('header-badge-text');
+            const titleEl = document.getElementById('header-main-title');
+            const subEl = document.getElementById('header-subtitle');
+            const runEl = document.getElementById('running-text-content');
+            const filterSel = document.getElementById('quick-filter-mode');
+            const specDate = document.getElementById('quick-specific-date');
 
-            setElValue('gsheet-url-input', appState.gsheet.url || '');
-            setElValue('gsheet-sheet-name', appState.gsheet.sheetName || 'Jadwal_UJK');
-            setElValue('gsheet-sync-interval', appState.gsheet.syncInterval || 10);
+            if (badgeEl) badgeEl.textContent = appState.settings.badge;
+            if (titleEl) titleEl.textContent = appState.settings.title;
+            if (subEl) subEl.textContent = appState.settings.subtitle;
+            if (runEl) runEl.textContent = appState.settings.runningText;
 
-            setElValue('setting-badge', s.badge);
-            setElValue('setting-title', s.title);
-            setElValue('setting-subtitle', s.subtitle);
-            setElValue('setting-rows-per-page', s.rowsPerPage);
-            setElValue('setting-slide-interval', s.slideInterval);
-            setElValue('setting-running-text', s.runningText);
-            setElValue('setting-gemini-voice', s.geminiVoice);
-            setElValue('setting-audio-lang', s.audioLang);
-            setElValue('setting-audio-mode', s.audioMode);
-            setElValue('setting-audio-rate', s.audioRate);
-            setElValue('setting-station-melody', s.stationMelody);
-            setElValue('setting-bgm-volume', s.bgmVolume);
+            if (filterSel) filterSel.value = appState.settings.filterMode || 'today_tomorrow';
+            if (specDate) {
+                specDate.value = appState.settings.specificDate || getRelativeIsoDate(0);
+                if (appState.settings.filterMode === 'specific') {
+                    specDate.classList.remove('hidden');
+                } else {
+                    specDate.classList.add('hidden');
+                }
+            }
+            updateFilterBadge();
+        }
 
-            updateFilterBadgeUI();
-            updateConnectionStatusUI();
+        function populateDrawerInputs() {
+            const setVal = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.value = val;
+            };
+            setVal('gsheet-url-input', appState.gsheet.url || '');
+            setVal('gsheet-sheet-name', appState.gsheet.sheetName || 'Jadwal_UJK');
+            setVal('gsheet-sync-interval', String(appState.gsheet.syncInterval || 10));
+            setVal('setting-ai-auto-mode', appState.settings.aiAutoMode || 'on_slide');
+            setVal('setting-ai-voice', appState.settings.aiVoice || 'Aoede');
+            setVal('setting-station-melody', appState.settings.stationMelody || 'playlist');
+            setVal('setting-bgm-volume', String(appState.settings.bgmVolume || 0.14));
+            setVal('setting-badge', appState.settings.badge);
+            setVal('setting-title', appState.settings.title);
+            setVal('setting-subtitle', appState.settings.subtitle);
+            setVal('setting-rows-per-page', String(appState.settings.rowsPerPage || 7));
+            setVal('setting-slide-interval', String(appState.settings.slideInterval || 10));
+            setVal('setting-running-text', appState.settings.runningText);
         }
 
         function saveDisplaySettings() {
-            appState.settings.badge = getElValue('setting-badge', DEFAULT_SETTINGS.badge).trim();
-            appState.settings.title = getElValue('setting-title', DEFAULT_SETTINGS.title).trim();
-            appState.settings.subtitle = getElValue('setting-subtitle', DEFAULT_SETTINGS.subtitle).trim();
-            appState.settings.rowsPerPage = Number(getElValue('setting-rows-per-page', 7));
-            appState.settings.slideInterval = Number(getElValue('setting-slide-interval', 10));
-            appState.settings.runningText = getElValue('setting-running-text', DEFAULT_SETTINGS.runningText).trim();
-            appState.settings.geminiVoice = getElValue('setting-gemini-voice', 'Aoede');
-            appState.settings.audioLang = getElValue('setting-audio-lang', 'id');
-            appState.settings.audioMode = getElValue('setting-audio-mode', 'manual');
-            appState.settings.audioRate = Number(getElValue('setting-audio-rate', 0.95));
-            appState.settings.stationMelody = getElValue('setting-station-melody', 'playlist');
-            appState.settings.bgmVolume = Number(getElValue('setting-bgm-volume', 0.14));
+            const getVal = (id, fallback) => {
+                const el = document.getElementById(id);
+                return el ? el.value : fallback;
+            };
+            appState.settings.aiAutoMode = getVal('setting-ai-auto-mode', 'on_slide');
+            appState.settings.aiVoice = getVal('setting-ai-voice', 'Aoede');
+            appState.settings.badge = getVal('setting-badge', appState.settings.badge).trim() || 'LSP / TUK RESMI';
+            appState.settings.title = getVal('setting-title', appState.settings.title).trim() || 'JADWAL UJI KOMPETENSI (UJK)';
+            appState.settings.subtitle = getVal('setting-subtitle', appState.settings.subtitle).trim();
+            appState.settings.rowsPerPage = parseInt(getVal('setting-rows-per-page', '7'), 10) || 7;
+            appState.settings.slideInterval = parseInt(getVal('setting-slide-interval', '10'), 10);
+            appState.settings.runningText = getVal('setting-running-text', appState.settings.runningText).trim();
 
-            currentPage = 1;
             saveAppState();
             applySettingsToUI();
             renderScheduleTable();
             startAutoPagination();
-            setupAudioIntervalMode();
-            showToast('Semua pengaturan berhasil disimpan.', 'success');
-        }
-
-        function startLiveClock() {
-            const updateClock = () => {
-                const now = new Date();
-                const dateStr = now.toLocaleDateString('id-ID', {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                });
-                const timeStr = now.toLocaleTimeString('id-ID', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                }).replace(/\./g, ':');
-
-                const dateEl = document.getElementById('live-date');
-                const clockEl = document.getElementById('live-clock');
-                if (dateEl) dateEl.textContent = dateStr.toUpperCase();
-                if (clockEl) clockEl.textContent = timeStr;
-
-                // Deteksi pergantian hari otomatis saat tengah malam (00:00)
-                const currentIso = getRelativeIsoDate(0);
-                if (currentIso !== lastKnownTodayIso) {
-                    lastKnownTodayIso = currentIso;
-                    if (!appState.gsheet.connected) {
-                        appState.schedules = [
-                            { ...DEFAULT_SCHEDULES[0], date: getRelativeIsoDate(0) },
-                            { ...DEFAULT_SCHEDULES[1], date: getRelativeIsoDate(0) },
-                            { ...DEFAULT_SCHEDULES[2], date: getRelativeIsoDate(1) }
-                        ];
-                    }
-                    updateFilterBadgeUI();
-                    renderScheduleTable();
-                }
-            };
-            updateClock();
-            setInterval(updateClock, 1000);
-        }
-
-        function exportToExcel() {
-            const data = getFilteredSchedules().map((item, idx) => ({
-                'No': idx + 1,
-                'Hari & Tanggal UJK': formatTanggalDenganHari(item.date),
-                'Nama TUK / Ruang': item.tuk,
-                'Nama Asesor Kompetensi': (item.assessors || []).join('; ')
-            }));
-
-            if (data.length === 0) {
-                showToast('Tidak ada data jadwal untuk diekspor.', 'info');
-                return;
-            }
-
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Jadwal UJK');
-            XLSX.writeFile(wb, `Jadwal_UJK_${getRelativeIsoDate(0)}.xlsx`);
-            showToast('File Excel (.xlsx) berhasil diunduh.', 'success');
-        }
-
-        function exportToPDF() {
-            const filtered = getFilteredSchedules();
-            if (filtered.length === 0) {
-                showToast('Tidak ada data jadwal untuk diekspor.', 'info');
-                return;
-            }
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-
-            doc.setFontSize(15);
-            doc.text(appState.settings.title || 'JADWAL UJI KOMPETENSI (UJK)', 14, 16);
-            doc.setFontSize(10);
-            doc.setTextColor(100);
-            doc.text(appState.settings.subtitle || '', 14, 22);
-
-            doc.autoTable({
-                startY: 28,
-                head: [['No', 'Tanggal UJK', 'Nama TUK / Ruang', 'Nama Asesor Kompetensi']],
-                body: filtered.map((item, idx) => [
-                    idx + 1,
-                    formatTanggalDenganHari(item.date),
-                    item.tuk,
-                    (item.assessors || []).join('\n')
-                ]),
-                styles: { fontSize: 9, cellPadding: 3 },
-                headStyles: { fillColor: [2, 132, 199], textColor: 255, fontStyle: 'bold' }
-            });
-
-            doc.save(`Jadwal_UJK_${getRelativeIsoDate(0)}.pdf`);
-            showToast('File PDF (.pdf) berhasil diunduh.', 'success');
-        }
-
-        /* =====================================================================
-           I. UTILITAS UI, DRAWER, FULLSCREEN & KEYBOARD SHORTCUT
-        ===================================================================== */
-        function isDesktopComputerBrowser() {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('admin') === '1') return true;
-            if (params.get('tv') === '1' || params.get('display') === '1') return false;
-            const ua = navigator.userAgent || '';
-            const isTV = /SmartTV|SMART-TV|Tizen|Web0S|BRAVIA|AFT|CrKey|Roku|Viera|NetCast|TV Bro|BrowseHere/i.test(ua);
-            return !isTV;
-        }
-
-        function configureDeviceAccessMode() {
-            const isDesktop = isDesktopComputerBrowser();
-            const controls = document.getElementById('header-control-buttons');
-            if (!isDesktop && controls) {
-                controls.style.display = 'none';
-            }
+            startAiPeriodicAnnouncement();
+            showToast('Pengaturan display & pembaca AI berhasil disimpan.', 'success');
         }
 
         function toggleAdminDrawer() {
@@ -1715,7 +1769,7 @@
 
             const isClosed = drawer.classList.contains('translate-x-full');
             if (isClosed) {
-                applySettingsToUI();
+                populateDrawerInputs();
                 drawer.classList.remove('translate-x-full');
                 backdrop.classList.remove('hidden');
             } else {
@@ -1726,9 +1780,7 @@
 
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {
-                    showToast('Browser memblokir layar penuh otomatis. Tekan F11.', 'info');
-                });
+                document.documentElement.requestFullscreen().catch(() => {});
             } else {
                 document.exitFullscreen().catch(() => {});
             }
@@ -1736,52 +1788,116 @@
 
         document.addEventListener('fullscreenchange', () => {
             const icon = document.getElementById('icon-fullscreen');
-            if (!icon) return;
-            icon.className = document.fullscreenElement
-                ? 'fa-solid fa-compress text-base sm:text-lg'
-                : 'fa-solid fa-expand text-base sm:text-lg';
+            if (icon) {
+                icon.className = document.fullscreenElement
+                    ? 'fa-solid fa-compress text-base sm:text-lg'
+                    : 'fa-solid fa-expand text-base sm:text-lg';
+            }
         });
+
+        /* =====================================================================
+           I. EXPORT LAPORAN EXCEL (.XLSX) & PDF (.PDF)
+        ===================================================================== */
+        function exportToExcel() {
+            if (typeof XLSX === 'undefined') {
+                showToast('Library Excel belum siap.', 'error');
+                return;
+            }
+            const data = getFilteredSchedules().map((item, idx) => ({
+                'No': idx + 1,
+                'Tanggal UJK': formatTanggalDenganHari(item.date),
+                'Nama TUK / Ruang': item.tuk,
+                'Nama Asesor Kompetensi': (item.assessors || []).join('; ')
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Jadwal_UJK');
+            XLSX.writeFile(wb, `Jadwal_UJK_${getRelativeIsoDate(0)}.xlsx`);
+            showToast('Laporan Excel (.xlsx) berhasil diunduh.', 'success');
+        }
+
+        function exportToPDF() {
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                showToast('Library PDF belum siap.', 'error');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+            doc.setFillColor(44, 49, 66);
+            doc.rect(0, 0, 297, 22, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(appState.settings.title || 'JADWAL UJI KOMPETENSI (UJK)', 14, 10);
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            doc.text(appState.settings.subtitle || '', 14, 16.5);
+
+            const rows = getFilteredSchedules().map((item, idx) => [
+                idx + 1,
+                formatTanggalDenganHari(item.date),
+                item.tuk,
+                (item.assessors || []).map((a, i) => `${i + 1}. ${a}`).join('\n')
+            ]);
+
+            doc.autoTable({
+                startY: 27,
+                head: [['No', 'Tanggal UJK', 'Nama TUK / Ruang', 'Nama Asesor Kompetensi']],
+                body: rows,
+                theme: 'grid',
+                headStyles: { fillColor: [44, 49, 66], textColor: [255, 255, 255], fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [238, 240, 245] },
+                styles: { fontSize: 9, cellPadding: 3 }
+            });
+
+            doc.save(`Jadwal_UJK_${getRelativeIsoDate(0)}.pdf`);
+            showToast('Laporan PDF (.pdf) berhasil diunduh.', 'success');
+        }
+
+        /* =====================================================================
+           J. UTILITAS KEAMANAN TEKS, TOAST & SHORTCUT KEYBOARD
+        ===================================================================== */
+        function escapeHtml(text) {
+            return String(text || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
 
-            const colors = {
-                success: 'bg-[#0f172a] border-[#2dd4bf] text-[#2dd4bf]',
-                error: 'bg-[#0f172a] border-[#f87171] text-[#f87171]',
-                info: 'bg-[#0f172a] border-[#38bdf8] text-[#e2e8f0]'
-            };
+            const iconClass = type === 'success'
+                ? 'fa-circle-check text-emerald-300'
+                : type === 'error'
+                    ? 'fa-circle-exclamation text-rose-300'
+                    : 'fa-circle-info text-[#FFFFFF]';
 
             const toast = document.createElement('div');
-            toast.className = `pointer-events-auto px-4 py-2.5 rounded-xl border shadow-xl text-xs font-bold flex items-center gap-2 transition-all duration-300 ${colors[type] || colors.info}`;
-            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i><span>${escapeHtml(message)}</span>`;
+            toast.className = 'pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl bg-[#393e51] text-[#FFFFFF] border border-[#545b72] shadow-2xl text-xs sm:text-sm font-semibold transition-all duration-300';
+            toast.innerHTML = `<i class="fa-solid ${iconClass}"></i><span>${escapeHtml(message)}</span>`;
             container.appendChild(toast);
 
             setTimeout(() => {
                 toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 300);
-            }, 3200);
-        }
-
-        function escapeHtml(str) {
-            return String(str ?? '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
+            }, 3500);
         }
 
         document.addEventListener('keydown', (e) => {
             if (e.altKey && e.key.toLowerCase() === 'a') {
                 e.preventDefault();
                 toggleAdminDrawer();
-            } else if (e.altKey && e.key.toLowerCase() === 's') {
-                e.preventDefault();
-                toggleScheduleAnnouncement();
             } else if (e.altKey && e.key.toLowerCase() === 'm') {
                 e.preventDefault();
                 toggleBackgroundMusic();
+            } else if (e.altKey && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                toggleScheduleAnnouncement();
             } else if (e.key === 'Escape') {
                 const drawer = document.getElementById('admin-drawer');
                 if (drawer && !drawer.classList.contains('translate-x-full')) {
@@ -1791,24 +1907,48 @@
         });
 
         /* =====================================================================
-           J. INISIALISASI SAAT HALAMAN SELESAI DIMUAT
+           K. INISIALISASI APLIKASI SAAT HALAMAN DIMUAT
         ===================================================================== */
         window.addEventListener('DOMContentLoaded', () => {
             loadAppState();
-            configureDeviceAccessMode();
+            configureDeviceMode();
             applySettingsToUI();
             renderScheduleTable();
             startLiveClock();
             startAutoPagination();
-            setupAudioIntervalMode();
+            startSyncPolling();
+            startAiPeriodicAnnouncement();
 
-            if (appState.gsheet.connected && appState.gsheet.url) {
-                startGoogleSheetSync();
-                fetchGoogleSheetData(false);
+            // Pemuatan daftar suara browser untuk Smart TV
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.getVoices();
+                if (typeof window.speechSynthesis.onvoiceschanged !== 'undefined') {
+                    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+                }
             }
 
-            if ('speechSynthesis' in window && typeof window.speechSynthesis.onvoiceschanged !== 'undefined') {
-                window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+            // Buka kunci audio otomatis apabila pengguna menekan tombol/remote mana saja di TV
+            const unlockOnFirstInteraction = () => {
+                if (!tvAudioUnlocked) {
+                    tvAudioUnlocked = true;
+                    const banner = document.getElementById('tv-audio-unlock-banner');
+                    if (banner) banner.classList.add('hidden');
+                    try {
+                        const ctx = ensureAudioContext();
+                        if (ctx && ctx.state === 'suspended') ctx.resume();
+                    } catch (e) {}
+                }
+                document.removeEventListener('click', unlockOnFirstInteraction);
+                document.removeEventListener('keydown', unlockOnFirstInteraction);
+            };
+            document.addEventListener('click', unlockOnFirstInteraction);
+            document.addEventListener('keydown', unlockOnFirstInteraction);
+
+            // Coba jalankan pembacaan AI otomatis 3 detik setelah halaman TV terbuka
+            if (appState.settings.aiAutoMode && appState.settings.aiAutoMode !== 'manual') {
+                setTimeout(() => {
+                    if (!isAnnouncing) announceCurrentPageSchedules(true);
+                }, 3000);
             }
         });
     </script>
