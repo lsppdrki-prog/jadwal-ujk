@@ -245,14 +245,17 @@
                     <table class="w-full table-fixed text-left border-collapse">
                         <thead class="sticky top-0 z-10 text-xs sm:text-sm uppercase tracking-wider border-b border-[#545b72]">
                             <tr>
-                                <th class="w-[27%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#393e51] text-[#FFFFFF] border-r border-[#545b72]">
+                                <th class="w-[24%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#393e51] text-[#FFFFFF] border-r border-[#545b72]">
                                     <i class="fa-regular fa-calendar-days text-[#CBD5E1] mr-2"></i>Tanggal UJK
                                 </th>
-                                <th class="w-[36%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#464c5e] text-[#FFFFFF] border-r border-[#545b72]">
+                                <th class="w-[33%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#464c5e] text-[#FFFFFF] border-r border-[#545b72]">
                                     <i class="fa-solid fa-location-dot text-[#E2E8F0] mr-2"></i>Nama TUK / Ruang
                                 </th>
-                                <th class="w-[37%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#545b72] text-[#FFFFFF]">
+                                <th class="w-[27%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#505567] text-[#FFFFFF] border-r border-[#545b72]">
                                     <i class="fa-solid fa-user-tie text-[#FFFFFF] mr-2"></i>Nama Asesor Kompetensi
+                                </th>
+                                <th class="w-[16%] py-3.5 px-3 sm:px-5 font-extrabold bg-[#545b72] text-[#FFFFFF] text-center">
+                                    <i class="fa-solid fa-signal text-[#FFFFFF] mr-1.5"></i>Status
                                 </th>
                             </tr>
                         </thead>
@@ -282,10 +285,10 @@
                             <span id="text-bgm-status">Backsound</span>
                         </button>
 
-                        <!-- Tombol Pembaca Jadwal AI Bahasa Indonesia (Kompatibel Remote Smart TV) -->
-                        <button id="btn-announce-audio" onclick="toggleScheduleAnnouncement()" title="Bacakan Jadwal UJK Bahasa Indonesia (Alt + S)" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] border border-[#FFFFFF] text-xs font-extrabold transition-all duration-300 cursor-pointer shadow">
-                            <i id="icon-audio-status" class="fa-solid fa-volume-high"></i>
-                            <span id="text-audio-status">Bacakan Jadwal (ID)</span>
+                        <!-- Tombol Bel Pemberitahuan Bandara / Stasiun -->
+                        <button id="btn-station-bell" onclick="triggerStationAnnouncement('MANUAL')" title="Bunyikan Bel Pemberitahuan Bandara / Stasiun (Alt + B)" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] border border-[#FFFFFF] text-xs font-extrabold transition-all duration-300 cursor-pointer shadow">
+                            <i id="icon-bell-status" class="fa-solid fa-bell"></i>
+                            <span id="text-bell-status">Bel Pemberitahuan</span>
                         </button>
 
                         <!-- Navigasi Halaman -->
@@ -385,29 +388,28 @@
                 </div>
             </section>
 
-            <!-- BAGIAN 2: PEMBACA AI OTOMATIS & BACKSOUND STASIUN -->
+            <!-- BAGIAN 2: BEL PEMBERITAHUAN STASIUN/BANDARA & BACKSOUND -->
             <section class="bg-[#393e51]/80 border border-[#545b72] rounded-2xl p-4 space-y-3.5">
                 <h3 class="text-sm font-extrabold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-volume-high text-[#CBD5E1]"></i> 2. Audio AI Otomatis & Backsound Stasiun
+                    <i class="fa-solid fa-bell text-[#CBD5E1]"></i> 2. Bel Pemberitahuan Bandara/Stasiun & Backsound
                 </h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Mode Pembaca AI Otomatis (TV)</label>
-                        <select id="setting-ai-auto-mode" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
-                            <option value="on_slide">Otomatis Setiap Ganti Halaman</option>
-                            <option value="interval_5">Otomatis Setiap 5 Menit</option>
-                            <option value="interval_15">Otomatis Setiap 15 Menit</option>
-                            <option value="manual">Manual (Klik Tombol Saja)</option>
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Nada Bel Pemberitahuan</label>
+                        <select id="setting-bell-style" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                            <option value="airport_chime">Chime Bandara Internasional (4 Nada)</option>
+                            <option value="kai_westminster">Bel Stasiun Kereta Api (Westminster)</option>
+                            <option value="boarding_dingdong">Ding-Dong Panggilan Ruang Tunggu</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Karakter Suara AI</label>
-                        <select id="setting-ai-voice" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
-                            <option value="Aoede">Aoede — Wanita Ramah & Jernih</option>
-                            <option value="Sulafat">Sulafat — Wanita Hangat & Lembut</option>
-                            <option value="Kore">Kore — Wanita Tegas & Berwibawa</option>
-                            <option value="Leda">Leda — Wanita Muda & Segar</option>
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Pemicu Otomatis Bel Pemberitahuan</label>
+                        <select id="setting-auto-bell" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                            <option value="slide_and_status">Setiap Ganti Slide, Status & Jam 12:00 ISOMA</option>
+                            <option value="slide_only">Setiap Pergantian Slide Halaman & ISOMA</option>
+                            <option value="status_only">Pergantian Status (07:30, 08:00, 15:23) & 12:00 ISOMA</option>
+                            <option value="off">Manual (Klik Tombol Bel Saja)</option>
                         </select>
                     </div>
                 </div>
@@ -500,27 +502,39 @@
                 <h3 class="text-sm font-extrabold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-2">
                     <i class="fa-solid fa-file-export text-[#CBD5E1]"></i> 4. Unduh Laporan Jadwal
                 </h3>
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="exportToExcel()" class="bg-[#464c5e] hover:bg-[#545b72] text-[#FFFFFF] border border-[#545b72] font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-excel text-emerald-300"></i> Export Excel (.xlsx)
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button onclick="exportToExcel()" class="bg-[#2c3142] hover:bg-[#464c5e] text-[#FFFFFF] border border-[#545b72] font-bold text-xs py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-excel text-emerald-400"></i> Unduh Excel (.xlsx)
                     </button>
-                    <button onclick="exportToPDF()" class="bg-[#464c5e] hover:bg-[#545b72] text-[#FFFFFF] border border-[#545b72] font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-pdf text-rose-300"></i> Export PDF (.pdf)
+                    <button onclick="exportToPDF()" class="bg-[#2c3142] hover:bg-[#464c5e] text-[#FFFFFF] border border-[#545b72] font-bold text-xs py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-pdf text-rose-400"></i> Unduh PDF (.pdf)
                     </button>
                 </div>
             </section>
         </div>
     </aside>
 
-    <!-- BANNER AKTIVASI SUARA AI KHUSUS SMART TV (MENGATASI BLOKIR AUTOPLAY BROWSER TV) -->
-    <div id="tv-audio-unlock-banner" onclick="unlockTvAudioAndSpeak()" class="hidden fixed bottom-14 right-4 z-40 max-w-sm bg-[#393e51]/95 backdrop-blur-md border-2 border-[#FFFFFF] rounded-2xl p-4 shadow-2xl cursor-pointer transition-transform hover:scale-105">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-[#FFFFFF] text-[#2c3142] flex items-center justify-center shrink-0 animate-pulse">
-                <i class="fa-solid fa-volume-high text-lg"></i>
+    <!-- BANNER PEMBERITAHUAN PANGGILAN ALA BANDARA / STASIUN -->
+    <div id="station-notice-banner" class="hidden fixed bottom-14 right-4 z-40 max-w-md bg-[#2c3142]/95 backdrop-blur-md border-2 border-[#FFFFFF] rounded-2xl p-4 shadow-[0_16px_40px_rgba(0,0,0,0.65)] transition-all duration-300">
+        <div class="flex items-start gap-3">
+            <div class="w-11 h-11 rounded-xl bg-[#FFFFFF] text-[#2c3142] flex items-center justify-center shrink-0 animate-bounce">
+                <i class="fa-solid fa-bell text-lg"></i>
             </div>
-            <div>
-                <p class="text-xs sm:text-sm font-extrabold text-[#FFFFFF]">Aktifkan Pembaca AI Otomatis TV</p>
-                <p class="text-[11px] text-[#CBD5E1]">Tekan OK pada remote TV sekali agar suara pengumuman otomatis aktif.</p>
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-2">
+                    <span id="station-notice-badge" class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-[#545b72] text-[#FFFFFF]">
+                        PEMBERITAHUAN TUK
+                    </span>
+                    <button onclick="hideStationNoticeBanner()" class="text-[#CBD5E1] hover:text-[#FFFFFF] text-xs cursor-pointer">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <p id="station-notice-title" class="text-xs sm:text-sm font-extrabold text-[#FFFFFF] mt-1">
+                    Perhatian Kepada Seluruh Peserta UJK
+                </p>
+                <p id="station-notice-desc" class="text-[11px] sm:text-xs text-[#CBD5E1] mt-0.5 leading-relaxed">
+                    Dimohon mempersiapkan diri dan memeriksa kelengkapan berkas asesmen.
+                </p>
             </div>
         </div>
     </div>
@@ -551,218 +565,175 @@
             { id: '4', date: getRelativeIsoDate(1), tuk: 'TUK Mandiri Studio Multimedia', assessors: ['Dewi Lestari, S.Ds., M.Sn.'] },
             { id: '5', date: getRelativeIsoDate(1), tuk: 'TUK Sewaktu Aula Sertifikasi', assessors: ['Drs. Bambang Sutrisno, M.Pd.', 'Nadia Putri, S.Psi., M.Psi.'] }
         ];
-
-        let appState = {
-            schedules: [...DEFAULT_SCHEDULES],
-            currentPage: 1,
-            lastKnownToday: getRelativeIsoDate(0),
-            gsheet: {
-                url: '',
-                sheetName: 'Jadwal_UJK',
-                syncInterval: 10
-            },
-            settings: {
-                badge: 'LSP / TUK RESMI',
-                title: 'JADWAL UJI KOMPETENSI (UJK)',
-                subtitle: 'Lembaga Sertifikasi Profesi • Informasi Pelaksanaan Asesmen Real-Time',
-                rowsPerPage: 7,
-                slideInterval: 10,
-                filterMode: 'today_tomorrow',
-                specificDate: getRelativeIsoDate(0),
-                runningText: 'Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan kelengkapan portofolio.',
-                stationMelody: 'playlist',
-                bgmVolume: 0.14,
-                aiAutoMode: 'on_slide',
-                aiVoice: 'Aoede'
-            }
-        };
-
-        let syncTimerId = null;
-        let slideTimerId = null;
-        let aiPeriodicTimerId = null;
-        let isAnnouncing = false;
-        let announcementAbortController = null;
-        let currentlyReadingRowId = null;
-        let tvAudioUnlocked = false;
-        let activeSpeechUtterance = null;
-        let speechKeepAliveTimer = null;
-
+// ... existing code ... -->
         /* =====================================================================
-           B. PERSISTENSI LOCALSTORAGE & PENYEGARAN TANGGAL HARIAN
+           D. KALKULASI STATUS REAL-TIME (STANDAR JAM 08:00 - 15:23 WIB)
         ===================================================================== */
-        function loadAppState() {
-            try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (Array.isArray(parsed.schedules) && parsed.schedules.length > 0) {
-                        appState.schedules = parsed.schedules;
-                    }
-                    if (parsed.gsheet) {
-                        appState.gsheet = { ...appState.gsheet, ...parsed.gsheet };
-                    }
-                    if (parsed.settings) {
-                        appState.settings = { ...appState.settings, ...parsed.settings };
-                    }
-                }
-            } catch (e) {
-                console.warn('Gagal memuat state tersimpan:', e);
+        const STANDARD_START_MINUTES = (8 * 60) + 0;   // 08:00 WIB
+        const STANDARD_END_MINUTES   = (15 * 60) + 23; // 15:23 WIB
+
+        function getScheduleLiveStatus(item) {
+            const now = new Date();
+            const todayIso = getRelativeIsoDate(0);
+
+            if (!item.date || item.date > todayIso) {
+                return {
+                    code: 'TERJADWAL',
+                    label: 'TERJADWAL',
+                    badgeClass: 'bg-[#2c3142] text-[#CBD5E1] border-[#545b72]',
+                    dotHtml: '<span class="w-2 h-2 rounded-full bg-[#CBD5E1]"></span>'
+                };
             }
+
+            if (item.date < todayIso) {
+                return {
+                    code: 'SELESAI',
+                    label: 'SELESAI',
+                    badgeClass: 'bg-[#2c3142]/75 text-[#94A3B8] border-[#464c5e]',
+                    dotHtml: '<i class="fa-solid fa-check text-[10px] text-[#94A3B8]"></i>'
+                };
+            }
+
+            // Tanggal hari ini: berjalan otomatis pada 08:00 - 15:23 WIB, lalu berubah SELESAI
+            const nowMin = (now.getHours() * 60) + now.getMinutes();
+
+            if (nowMin >= STANDARD_START_MINUTES && nowMin <= STANDARD_END_MINUTES) {
+                return {
+                    code: 'BERLANGSUNG',
+                    label: 'BERLANGSUNG',
+                    badgeClass: 'bg-emerald-500/25 text-white border-emerald-300 shadow-[0_0_14px_rgba(52,211,153,0.4)]',
+                    dotHtml: '<span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-90"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span></span>'
+                };
+            }
+
+            if (nowMin >= (STANDARD_START_MINUTES - 30) && nowMin < STANDARD_START_MINUTES) {
+                return {
+                    code: 'PERSIAPAN',
+                    label: 'PERSIAPAN',
+                    badgeClass: 'bg-amber-400/25 text-amber-100 border-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.3)]',
+                    dotHtml: '<span class="w-2.5 h-2.5 rounded-full bg-amber-300 animate-pulse"></span>'
+                };
+            }
+
+            if (nowMin < (STANDARD_START_MINUTES - 30)) {
+                return {
+                    code: 'TERJADWAL',
+                    label: 'TERJADWAL',
+                    badgeClass: 'bg-[#2c3142] text-[#E2E8F0] border-[#545b72]',
+                    dotHtml: '<span class="w-2 h-2 rounded-full bg-[#E2E8F0]"></span>'
+                };
+            }
+
+            return {
+                code: 'SELESAI',
+                label: 'SELESAI',
+                badgeClass: 'bg-[#2c3142]/75 text-[#94A3B8] border-[#464c5e]',
+                dotHtml: '<i class="fa-solid fa-check text-[10px] text-[#94A3B8]"></i>'
+            };
         }
 
-        function saveAppState() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-            } catch (e) {
-                console.warn('Gagal menyimpan state:', e);
-            }
-        }
-
         /* =====================================================================
-           C. JAM DIGITAL WIB & PERGANTIAN HARI OTOMATIS 24/7
+           E. FILTER TANGGAL, FORMAT HARI & RENDER TABEL JADWAL
         ===================================================================== */
-        const HARI_ID = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        const BULAN_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        const NAMA_HARI_ID = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const NAMA_BULAN_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
         function formatTanggalDenganHari(isoStr) {
-            if (!isoStr) return '-';
-            const parts = String(isoStr).split('-');
-            if (parts.length !== 3) return isoStr;
-            const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-            if (isNaN(d.getTime())) return isoStr;
-            return `${HARI_ID[d.getDay()]}, ${d.getDate()} ${BULAN_ID[d.getMonth()]} ${d.getFullYear()}`;
+            if (!isoStr || !/^\d{4}-\d{2}-\d{2}$/.test(isoStr)) return isoStr || '-';
+            const [y, m, d] = isoStr.split('-').map(Number);
+            const dt = new Date(y, m - 1, d);
+            const hari = NAMA_HARI_ID[dt.getDay()] || '';
+            const bulan = NAMA_BULAN_ID[m - 1] || '';
+            return `${hari}, ${String(d).padStart(2, '0')} ${bulan} ${y}`;
         }
 
-        function startLiveClock() {
-            const updateClock = () => {
-                const now = new Date();
-                const dateEl = document.getElementById('live-date');
-                const clockEl = document.getElementById('live-clock');
-
-                if (dateEl) {
-                    dateEl.textContent = `${HARI_ID[now.getDay()]}, ${now.getDate()} ${BULAN_ID[now.getMonth()]} ${now.getFullYear()}`;
-                }
-                if (clockEl) {
-                    const hh = String(now.getHours()).padStart(2, '0');
-                    const mm = String(now.getMinutes()).padStart(2, '0');
-                    const ss = String(now.getSeconds()).padStart(2, '0');
-                    clockEl.textContent = `${hh}:${mm}:${ss}`;
-                }
-
-                const todayIso = getRelativeIsoDate(0);
-                if (todayIso !== appState.lastKnownToday) {
-                    appState.lastKnownToday = todayIso;
-                    if (!appState.gsheet.url) {
-                        appState.schedules = DEFAULT_SCHEDULES.map((item, i) => ({
-                            ...item,
-                            date: getRelativeIsoDate(i < 3 ? 0 : 1)
-                        }));
-                    }
-                    renderScheduleTable();
-                }
-            };
-            updateClock();
-            setInterval(updateClock, 1000);
-        }
-
-        /* =====================================================================
-           D. FILTER TANGGAL, PAGINASI & RENDER TABEL STEEL SLATE
-        ===================================================================== */
         function getFilteredSchedules() {
-            const mode = appState.settings.filterMode || 'today_tomorrow';
+            const mode = appState.filter.mode || 'today_tomorrow';
             const today = getRelativeIsoDate(0);
             const tomorrow = getRelativeIsoDate(1);
             const yesterday = getRelativeIsoDate(-1);
 
-            return appState.schedules.filter(item => {
+            return (appState.schedules || []).filter(item => {
                 if (mode === 'today') return item.date === today;
                 if (mode === 'today_tomorrow') return item.date === today || item.date === tomorrow;
                 if (mode === 'yesterday') return item.date === yesterday;
-                if (mode === 'specific') return item.date === appState.settings.specificDate;
+                if (mode === 'specific') return !appState.filter.specificDate || item.date === appState.filter.specificDate;
                 return true;
             });
         }
 
-        function updateFilterBadge() {
-            const badge = document.getElementById('active-filter-badge');
-            const mode = appState.settings.filterMode;
-            if (!badge) return;
-
-            const labels = {
-                today_tomorrow: 'Hari Ini & Besok',
-                today: 'Hari Ini Saja',
-                yesterday: 'Hari Kemarin',
-                all: 'Semua Tanggal UJK',
-                specific: formatTanggalDenganHari(appState.settings.specificDate)
-            };
-            badge.textContent = labels[mode] || 'Hari Ini & Besok';
-        }
-
         function handleQuickFilterChange() {
-            const sel = document.getElementById('quick-filter-mode');
-            const dateInput = document.getElementById('quick-specific-date');
-            if (!sel) return;
+            const selectEl = document.getElementById('quick-filter-mode');
+            const dateInputEl = document.getElementById('quick-specific-date');
+            if (!selectEl) return;
 
-            appState.settings.filterMode = sel.value;
-            if (sel.value === 'specific') {
-                if (dateInput) {
-                    dateInput.classList.remove('hidden');
-                    dateInput.value = appState.settings.specificDate || getRelativeIsoDate(0);
+            appState.filter.mode = selectEl.value;
+            if (appState.filter.mode === 'specific') {
+                if (!appState.filter.specificDate) {
+                    appState.filter.specificDate = getRelativeIsoDate(0);
                 }
-            } else if (dateInput) {
-                dateInput.classList.add('hidden');
+                if (dateInputEl) {
+                    dateInputEl.value = appState.filter.specificDate;
+                    dateInputEl.classList.remove('hidden');
+                }
+            } else if (dateInputEl) {
+                dateInputEl.classList.add('hidden');
             }
 
             appState.currentPage = 1;
-            updateFilterBadge();
             saveAppState();
             renderScheduleTable();
         }
 
         function handleQuickSpecificDateChange() {
-            const dateInput = document.getElementById('quick-specific-date');
-            if (!dateInput || !dateInput.value) return;
-            appState.settings.specificDate = dateInput.value;
+            const dateInputEl = document.getElementById('quick-specific-date');
+            if (!dateInputEl) return;
+            appState.filter.specificDate = dateInputEl.value;
             appState.currentPage = 1;
-            updateFilterBadge();
             saveAppState();
             renderScheduleTable();
+        }
+
+        function updateActiveFilterBadge() {
+            const badge = document.getElementById('active-filter-badge');
+            if (!badge) return;
+            const mode = appState.filter.mode || 'today_tomorrow';
+            const mapLabel = {
+                today_tomorrow: 'Hari Ini & Besok',
+                today: 'Hari Ini Saja',
+                yesterday: 'Hari Kemarin',
+                all: 'Semua Tanggal UJK',
+                specific: appState.filter.specificDate ? formatTanggalDenganHari(appState.filter.specificDate) : 'Tanggal Tertentu'
+            };
+            badge.textContent = mapLabel[mode] || 'Hari Ini & Besok';
         }
 
         function renderScheduleTable() {
             const tbody = document.getElementById('schedule-table-body');
             if (!tbody) return;
 
+            updateActiveFilterBadge();
             const filtered = getFilteredSchedules();
             const perPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
             const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
 
-            if (appState.currentPage > totalPages) {
-                appState.currentPage = 1;
-            }
-
+            if (appState.currentPage > totalPages) appState.currentPage = 1;
             const startIdx = (appState.currentPage - 1) * perPage;
             const pageItems = filtered.slice(startIdx, startIdx + perPage);
 
-            const totalLabel = document.getElementById('total-count-label');
+            const countLabel = document.getElementById('total-count-label');
             const pageIndicator = document.getElementById('page-indicator');
-            if (totalLabel) totalLabel.textContent = `Menampilkan ${filtered.length} jadwal`;
+            if (countLabel) countLabel.textContent = `Menampilkan ${filtered.length} jadwal`;
             if (pageIndicator) pageIndicator.textContent = `HALAMAN ${appState.currentPage} / ${totalPages}`;
 
             if (pageItems.length === 0) {
-                const labelTanggal = appState.settings.filterMode === 'specific'
-                    ? formatTanggalDenganHari(appState.settings.specificDate)
-                    : 'periode filter yang dipilih';
-
                 tbody.innerHTML = `
-                    <tr class="animate-row-in">
-                        <td colspan="3" class="py-16 px-6 text-center">
-                            <div class="inline-flex flex-col items-center max-w-md mx-auto">
-                                <div class="w-14 h-14 rounded-2xl bg-[#2c3142] text-[#FFFFFF] flex items-center justify-center mb-3 border border-[#545b72]">
-                                    <i class="fa-regular fa-calendar-xmark text-2xl"></i>
-                                </div>
-                                <p class="text-base sm:text-lg font-extrabold text-[#FFFFFF] mb-1">Tidak Ada Jadwal UJK</p>
-                                <p class="text-xs sm:text-sm text-[#CBD5E1]">Belum terdapat jadwal Uji Kompetensi untuk ${escapeHtml(labelTanggal)}.</p>
+                    <tr>
+                        <td colspan="4" class="py-16 px-6 text-center bg-[#2c3142]/50">
+                            <div class="inline-flex flex-col items-center gap-2 text-[#CBD5E1]">
+                                <i class="fa-regular fa-calendar-xmark text-4xl text-[#545b72] mb-1"></i>
+                                <p class="text-base sm:text-lg font-extrabold text-[#FFFFFF]">Tidak Ada Jadwal UJK pada Filter Ini</p>
+                                <p class="text-xs sm:text-sm text-[#CBD5E1]">Ubah pilihan filter tanggal di atas atau hubungkan data Google Sheets.</p>
                             </div>
                         </td>
                     </tr>
@@ -771,32 +742,28 @@
             }
 
             tbody.innerHTML = pageItems.map((item, idx) => {
-                const isReading = currentlyReadingRowId === item.id;
-                const isOddRow = idx % 2 === 0;
-                const rowBg = isReading
-                    ? 'bg-[#545b72] ring-2 ring-inset ring-[#FFFFFF]'
-                    : (isOddRow ? 'bg-[#393e51] hover:bg-[#464c5e]' : 'bg-[#2c3142] hover:bg-[#464c5e]');
-                const badgeBg = isReading
-                    ? 'bg-[#FFFFFF] border-[#FFFFFF] text-[#2c3142]'
-                    : (isOddRow ? 'bg-[#2c3142] border-[#545b72] text-[#FFFFFF]' : 'bg-[#505567] border-[#545b72] text-[#FFFFFF]');
-                const delayMs = idx * 65;
+                const statusInfo = getScheduleLiveStatus(item);
+                const isFinished = statusInfo.code === 'SELESAI';
+                const rowBg = idx % 2 === 0 ? 'bg-[#393e51]/90' : 'bg-[#2c3142]/95';
+                const badgeBg = 'bg-[#2c3142] text-[#FFFFFF] border-[#545b72]';
+                const delayMs = idx * 45;
 
                 const assessorsHtml = (item.assessors || []).map((name, aIdx) => `
-                    <div class="flex items-start gap-2 ${aIdx > 0 ? 'mt-1.5 pt-1.5 border-t border-white/15' : ''}">
-                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-white/15 text-[#FFFFFF] font-mono text-[11px] font-bold shrink-0 mt-0.5">
+                    <div class="flex items-start gap-2 ${aIdx > 0 ? 'mt-1.5' : ''}">
+                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-[#2c3142] border border-[#545b72] text-[11px] font-extrabold text-[#FFFFFF] shrink-0 mt-0.5">
                             ${aIdx + 1}
                         </span>
-                        <span class="font-semibold text-sm sm:text-base lg:text-lg text-[#FFFFFF] break-words leading-snug">
+                        <span class="font-semibold text-sm sm:text-base lg:text-lg text-[#FFFFFF] leading-snug break-words">
                             ${escapeHtml(name)}
                         </span>
                     </div>
                 `).join('');
 
                 return `
-                    <tr style="animation-delay: ${delayMs}ms" class="animate-row-in ${rowBg} transition-colors duration-200">
-                        <td class="py-4 px-4 sm:px-6 align-top border-r border-[#545b72]/70">
+                    <tr style="animation-delay: ${delayMs}ms" class="animate-row-in ${rowBg} ${isFinished ? 'opacity-75' : ''} transition-colors duration-200">
+                        <td class="py-4 px-4 sm:px-6 align-middle border-r border-[#545b72]/70">
                             <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border ${badgeBg} shadow-xs">
-                                <i class="fa-regular ${isReading ? 'fa-volume-high animate-pulse text-[#2c3142]' : 'fa-calendar text-[#E2E8F0]'} text-xs sm:text-sm"></i>
+                                <i class="fa-regular fa-calendar text-[#E2E8F0] text-xs sm:text-sm"></i>
                                 <span class="font-bold text-xs sm:text-sm lg:text-base tracking-tight">
                                     ${escapeHtml(formatTanggalDenganHari(item.date))}
                                 </span>
@@ -807,8 +774,14 @@
                                 ${escapeHtml(item.tuk)}
                             </div>
                         </td>
-                        <td class="py-4 px-4 sm:px-6 align-top">
+                        <td class="py-4 px-4 sm:px-6 align-top border-r border-[#545b72]/70">
                             ${assessorsHtml || '<span class="text-sm text-[#CBD5E1] italic">-</span>'}
+                        </td>
+                        <td class="py-4 px-3 sm:px-4 align-middle text-center">
+                            <span class="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl border text-[11px] sm:text-xs font-black tracking-wider uppercase ${statusInfo.badgeClass}">
+                                ${statusInfo.dotHtml}
+                                <span>${statusInfo.label}</span>
+                            </span>
                         </td>
                     </tr>
                 `;
@@ -821,6 +794,7 @@
             const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
             appState.currentPage = appState.currentPage <= 1 ? totalPages : appState.currentPage - 1;
             renderScheduleTable();
+            notifySlideChangeIfEnabled(totalPages);
         }
 
         function nextPage(isAutoSlide = false) {
@@ -831,707 +805,82 @@
 
             appState.currentPage = appState.currentPage >= totalPages ? 1 : appState.currentPage + 1;
             renderScheduleTable();
-
-            // Jika mode otomatis tiap pergantian halaman aktif & tidak sedang berbicara, bacakan halaman baru
-            if (isAutoSlide && appState.settings.aiAutoMode === 'on_slide' && !isAnnouncing) {
-                announceCurrentPageSchedules(true);
+            if (totalPages > 1) {
+                notifySlideChangeIfEnabled(totalPages);
             }
         }
 
-        function startAutoPagination() {
-            if (slideTimerId) clearInterval(slideTimerId);
-            const sec = parseInt(appState.settings.slideInterval, 10);
-            const infoEl = document.getElementById('auto-slide-info');
-            if (!sec || sec <= 0) {
-                if (infoEl) infoEl.textContent = 'Auto-slide nonaktif';
-                return;
-            }
-            if (infoEl) infoEl.textContent = `Auto-slide aktif (${sec} dtk)`;
-            slideTimerId = setInterval(() => {
-                // Tunggu pembacaan selesai sebelum pindah halaman agar pengumuman tidak terpotong
-                if (!isAnnouncing) {
-                    nextPage(true);
-                }
-            }, sec * 1000);
-        }
-
-        /* =====================================================================
-           E. SINKRONISASI GOOGLE SHEETS REAL-TIME (JSONP BEBAS CORS)
-        ===================================================================== */
-        function extractSpreadsheetId(url) {
-            const match = String(url || '').match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-            return match ? match[1] : null;
-        }
-
-        function normalizeDateValue(raw) {
-            if (!raw) return '';
-            const str = String(raw).trim();
-            const gvizDateMatch = str.match(/^Date\((\d+),\s*(\d+),\s*(\d+)\)/);
-            if (gvizDateMatch) {
-                const y = gvizDateMatch[1];
-                const m = String(Number(gvizDateMatch[2]) + 1).padStart(2, '0');
-                const d = String(Number(gvizDateMatch[3])).padStart(2, '0');
-                return `${y}-${m}-${d}`;
-            }
-            if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
-            const dmyMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-            if (dmyMatch) {
-                return `${dmyMatch[3]}-${dmyMatch[2].padStart(2, '0')}-${dmyMatch[1].padStart(2, '0')}`;
-            }
-            return str;
-        }
-
-        function fetchGoogleSheetData(isManual = false) {
-            const sheetId = extractSpreadsheetId(appState.gsheet.url);
-            if (!sheetId) return;
-
-            const syncIcon = document.getElementById('icon-manual-sync');
-            if (syncIcon) syncIcon.classList.add('fa-spin');
-
-            const callbackName = 'gvizCallback_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
-            const script = document.createElement('script');
-            const sheetParam = encodeURIComponent(appState.gsheet.sheetName || 'Jadwal_UJK');
-
-            const cleanup = () => {
-                if (syncIcon) syncIcon.classList.remove('fa-spin');
-                delete window[callbackName];
-                if (script.parentNode) script.parentNode.removeChild(script);
-            };
-
-            window[callbackName] = function(response) {
-                cleanup();
-                try {
-                    if (!response || !response.table || !Array.isArray(response.table.rows)) {
-                        throw new Error('Struktur sheet tidak terbaca');
-                    }
-                    const parsedRows = [];
-                    response.table.rows.forEach((row, idx) => {
-                        const cells = row.c || [];
-                        const rawDate = cells[0] ? (cells[0].f || cells[0].v) : '';
-                        const rawTuk = cells[1] ? (cells[1].v || '') : '';
-                        const rawAssessor = cells[2] ? (cells[2].v || '') : '';
-
-                        const dateIso = normalizeDateValue(rawDate);
-                        const tukName = String(rawTuk).trim();
-                        if (!dateIso || !tukName || tukName.toLowerCase().includes('nama tuk')) return;
-
-                        const assessors = String(rawAssessor)
-                            .split(/[;\n]+/)
-                            .map(s => s.trim())
-                            .filter(Boolean);
-
-                        parsedRows.push({
-                            id: `gs_${idx}_${dateIso}`,
-                            date: dateIso,
-                            tuk: tukName,
-                            assessors
-                        });
-                    });
-
-                    appState.schedules = parsedRows;
-                    saveAppState();
-                    renderScheduleTable();
-                    updateConnectionUI(true);
-                    if (isManual) showToast(`Sinkronisasi berhasil (${parsedRows.length} jadwal).`, 'success');
-                } catch (err) {
-                    console.error('Error parsing Google Sheet:', err);
-                    if (isManual) showToast('Gagal membaca data Google Sheets. Pastikan akses publik aktif.', 'error');
-                }
-            };
-
-            script.onerror = () => {
-                cleanup();
-                if (isManual) showToast('Koneksi ke Google Sheets gagal.', 'error');
-            };
-
-            script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json;responseHandler:${callbackName}&sheet=${sheetParam}&_ts=${Date.now()}`;
-            document.body.appendChild(script);
-        }
-
-        function updateConnectionUI(connected) {
-            const label = document.getElementById('connection-label');
-            const syncTime = document.getElementById('last-sync-time');
-            const manualBtn = document.getElementById('btn-manual-sync');
-            const drawerStatus = document.getElementById('gsheet-drawer-status');
-
-            if (label) label.textContent = connected ? 'Google Sheets Live' : 'Mode Siap Pakai';
-            if (syncTime) {
-                const now = new Date();
-                const hh = String(now.getHours()).padStart(2, '0');
-                const mm = String(now.getMinutes()).padStart(2, '0');
-                const ss = String(now.getSeconds()).padStart(2, '0');
-                syncTime.textContent = connected ? `Sync ${hh}:${mm}:${ss}` : 'Data Siap';
-            }
-            if (manualBtn) {
-                if (connected) {
-                    manualBtn.classList.remove('hidden');
-                    manualBtn.classList.add('inline-flex');
-                } else {
-                    manualBtn.classList.add('hidden');
-                    manualBtn.classList.remove('inline-flex');
-                }
-            }
-            if (drawerStatus) {
-                drawerStatus.textContent = connected ? 'Terhubung Real-Time' : 'Belum Terhubung';
-                drawerStatus.className = connected
-                    ? 'text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200 border border-emerald-400/40'
-                    : 'text-[11px] font-bold px-2 py-0.5 rounded bg-[#464c5e] text-[#E2E8F0]';
-            }
-        }
-
-        function startSyncPolling() {
-            if (syncTimerId) clearInterval(syncTimerId);
-            if (!extractSpreadsheetId(appState.gsheet.url)) {
-                updateConnectionUI(false);
-                return;
-            }
-            fetchGoogleSheetData(false);
-            const sec = Math.max(5, parseInt(appState.gsheet.syncInterval, 10) || 10);
-            syncTimerId = setInterval(() => fetchGoogleSheetData(false), sec * 1000);
-        }
-
-        function manualSyncNow() {
-            fetchGoogleSheetData(true);
-        }
-
-        function connectGoogleSheet() {
-            const urlInput = document.getElementById('gsheet-url-input');
-            const sheetInput = document.getElementById('gsheet-sheet-name');
-            const intervalInput = document.getElementById('gsheet-sync-interval');
-
-            const url = urlInput ? urlInput.value.trim() : '';
-            if (!extractSpreadsheetId(url)) {
-                showToast('Masukkan link Google Sheets yang valid.', 'error');
-                return;
-            }
-
-            appState.gsheet.url = url;
-            appState.gsheet.sheetName = (sheetInput && sheetInput.value.trim()) || 'Jadwal_UJK';
-            appState.gsheet.syncInterval = parseInt(intervalInput ? intervalInput.value : '10', 10) || 10;
-            saveAppState();
-            startSyncPolling();
-            showToast('Menghubungkan ke Google Sheets...', 'info');
-        }
-
-        function disconnectGoogleSheet() {
-            appState.gsheet.url = '';
-            if (syncTimerId) clearInterval(syncTimerId);
-            saveAppState();
-            updateConnectionUI(false);
-            showToast('Koneksi Google Sheets diputuskan.', 'info');
-        }
-
-        function downloadTemplateCSV() {
-            const csv = [
-                'Tanggal UJK,Nama TUK,Nama Asesor',
-                `${getRelativeIsoDate(0)},TUK Sewaktu Lab Komputer 01,Ir. Budi Santoso; Dr. Siti Aminah`,
-                `${getRelativeIsoDate(1)},TUK Mandiri Ruang Praktik Utama,Ahmad Fauzi`
-            ].join('\n');
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'Template_Jadwal_UJK.csv';
-            link.click();
-        }
-
-        /* =====================================================================
-           F. PEMBACA JADWAL AI OTOMATIS (KOMPATIBEL SMART TV & BROWSER)
-        ===================================================================== */
-        function unlockTvAudioAndSpeak() {
-            tvAudioUnlocked = true;
-            const banner = document.getElementById('tv-audio-unlock-banner');
-            if (banner) banner.classList.add('hidden');
-
-            try {
-                const ctx = ensureAudioContext();
-                if (ctx && ctx.state === 'suspended') ctx.resume();
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const warmUp = new SpeechSynthesisUtterance(' ');
-                    warmUp.volume = 0;
-                    window.speechSynthesis.speak(warmUp);
-                }
-            } catch (e) {}
-
-            showToast('Pembaca AI otomatis diaktifkan untuk TV.', 'success');
-            announceCurrentPageSchedules(false);
-        }
-
-        function showTvUnlockPromptIfBlocked() {
-            const banner = document.getElementById('tv-audio-unlock-banner');
-            if (banner && !tvAudioUnlocked) {
-                banner.classList.remove('hidden');
-            }
-        }
-
-        function updateAudioButtonUI(playing) {
-            const btn = document.getElementById('btn-announce-audio');
-            const icon = document.getElementById('icon-audio-status');
-            const text = document.getElementById('text-audio-status');
-            if (!btn) return;
-
-            if (playing) {
-                btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-400 text-[#2c3142] border border-emerald-200 text-xs font-extrabold transition-all duration-300 cursor-pointer shadow-lg animate-pulse';
-                if (icon) icon.className = 'fa-solid fa-stop';
-                if (text) text.textContent = 'Hentikan Suara';
-            } else {
-                btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] border border-[#FFFFFF] text-xs font-extrabold transition-all duration-300 cursor-pointer shadow';
-                if (icon) icon.className = 'fa-solid fa-volume-high';
-                if (text) text.textContent = 'Bacakan Jadwal (ID)';
-            }
-        }
-
-        function stopScheduleAnnouncement() {
-            isAnnouncing = false;
-            currentlyReadingRowId = null;
-            if (announcementAbortController) {
-                try { announcementAbortController.abort(); } catch (e) {}
-                announcementAbortController = null;
-            }
-            if (speechKeepAliveTimer) {
-                clearInterval(speechKeepAliveTimer);
-                speechKeepAliveTimer = null;
-            }
-            if ('speechSynthesis' in window) {
-                try { window.speechSynthesis.cancel(); } catch (e) {}
-            }
-            activeSpeechUtterance = null;
-            restoreBgmVolumeAfterDucking();
-            updateAudioButtonUI(false);
-            renderScheduleTable();
-        }
-
-        function toggleScheduleAnnouncement() {
-            tvAudioUnlocked = true;
-            const banner = document.getElementById('tv-audio-unlock-banner');
-            if (banner) banner.classList.add('hidden');
-
-            if (isAnnouncing) {
-                stopScheduleAnnouncement();
-                return;
-            }
-            announceCurrentPageSchedules(false);
-        }
-
-        function playAnnouncementChime() {
-            return new Promise(resolve => {
-                try {
-                    const ctx = ensureAudioContext();
-                    if (!ctx) return resolve();
-                    if (ctx.state === 'suspended') {
-                        ctx.resume().catch(() => {});
-                    }
-                    const notes = [523.25, 659.25, 783.99, 1046.5];
-                    notes.forEach((freq, i) => {
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        const t = ctx.currentTime + i * 0.22;
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, t);
-                        gain.gain.setValueAtTime(0.001, t);
-                        gain.gain.exponentialRampToValueAtTime(0.14, t + 0.04);
-                        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.start(t);
-                        osc.stop(t + 0.58);
-                    });
-                    setTimeout(resolve, 950);
-                } catch (e) {
-                    resolve();
-                }
-            });
-        }
-
-        function buildAnnouncementSegments() {
-            const filtered = getFilteredSchedules();
-            const perPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
-            const startIdx = (appState.currentPage - 1) * perPage;
-            const pageItems = filtered.slice(startIdx, startIdx + perPage);
-
-            if (pageItems.length === 0) return [];
-
-            const lembaga = formatIndonesianSpeechText(appState.settings.badge || 'Lembaga Sertifikasi Profesi');
-            const segments = [
-                {
-                    rowId: null,
-                    text: `Perhatian. Informasi jadwal pelaksanaan Uji Kompetensi, ${lembaga}.`
-                }
-            ];
-
-            pageItems.forEach((item, idx) => {
-                const tanggal = formatTanggalDenganHari(item.date);
-                const tukSpoken = formatIndonesianSpeechText(item.tuk);
-                const asesorSpokenList = (item.assessors || []).map(a => formatIndonesianSpeechText(a));
-                const asesorText = asesorSpokenList.length > 0
-                    ? `dengan asesor kompetensi: ${asesorSpokenList.join(', dan ')}.`
-                    : '';
-                segments.push({
-                    rowId: item.id,
-                    text: `Jadwal nomor ${idx + 1}. Hari ${tanggal}, bertempat di ${tukSpoken}, ${asesorText}`
+        function notifySlideChangeIfEnabled(totalPages) {
+            const mode = appState.settings.autoBell || 'slide_and_status';
+            if (mode === 'slide_and_status' || mode === 'slide_only') {
+                triggerStationAnnouncement('SLIDE_CHANGE', {
+                    currentPage: appState.currentPage,
+                    totalPages: totalPages
                 });
-            });
-
-            segments.push({
-                rowId: null,
-                text: 'Kepada seluruh peserta uji kompetensi, dimohon mempersiapkan kelengkapan dokumen dan hadir tiga puluh menit sebelum asesmen dimulai. Terima kasih.'
-            });
-
-            return segments;
-        }
-
-        function formatIndonesianSpeechText(rawText) {
-            let text = String(rawText || '');
-            const replacements = [
-                [/\bTUK\b/g, 'Tempat Uji Kompetensi'],
-                [/\bUJK\b/g, 'Uji Kompetensi'],
-                [/\bLSP\b/g, 'Lembaga Sertifikasi Profesi'],
-                [/\bIr\.\s*/g, 'Insinyur '],
-                [/\bDrs\.\s*/g, 'Doktorandus '],
-                [/\bDra\.\s*/g, 'Doktoranda '],
-                [/\bDr\.\s*/g, 'Doktor '],
-                [/\bProf\.\s*/g, 'Profésor '],
-                [/\bS\.Kom\.?/gi, 'Sarjana Komputer'],
-                [/\bM\.Kom\.?/gi, 'Magister Komputer'],
-                [/\bS\.T\.?/g, 'Sarjana Teknik'],
-                [/\bM\.T\.?/g, 'Magister Teknik'],
-                [/\bS\.E\.?/g, 'Sarjana Ekonomi'],
-                [/\bM\.Ak\.?/gi, 'Magister Akuntansi'],
-                [/\bM\.M\.?/g, 'Magister Manajemen'],
-                [/\bS\.Ds\.?/gi, 'Sarjana Desain'],
-                [/\bM\.Sn\.?/gi, 'Magister Seni'],
-                [/\bS\.Pd\.?/gi, 'Sarjana Pendidikan'],
-                [/\bM\.Pd\.?/gi, 'Magister Pendidikan'],
-                [/\bS\.Psi\.?/gi, 'Sarjana Psikologi'],
-                [/\bM\.Psi\.?/gi, 'Magister Psikologi'],
-                [/\bS\.Si\.?/gi, 'Sarjana Sains'],
-                [/\bM\.Si\.?/gi, 'Magister Sains'],
-                [/\bS\.H\.?/g, 'Sarjana Hukum'],
-                [/\bM\.H\.?/g, 'Magister Hukum'],
-                [/\b0(\d)\b/g, 'nol $1'],
-                [/\//g, ' atau ']
-            ];
-            replacements.forEach(([pattern, spoken]) => {
-                text = text.replace(pattern, spoken);
-            });
-            return text.replace(/\s+/g, ' ').trim();
-        }
-
-        function pcmToWavBlob(base64Pcm, sampleRate = 24000) {
-            const binary = atob(base64Pcm);
-            const pcmLen = binary.length;
-            const buffer = new ArrayBuffer(44 + pcmLen);
-            const view = new DataView(buffer);
-
-            const writeStr = (offset, str) => {
-                for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
-            };
-
-            writeStr(0, 'RIFF');
-            view.setUint32(4, 36 + pcmLen, true);
-            view.setUint32(8, 0x45564157, true);
-            writeStr(12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, 1, true);
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true);
-            view.setUint16(32, 2, true);
-            view.setUint16(34, 16, true);
-            writeStr(36, 'data');
-            view.setUint32(40, pcmLen, true);
-
-            const bytes = new Uint8Array(buffer, 44);
-            for (let i = 0; i < pcmLen; i++) bytes[i] = binary.charCodeAt(i);
-            return new Blob([buffer], { type: 'audio/wav' });
-        }
-
-        async function speakWithGeminiTTS(text, signal) {
-            if (!GEMINI_API_KEY) return false;
-            try {
-                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${GEMINI_API_KEY}`;
-                const res = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    signal,
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `Bacakan pengumuman ini dengan suara wanita Indonesia yang ramah, jernih, dan profesional seperti penyiar ruang tunggu resmi: ${text}` }] }],
-                        generationConfig: {
-                            responseModalities: ['AUDIO'],
-                            speechConfig: {
-                                voiceConfig: {
-                                    prebuiltVoiceConfig: { voiceName: appState.settings.aiVoice || 'Aoede' }
-                                }
-                            }
-                        }
-                    })
-                });
-                if (!res.ok) return false;
-                const data = await res.json();
-                const inline = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData;
-                if (!inline || !inline.data) return false;
-
-                const wavBlob = pcmToWavBlob(inline.data, 24000);
-                const audioUrl = URL.createObjectURL(wavBlob);
-
-                return await new Promise(resolve => {
-                    const audio = new Audio(audioUrl);
-                    audio.onended = () => {
-                        URL.revokeObjectURL(audioUrl);
-                        resolve(true);
-                    };
-                    audio.onerror = () => {
-                        URL.revokeObjectURL(audioUrl);
-                        resolve(false);
-                    };
-                    audio.play().then(() => {
-                        tvAudioUnlocked = true;
-                    }).catch(() => {
-                        URL.revokeObjectURL(audioUrl);
-                        showTvUnlockPromptIfBlocked();
-                        resolve(false);
-                    });
-                });
-            } catch (e) {
-                return false;
-            }
-        }
-
-        function getBestIndonesianFemaleVoice() {
-            if (!('speechSynthesis' in window)) return null;
-            const voices = window.speechSynthesis.getVoices() || [];
-            const idVoices = voices.filter(v => (v.lang || '').toLowerCase().startsWith('id'));
-            if (idVoices.length === 0) return null;
-
-            const femaleHint = /gadis|damayanti|google bahasa indonesia|female|woman|natural|online/i;
-            const maleHint = /ardi|male|man\b/i;
-
-            return idVoices.find(v => femaleHint.test(v.name) && !maleHint.test(v.name))
-                || idVoices.find(v => !maleHint.test(v.name))
-                || idVoices[0];
-        }
-
-        function speakWithBrowserTTS(text, isAutoTriggered) {
-            return new Promise(resolve => {
-                if (!('speechSynthesis' in window)) {
-                    resolve(false);
-                    return;
-                }
-
-                const voice = getBestIndonesianFemaleVoice();
-                // Jika Smart TV tidak punya voice lokal Bahasa Indonesia, gunakan suara daring Bahasa Indonesia
-                if (!voice) {
-                    resolve(false);
-                    return;
-                }
-
-                try {
-                    window.speechSynthesis.cancel();
-                    const utter = new SpeechSynthesisUtterance(text);
-                    utter.lang = 'id-ID';
-                    utter.rate = 0.94;
-                    utter.pitch = 1.03;
-                    utter.volume = 1.0;
-                    utter.voice = voice;
-
-                    let started = false;
-                    let settled = false;
-
-                    const finish = (ok) => {
-                        if (settled) return;
-                        settled = true;
-                        if (speechKeepAliveTimer) {
-                            clearInterval(speechKeepAliveTimer);
-                            speechKeepAliveTimer = null;
-                        }
-                        activeSpeechUtterance = null;
-                        resolve(ok);
-                    };
-
-                    utter.onstart = () => {
-                        started = true;
-                        tvAudioUnlocked = true;
-                        const banner = document.getElementById('tv-audio-unlock-banner');
-                        if (banner) banner.classList.add('hidden');
-                    };
-
-                    utter.onend = () => finish(true);
-                    utter.onerror = (ev) => {
-                        if (ev && (ev.error === 'not-allowed' || ev.error === 'synthesis-failed')) {
-                            if (isAutoTriggered) showTvUnlockPromptIfBlocked();
-                        }
-                        finish(false);
-                    };
-
-                    activeSpeechUtterance = utter;
-
-                    speechKeepAliveTimer = setInterval(() => {
-                        if (!isAnnouncing || !window.speechSynthesis.speaking) {
-                            clearInterval(speechKeepAliveTimer);
-                            speechKeepAliveTimer = null;
-                            return;
-                        }
-                        try {
-                            window.speechSynthesis.pause();
-                            window.speechSynthesis.resume();
-                        } catch (e) {}
-                    }, 9000);
-
-                    window.speechSynthesis.speak(utter);
-
-                    setTimeout(() => {
-                        if (!started && !settled && isAutoTriggered) {
-                            showTvUnlockPromptIfBlocked();
-                            try { window.speechSynthesis.cancel(); } catch (e) {}
-                            finish(false);
-                        }
-                    }, 1800);
-
-                    setTimeout(() => finish(true), 35000);
-                } catch (e) {
-                    if (isAutoTriggered) showTvUnlockPromptIfBlocked();
-                    resolve(false);
-                }
-            });
-        }
-
-        function speakWithOnlineIndonesianFallback(text, isAutoTriggered) {
-            return new Promise(resolve => {
-                try {
-                    const clean = String(text || '').slice(0, 195);
-                    const url = `https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=id&q=${encodeURIComponent(clean)}`;
-                    const audio = new Audio(url);
-                    audio.playbackRate = 0.96;
-
-                    let settled = false;
-                    const done = (ok) => {
-                        if (settled) return;
-                        settled = true;
-                        resolve(ok);
-                    };
-
-                    audio.onended = () => done(true);
-                    audio.onerror = () => done(false);
-
-                    audio.play().then(() => {
-                        tvAudioUnlocked = true;
-                        const banner = document.getElementById('tv-audio-unlock-banner');
-                        if (banner) banner.classList.add('hidden');
-                    }).catch(() => {
-                        if (isAutoTriggered) showTvUnlockPromptIfBlocked();
-                        done(false);
-                    });
-
-                    setTimeout(() => done(true), 25000);
-                } catch (e) {
-                    resolve(false);
-                }
-            });
-        }
-
-        async function announceCurrentPageSchedules(isAutoTriggered = false) {
-            if (isAnnouncing) return;
-            const segments = buildAnnouncementSegments();
-            if (segments.length === 0) {
-                if (!isAutoTriggered) showToast('Tidak ada jadwal pada halaman ini untuk dibacakan.', 'info');
-                return;
-            }
-
-            isAnnouncing = true;
-            announcementAbortController = new AbortController();
-            updateAudioButtonUI(true);
-            duckBgmVolumeForAnnouncement();
-
-            await playAnnouncementChime();
-
-            for (const seg of segments) {
-                if (!isAnnouncing) break;
-
-                currentlyReadingRowId = seg.rowId;
-                renderScheduleTable();
-
-                let spoke = await speakWithGeminiTTS(seg.text, announcementAbortController.signal);
-                if (!spoke && isAnnouncing) {
-                    spoke = await speakWithBrowserTTS(seg.text, isAutoTriggered);
-                }
-                if (!spoke && isAnnouncing) {
-                    spoke = await speakWithOnlineIndonesianFallback(seg.text, isAutoTriggered);
-                }
-
-                if (!spoke && isAutoTriggered && !tvAudioUnlocked) {
-                    break;
-                }
-
-                if (isAnnouncing) {
-                    await new Promise(r => setTimeout(r, 380));
-                }
-            }
-
-            stopScheduleAnnouncement();
-        }
-
-        function startAiPeriodicAnnouncement() {
-            if (aiPeriodicTimerId) clearInterval(aiPeriodicTimerId);
-            const mode = appState.settings.aiAutoMode || 'on_slide';
-
-            if (mode === 'interval_5' || mode === 'interval_15') {
-                const mins = mode === 'interval_5' ? 5 : 15;
-                aiPeriodicTimerId = setInterval(() => {
-                    if (!isAnnouncing) announceCurrentPageSchedules(true);
-                }, mins * 60 * 1000);
             }
         }
 
         /* =====================================================================
-           G. BACKSOUND INSTRUMEN LAGU STASIUN KAI (WEB AUDIO SYNTHESIZER)
+           F. BACKSOUND 11 INSTRUMEN MELODI KHAS STASIUN KAI (WEB AUDIO API)
         ===================================================================== */
+        let audioCtx = null;
+        let isBgmPlaying = false;
+        let bgmNoteTimer = null;
+        let bgmPlaylistIndex = 0;
+        let bgmNoteIndex = 0;
+
+        const NOTE_FREQS = {
+            C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
+            C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.00, B5: 987.77
+        };
+
         const STATION_MELODIES = {
             sepasang_mata_bola: [
-                [392.00, 0.5], [440.00, 0.5], [493.88, 1.0], [523.25, 0.5], [493.88, 0.5], [440.00, 1.0],
-                [392.00, 0.5], [329.63, 0.5], [392.00, 1.5], [0, 0.5]
+                ['E4', 0.45], ['G4', 0.45], ['C5', 0.7], ['B4', 0.4], ['A4', 0.45], ['G4', 0.7],
+                ['F4', 0.45], ['A4', 0.45], ['D5', 0.7], ['C5', 0.4], ['B4', 0.45], ['C5', 0.9]
             ],
             bengawan_solo: [
-                [329.63, 0.5], [392.00, 0.5], [440.00, 1.0], [523.25, 1.0], [493.88, 0.5], [440.00, 0.5],
-                [392.00, 1.5], [0, 0.5]
+                ['G4', 0.4], ['E4', 0.4], ['G4', 0.55], ['C5', 0.8], ['B4', 0.4], ['A4', 0.4], ['G4', 0.7],
+                ['A4', 0.4], ['G4', 0.4], ['F4', 0.55], ['E4', 0.55], ['D4', 0.55], ['C4', 0.95]
             ],
             sabilulungan: [
-                [392.00, 0.4], [440.00, 0.4], [523.25, 0.6], [587.33, 0.6], [523.25, 0.4], [440.00, 0.4],
-                [392.00, 1.0], [0, 0.4]
+                ['E5', 0.35], ['D5', 0.35], ['C5', 0.45], ['A4', 0.45], ['G4', 0.55], ['A4', 0.45],
+                ['C5', 0.35], ['D5', 0.35], ['E5', 0.55], ['D5', 0.45], ['C5', 0.85]
             ],
             manuk_dadali: [
-                [261.63, 0.4], [329.63, 0.4], [392.00, 0.6], [392.00, 0.4], [440.00, 0.4], [392.00, 0.8],
-                [329.63, 0.8], [0, 0.4]
+                ['G4', 0.35], ['C5', 0.45], ['C5', 0.35], ['D5', 0.35], ['E5', 0.55], ['C5', 0.45],
+                ['D5', 0.35], ['E5', 0.35], ['F5', 0.55], ['E5', 0.45], ['D5', 0.45], ['C5', 0.85]
             ],
             karatagan_pahlawan: [
-                [293.66, 0.4], [369.99, 0.4], [440.00, 0.8], [493.88, 0.4], [440.00, 0.4], [369.99, 0.8],
-                [293.66, 1.0], [0, 0.4]
+                ['C5', 0.4], ['G4', 0.35], ['C5', 0.45], ['E5', 0.65], ['D5', 0.4], ['C5', 0.4], ['B4', 0.6],
+                ['A4', 0.4], ['B4', 0.4], ['C5', 0.55], ['D5', 0.55], ['E5', 0.85]
             ],
             ayun_ambing: [
-                [440.00, 0.6], [392.00, 0.6], [329.63, 0.6], [293.66, 0.8], [329.63, 0.6], [392.00, 1.2],
-                [0, 0.6]
+                ['A4', 0.5], ['E5', 0.5], ['D5', 0.5], ['C5', 0.5], ['A4', 0.75],
+                ['G4', 0.5], ['A4', 0.5], ['C5', 0.5], ['D5', 0.5], ['E5', 0.9]
             ],
             rek_ayo_rek: [
-                [392.00, 0.35], [392.00, 0.35], [440.00, 0.5], [392.00, 0.5], [329.63, 0.5], [261.63, 0.7],
-                [293.66, 0.7], [0, 0.4]
+                ['G4', 0.35], ['E4', 0.35], ['G4', 0.45], ['A4', 0.45], ['G4', 0.35], ['E4', 0.35], ['C4', 0.55],
+                ['D4', 0.35], ['E4', 0.35], ['G4', 0.45], ['A4', 0.45], ['G4', 0.8]
             ],
             surabaya_oh_surabaya: [
-                [329.63, 0.5], [392.00, 0.5], [523.25, 1.0], [493.88, 0.5], [440.00, 0.5], [392.00, 1.2],
-                [0, 0.5]
+                ['C5', 0.45], ['B4', 0.45], ['A4', 0.65], ['G4', 0.45], ['E4', 0.45], ['G4', 0.7],
+                ['A4', 0.45], ['G4', 0.45], ['F4', 0.55], ['E4', 0.55], ['D4', 0.55], ['C4', 0.9]
             ],
             sungai_serayu: [
-                [349.23, 0.5], [440.00, 0.5], [523.25, 1.0], [493.88, 0.5], [440.00, 0.5], [392.00, 1.2],
-                [0, 0.5]
+                ['E4', 0.45], ['G4', 0.45], ['A4', 0.65], ['C5', 0.55], ['B4', 0.45], ['A4', 0.65],
+                ['G4', 0.45], ['E4', 0.45], ['D4', 0.55], ['E4', 0.55], ['C4', 0.95]
             ],
             gambang_semarang: [
-                [392.00, 0.4], [493.88, 0.4], [587.33, 0.6], [523.25, 0.4], [493.88, 0.4], [440.00, 0.8],
-                [392.00, 0.8], [0, 0.4]
+                ['C5', 0.35], ['D5', 0.35], ['E5', 0.45], ['G5', 0.55], ['E5', 0.35], ['D5', 0.35], ['C5', 0.55],
+                ['A4', 0.4], ['C5', 0.4], ['D5', 0.5], ['E5', 0.5], ['C5', 0.85]
             ],
             kota_cirebon: [
-                [329.63, 0.5], [392.00, 0.5], [440.00, 0.8], [392.00, 0.5], [329.63, 0.5], [293.66, 1.0],
-                [0, 0.5]
+                ['G4', 0.45], ['A4', 0.45], ['C5', 0.65], ['D5', 0.45], ['E5', 0.65],
+                ['D5', 0.45], ['C5', 0.45], ['A4', 0.55], ['G4', 0.85]
             ],
             chime: [
-                [523.25, 0.5], [659.25, 0.5], [783.99, 0.8], [0, 1.2]
+                ['C5', 0.45], ['E5', 0.45], ['G5', 0.45], ['C5', 0.9]
             ]
         };
 
@@ -1541,279 +890,588 @@
             'sungai_serayu', 'gambang_semarang', 'kota_cirebon'
         ];
 
-        let audioCtx = null;
-        let bgmMasterGain = null;
-        let isBgmPlaying = false;
-        let bgmLoopTimeout = null;
-        let playlistIdx = 0;
-
         function ensureAudioContext() {
             if (!audioCtx) {
-                const Ctx = window.AudioContext || window.webkitAudioContext;
-                if (Ctx) {
-                    audioCtx = new Ctx();
-                    bgmMasterGain = audioCtx.createGain();
-                    bgmMasterGain.gain.value = parseFloat(appState.settings.bgmVolume) || 0.14;
-                    bgmMasterGain.connect(audioCtx.destination);
-                }
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) audioCtx = new AudioContextClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume().catch(() => {});
             }
             return audioCtx;
         }
 
-        function duckBgmVolumeForAnnouncement() {
-            if (!bgmMasterGain || !audioCtx || !isBgmPlaying) return;
-            try {
-                bgmMasterGain.gain.setTargetAtTime(0.02, audioCtx.currentTime, 0.15);
-            } catch (e) {}
-        }
-
-        function restoreBgmVolumeAfterDucking() {
-            if (!bgmMasterGain || !audioCtx || !isBgmPlaying) return;
-            try {
-                const target = parseFloat(appState.settings.bgmVolume) || 0.14;
-                bgmMasterGain.gain.setTargetAtTime(target, audioCtx.currentTime, 0.25);
-            } catch (e) {}
-        }
-
-        function playMelodySequence(notes) {
+        function playSoftBellNote(freq, durationSec, volume) {
             const ctx = ensureAudioContext();
-            if (!ctx || !isBgmPlaying) return 2000;
-            if (ctx.state === 'suspended') ctx.resume();
+            if (!ctx) return;
 
-            let offset = 0;
-            const tempo = 0.62;
-            notes.forEach(([freq, dur]) => {
-                const durationSec = dur * tempo;
-                if (freq > 0) {
-                    const osc = ctx.createOscillator();
-                    const noteGain = ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, ctx.currentTime + offset);
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
 
-                    noteGain.gain.setValueAtTime(0.001, ctx.currentTime + offset);
-                    noteGain.gain.exponentialRampToValueAtTime(0.8, ctx.currentTime + offset + 0.06);
-                    noteGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + offset + durationSec * 0.95);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
 
-                    osc.connect(noteGain);
-                    noteGain.connect(bgmMasterGain);
-                    osc.start(ctx.currentTime + offset);
-                    osc.stop(ctx.currentTime + offset + durationSec);
-                }
-                offset += durationSec;
-            });
-            return (offset + 1.2) * 1000;
+            const effectiveVol = isBellRinging ? volume * 0.15 : volume;
+            gain.gain.setValueAtTime(0.0001, now);
+            gain.gain.exponentialRampToValueAtTime(Math.max(0.001, effectiveVol), now + 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec + 0.35);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + durationSec + 0.4);
         }
 
-        function scheduleNextBgmLoop() {
+        function stepBgmLoop() {
             if (!isBgmPlaying) return;
-            const selected = appState.settings.stationMelody || 'playlist';
-            let key = selected;
-            if (selected === 'playlist') {
-                key = BGM_PLAYLIST_KEYS[playlistIdx % BGM_PLAYLIST_KEYS.length];
-                playlistIdx++;
+
+            const selectedKey = appState.settings.stationMelody || 'playlist';
+            const melodyKey = selectedKey === 'playlist'
+                ? BGM_PLAYLIST_KEYS[bgmPlaylistIndex % BGM_PLAYLIST_KEYS.length]
+                : (STATION_MELODIES[selectedKey] ? selectedKey : 'sepasang_mata_bola');
+
+            const notes = STATION_MELODIES[melodyKey];
+            const [noteName, dur] = notes[bgmNoteIndex % notes.length];
+            const freq = NOTE_FREQS[noteName] || 440;
+            const vol = parseFloat(appState.settings.bgmVolume) || 0.14;
+
+            playSoftBellNote(freq, dur, vol);
+
+            bgmNoteIndex++;
+            let nextDelayMs = (dur + 0.12) * 1000;
+
+            if (bgmNoteIndex >= notes.length) {
+                bgmNoteIndex = 0;
+                if (selectedKey === 'playlist') {
+                    bgmPlaylistIndex = (bgmPlaylistIndex + 1) % BGM_PLAYLIST_KEYS.length;
+                }
+                nextDelayMs += 1800; // Jeda antarlirik melodi ruang tunggu
             }
-            const notes = STATION_MELODIES[key] || STATION_MELODIES.sepasang_mata_bola;
-            const waitMs = playMelodySequence(notes);
-            bgmLoopTimeout = setTimeout(scheduleNextBgmLoop, waitMs);
+
+            bgmNoteTimer = setTimeout(stepBgmLoop, nextDelayMs);
         }
 
         function toggleBackgroundMusic() {
             isBgmPlaying = !isBgmPlaying;
+            if (bgmNoteTimer) clearTimeout(bgmNoteTimer);
+
+            const btn = document.getElementById('btn-toggle-bgm');
+            const eq = document.getElementById('bgm-eq-bars');
+            const icon = document.getElementById('icon-bgm-status');
+            const text = document.getElementById('text-bgm-status');
+
             if (isBgmPlaying) {
                 ensureAudioContext();
-                scheduleNextBgmLoop();
-            } else if (bgmLoopTimeout) {
-                clearTimeout(bgmLoopTimeout);
-                bgmLoopTimeout = null;
+                bgmNoteIndex = 0;
+                stepBgmLoop();
+                if (btn) btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FFFFFF] text-[#2c3142] border border-[#FFFFFF] text-xs font-extrabold transition-all duration-300 cursor-pointer shadow';
+                if (eq) { eq.classList.remove('hidden'); eq.classList.add('inline-flex'); }
+                if (icon) icon.classList.add('hidden');
+                if (text) text.textContent = 'Backsound Aktif';
+                showToast('Backsound instrumen stasiun dinyalakan.', 'info');
+            } else {
+                if (btn) btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#393e51] hover:bg-[#505567] text-[#E2E8F0] border border-[#545b72] text-xs font-bold transition-all duration-300 cursor-pointer';
+                if (eq) { eq.classList.add('hidden'); eq.classList.remove('inline-flex'); }
+                if (icon) icon.classList.remove('hidden');
+                if (text) text.textContent = 'Backsound';
+                showToast('Backsound dimatikan.', 'info');
             }
-            updateBgmButtonUI();
         }
 
         function handleMelodySelectChange() {
-            const sel = document.getElementById('setting-station-melody');
-            if (!sel) return;
-            appState.settings.stationMelody = sel.value;
+            const el = document.getElementById('setting-station-melody');
+            if (!el) return;
+            appState.settings.stationMelody = el.value;
+            bgmNoteIndex = 0;
             saveAppState();
-            if (isBgmPlaying) {
-                if (bgmLoopTimeout) clearTimeout(bgmLoopTimeout);
-                scheduleNextBgmLoop();
-            }
         }
 
         function handleBgmVolumeChange() {
-            const sel = document.getElementById('setting-bgm-volume');
-            if (!sel) return;
-            const vol = parseFloat(sel.value) || 0.14;
-            appState.settings.bgmVolume = vol;
+            const el = document.getElementById('setting-bgm-volume');
+            if (!el) return;
+            appState.settings.bgmVolume = el.value;
             saveAppState();
-            if (bgmMasterGain && audioCtx) {
-                bgmMasterGain.gain.setValueAtTime(vol, audioCtx.currentTime);
-            }
-        }
-
-        function updateBgmButtonUI() {
-            const btn = document.getElementById('btn-toggle-bgm');
-            const eqBars = document.getElementById('bgm-eq-bars');
-            const icon = document.getElementById('icon-bgm-status');
-            const text = document.getElementById('text-bgm-status');
-            if (!btn) return;
-
-            if (isBgmPlaying) {
-                btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FFFFFF] text-[#2c3142] border border-[#FFFFFF] text-xs font-extrabold transition-all duration-300 cursor-pointer shadow';
-                if (eqBars) {
-                    eqBars.classList.remove('hidden');
-                    eqBars.classList.add('inline-flex');
-                }
-                if (icon) icon.classList.add('hidden');
-                if (text) text.textContent = 'Backsound Aktif';
-            } else {
-                btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#393e51] hover:bg-[#505567] text-[#E2E8F0] border border-[#545b72] text-xs font-bold transition-all duration-300 cursor-pointer';
-                if (eqBars) {
-                    eqBars.classList.add('hidden');
-                    eqBars.classList.remove('inline-flex');
-                }
-                if (icon) icon.classList.remove('hidden');
-                if (text) text.textContent = 'Backsound';
-            }
         }
 
         /* =====================================================================
-           H. PENGATURAN TAMPILAN, DRAWER ADMIN & DETEKSI PERANGKAT TV
+           G. BEL PEMBERITAHUAN BANDARA / STASIUN KERETA API
         ===================================================================== */
-        function isSmartTvDevice() {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('admin') === '1') return false;
-            if (params.get('tv') === '1') return true;
-            const ua = navigator.userAgent || '';
-            return /SmartTV|SMART-TV|Tizen|Web0S|BRAVIA|AFT|CrKey|Roku|Viera|NetCast|TV Bro|BrowseHere/i.test(ua);
+        let isBellRinging = false;
+        let stationNoticeTimer = null;
+        let lastAnnouncedStatusPhase = '';
+        let lastIsomaAnnouncedDate = '';
+
+        const STATION_BELL_PATTERNS = {
+            airport_chime: [
+                { freq: 523.25, delay: 0.00, dur: 0.45 },
+                { freq: 659.25, delay: 0.35, dur: 0.45 },
+                { freq: 783.99, delay: 0.70, dur: 0.45 },
+                { freq: 1046.50, delay: 1.05, dur: 0.90 }
+            ],
+            kai_westminster: [
+                { freq: 659.25, delay: 0.00, dur: 0.50 },
+                { freq: 523.25, delay: 0.48, dur: 0.50 },
+                { freq: 587.33, delay: 0.96, dur: 0.50 },
+                { freq: 392.00, delay: 1.44, dur: 0.95 }
+            ],
+            boarding_dingdong: [
+                { freq: 659.25, delay: 0.00, dur: 0.55 },
+                { freq: 523.25, delay: 0.52, dur: 0.95 }
+            ]
+        };
+
+        function playStationBellSound() {
+            const ctx = ensureAudioContext();
+            if (!ctx) return;
+
+            const style = appState.settings.bellStyle || 'airport_chime';
+            const pattern = STATION_BELL_PATTERNS[style] || STATION_BELL_PATTERNS.airport_chime;
+
+            isBellRinging = true;
+            const bellBtn = document.getElementById('btn-station-bell');
+            if (bellBtn) bellBtn.classList.add('ring-4', 'ring-white/40');
+
+            pattern.forEach(tone => {
+                const startTime = ctx.currentTime + tone.delay;
+                const osc = ctx.createOscillator();
+                const harmonic = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(tone.freq, startTime);
+
+                harmonic.type = 'triangle';
+                harmonic.frequency.setValueAtTime(tone.freq * 2, startTime);
+
+                const hGain = ctx.createGain();
+                hGain.gain.setValueAtTime(0.08, startTime);
+
+                gain.gain.setValueAtTime(0.0001, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.32, startTime + 0.03);
+                gain.gain.exponentialRampToValueAtTime(0.0001, startTime + tone.dur + 0.35);
+
+                osc.connect(gain);
+                harmonic.connect(hGain);
+                hGain.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start(startTime);
+                harmonic.start(startTime);
+                osc.stop(startTime + tone.dur + 0.4);
+                harmonic.stop(startTime + tone.dur + 0.4);
+            });
+
+            const totalMs = Math.ceil((pattern[pattern.length - 1].delay + pattern[pattern.length - 1].dur + 0.5) * 1000);
+            setTimeout(() => {
+                isBellRinging = false;
+                if (bellBtn) bellBtn.classList.remove('ring-4', 'ring-white/40');
+            }, totalMs);
         }
 
-        function configureDeviceMode() {
-            const adminBtn = document.getElementById('btn-admin-drawer');
-            if (adminBtn && isSmartTvDevice()) {
-                adminBtn.style.display = 'none';
-            }
-        }
+        function showStationNoticeBanner(type = 'MANUAL', meta = {}) {
+            const banner = document.getElementById('station-notice-banner');
+            const badgeEl = document.getElementById('station-notice-badge');
+            const titleEl = document.getElementById('station-notice-title');
+            const descEl = document.getElementById('station-notice-desc');
+            if (!banner) return;
 
-        function applySettingsToUI() {
-            const badgeEl = document.getElementById('header-badge-text');
-            const titleEl = document.getElementById('header-main-title');
-            const subEl = document.getElementById('header-subtitle');
-            const runEl = document.getElementById('running-text-content');
-            const filterSel = document.getElementById('quick-filter-mode');
-            const specDate = document.getElementById('quick-specific-date');
-
-            if (badgeEl) badgeEl.textContent = appState.settings.badge;
-            if (titleEl) titleEl.textContent = appState.settings.title;
-            if (subEl) subEl.textContent = appState.settings.subtitle;
-            if (runEl) runEl.textContent = appState.settings.runningText;
-
-            if (filterSel) filterSel.value = appState.settings.filterMode || 'today_tomorrow';
-            if (specDate) {
-                specDate.value = appState.settings.specificDate || getRelativeIsoDate(0);
-                if (appState.settings.filterMode === 'specific') {
-                    specDate.classList.remove('hidden');
-                } else {
-                    specDate.classList.add('hidden');
+            const messages = {
+                PERSIAPAN: {
+                    badge: 'PERSIAPAN UJK • 07:30 WIB',
+                    title: 'Perhatian: 30 Menit Menuju Pelaksanaan UJK',
+                    desc: 'Peserta Uji Kompetensi dimohon bersiap memasuki ruang TUK dan menyiapkan kartu identitas.'
+                },
+                BERLANGSUNG: {
+                    badge: 'PELAKSANAAN DIMULAI • 08:00 WIB',
+                    title: 'Pelaksanaan Uji Kompetensi Sedang Berlangsung',
+                    desc: 'Kepada seluruh peserta dan asesor dipersilakan menempati ruang TUK sesuai jadwal pada layar.'
+                },
+                SELESAI: {
+                    badge: 'SESI BERAKHIR • 15:23 WIB',
+                    title: 'Waktu Pelaksanaan UJK Hari Ini Telah Selesai',
+                    desc: 'Terima kasih atas partisipasi seluruh peserta dan asesor kompetensi.'
+                },
+                ISOMA: {
+                    badge: 'WAKTU ISOMA • 12:00 WIB',
+                    title: 'Pengingat Waktu Istirahat, Sholat & Makan (ISOMA)',
+                    desc: 'Memasuki pukul 12:00 WIB, peserta, asesor, dan panitia UJK dipersilakan untuk melaksanakan ISOMA.'
+                },
+                SLIDE_CHANGE: {
+                    badge: `INFORMASI HALAMAN ${meta.currentPage || 1} / ${meta.totalPages || 1}`,
+                    title: 'Pembaruan Tampilan Halaman Jadwal UJK',
+                    desc: `Menampilkan daftar Tempat Uji Kompetensi dan Asesor halaman ${meta.currentPage || 1} dari ${meta.totalPages || 1}.`
+                },
+                MANUAL: {
+                    badge: 'PANGGILAN RUANG TUNGGU TUK',
+                    title: 'Perhatian Kepada Seluruh Peserta UJK',
+                    desc: 'Dimohon kepada seluruh peserta dan asesor untuk memantau jadwal terbaru pada layar.'
                 }
+            };
+
+            const info = messages[type] || messages.MANUAL;
+            if (badgeEl) badgeEl.textContent = info.badge;
+            if (titleEl) titleEl.textContent = info.title;
+            if (descEl) descEl.textContent = info.desc;
+
+            banner.classList.remove('hidden');
+            if (stationNoticeTimer) clearTimeout(stationNoticeTimer);
+            stationNoticeTimer = setTimeout(() => {
+                hideStationNoticeBanner();
+            }, 9000);
+        }
+
+        function hideStationNoticeBanner() {
+            const banner = document.getElementById('station-notice-banner');
+            if (banner) banner.classList.add('hidden');
+        }
+
+        function triggerStationAnnouncement(type = 'MANUAL', meta = {}) {
+            playStationBellSound();
+            showStationNoticeBanner(type, meta);
+        }
+
+        /* =====================================================================
+           H. JAM REAL-TIME WIB & PEMBARUAN STATUS OTOMATIS + NOTIFIKASI ISOMA
+        ===================================================================== */
+        function startLiveClock() {
+            const dateEl = document.getElementById('live-date');
+            const clockEl = document.getElementById('live-clock');
+
+            const updateClock = () => {
+                const now = new Date();
+                const dayName = NAMA_HARI_ID[now.getDay()] || '';
+                const dateNum = String(now.getDate()).padStart(2, '0');
+                const monthName = NAMA_BULAN_ID[now.getMonth()] || '';
+                const yearNum = now.getFullYear();
+
+                if (dateEl) {
+                    dateEl.textContent = `${dayName}, ${dateNum} ${monthName} ${yearNum}`;
+                }
+
+                const hh = String(now.getHours()).padStart(2, '0');
+                const mm = String(now.getMinutes()).padStart(2, '0');
+                const ss = String(now.getSeconds()).padStart(2, '0');
+                if (clockEl) {
+                    clockEl.textContent = `${hh}:${mm}:${ss}`;
+                }
+
+                const currentIsoDay = `${yearNum}-${String(now.getMonth() + 1).padStart(2, '0')}-${dateNum}`;
+                const nowMin = (now.getHours() * 60) + now.getMinutes();
+
+                let currentPhase = 'TERJADWAL';
+                if (nowMin >= (STANDARD_START_MINUTES - 30) && nowMin < STANDARD_START_MINUTES) {
+                    currentPhase = 'PERSIAPAN';
+                } else if (nowMin >= STANDARD_START_MINUTES && nowMin <= STANDARD_END_MINUTES) {
+                    currentPhase = 'BERLANGSUNG';
+                } else if (nowMin > STANDARD_END_MINUTES) {
+                    currentPhase = 'SELESAI';
+                }
+
+                const bellMode = appState.settings.autoBell || 'slide_and_status';
+
+                if (lastAnnouncedStatusPhase && lastAnnouncedStatusPhase !== currentPhase) {
+                    renderScheduleTable();
+                    if ((bellMode === 'slide_and_status' || bellMode === 'status_only') && currentPhase !== 'TERJADWAL') {
+                        triggerStationAnnouncement(currentPhase);
+                    }
+                }
+                lastAnnouncedStatusPhase = currentPhase;
+
+                // Notifikasi otomatis setiap pukul 12:00 WIB untuk waktu ISOMA
+                if (now.getHours() === 12 && now.getMinutes() === 0 && lastIsomaAnnouncedDate !== currentIsoDay) {
+                    lastIsomaAnnouncedDate = currentIsoDay;
+                    if (bellMode !== 'off') {
+                        triggerStationAnnouncement('ISOMA');
+                    }
+                }
+            };
+
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        /* =====================================================================
+           I. SINKRONISASI GOOGLE SHEETS REAL-TIME & NORMALISASI TANGGAL
+        ===================================================================== */
+        let syncIntervalTimer = null;
+        let autoSlideTimer = null;
+
+        function extractSpreadsheetId(urlOrId) {
+            if (!urlOrId) return '';
+            const trimmed = urlOrId.trim();
+            const match = trimmed.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+            if (match && match[1]) return match[1];
+            if (/^[a-zA-Z0-9-_]{20,}$/.test(trimmed)) return trimmed;
+            return '';
+        }
+
+        function normalizeDateToIso(rawVal, formattedVal = '') {
+            const candidate = (rawVal !== null && rawVal !== undefined && String(rawVal).trim() !== '')
+                ? String(rawVal).trim()
+                : String(formattedVal || '').trim();
+
+            if (!candidate) return '';
+
+            // 1. Format Google Visualization Date(YYYY,M,D,...) (bulan berbasis 0)
+            const gvizMatch = candidate.match(/Date\(\s*(\d{4})\s*,\s*(\d{1,2})\s*,\s*(\d{1,2})/i);
+            if (gvizMatch) {
+                const y = gvizMatch[1];
+                const m = String(parseInt(gvizMatch[2], 10) + 1).padStart(2, '0');
+                const d = String(parseInt(gvizMatch[3], 10)).padStart(2, '0');
+                return `${y}-${m}-${d}`;
             }
-            updateFilterBadge();
+
+            // 2. Format ISO standar YYYY-MM-DD
+            const isoMatch = candidate.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+            if (isoMatch) {
+                return `${isoMatch[1]}-${String(isoMatch[2]).padStart(2, '0')}-${String(isoMatch[3]).padStart(2, '0')}`;
+            }
+
+            // 3. Format DD/MM/YYYY atau DD-MM-YYYY
+            const dmyMatch = candidate.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+            if (dmyMatch) {
+                let p1 = parseInt(dmyMatch[1], 10);
+                let p2 = parseInt(dmyMatch[2], 10);
+                const y = dmyMatch[3];
+                if (p2 > 12 && p1 <= 12) {
+                    const tmp = p1; p1 = p2; p2 = tmp;
+                }
+                return `${y}-${String(p2).padStart(2, '0')}-${String(p1).padStart(2, '0')}`;
+            }
+
+            // 4. Format Teks Bulan Indonesia / Inggris (misal: "Jumat, 20 November 2026" atau "20 Nov 2026")
+            const monthMap = {
+                januari: 1, jan: 1, february: 2, februari: 2, feb: 2,
+                maret: 3, mar: 3, march: 3, april: 4, apr: 4,
+                mei: 5, may: 5, juni: 6, jun: 6, june: 6,
+                juli: 7, jul: 7, july: 7, agustus: 8, agu: 8, agt: 8, aug: 8, august: 8,
+                september: 9, sep: 9, sept: 9, oktober: 10, okt: 10, oct: 10, october: 10,
+                november: 11, nov: 11, desember: 12, des: 12, dec: 12, december: 12
+            };
+            const textMatch = candidate.toLowerCase().match(/(\d{1,2})\s+([a-z]+)\s+(\d{4})/);
+            if (textMatch && monthMap[textMatch[2]]) {
+                const d = String(parseInt(textMatch[1], 10)).padStart(2, '0');
+                const m = String(monthMap[textMatch[2]]).padStart(2, '0');
+                return `${textMatch[3]}-${m}-${d}`;
+            }
+
+            const parsed = new Date(candidate);
+            if (!isNaN(parsed.getTime())) {
+                return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
+            }
+
+            return '';
         }
 
-        function populateDrawerInputs() {
-            const setVal = (id, val) => {
-                const el = document.getElementById(id);
-                if (el) el.value = val;
-            };
-            setVal('gsheet-url-input', appState.gsheet.url || '');
-            setVal('gsheet-sheet-name', appState.gsheet.sheetName || 'Jadwal_UJK');
-            setVal('gsheet-sync-interval', String(appState.gsheet.syncInterval || 10));
-            setVal('setting-ai-auto-mode', appState.settings.aiAutoMode || 'on_slide');
-            setVal('setting-ai-voice', appState.settings.aiVoice || 'Aoede');
-            setVal('setting-station-melody', appState.settings.stationMelody || 'playlist');
-            setVal('setting-bgm-volume', String(appState.settings.bgmVolume || 0.14));
-            setVal('setting-badge', appState.settings.badge);
-            setVal('setting-title', appState.settings.title);
-            setVal('setting-subtitle', appState.settings.subtitle);
-            setVal('setting-rows-per-page', String(appState.settings.rowsPerPage || 7));
-            setVal('setting-slide-interval', String(appState.settings.slideInterval || 10));
-            setVal('setting-running-text', appState.settings.runningText);
+        async function fetchGoogleSheetData(isManual = false) {
+            const sheetId = extractSpreadsheetId(appState.gsheet.url);
+            if (!sheetId) return;
+
+            const syncIcon = document.getElementById('icon-manual-sync');
+            if (syncIcon) syncIcon.classList.add('fa-spin');
+
+            try {
+                const sheetName = encodeURIComponent(appState.gsheet.sheetName || 'Jadwal_UJK');
+                const endpoint = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}&_=${Date.now()}`;
+                const response = await fetch(endpoint);
+                if (!response.ok) throw new Error('Gagal mengakses Google Sheets.');
+
+                const rawText = await response.text();
+                const jsonMatch = rawText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);?\s*$/);
+                if (!jsonMatch || !jsonMatch[1]) throw new Error('Format respons Google Sheets tidak valid.');
+
+                const parsedJson = JSON.parse(jsonMatch[1]);
+                const rows = (parsedJson.table && parsedJson.table.rows) || [];
+                const parsedSchedules = [];
+
+                rows.forEach((row, idx) => {
+                    const cells = row.c || [];
+                    const rawDate = cells[0] ? cells[0].v : '';
+                    const fmtDate = cells[0] ? cells[0].f : '';
+                    const tukName = cells[1] ? String(cells[1].v || cells[1].f || '').trim() : '';
+
+                    if (!tukName || tukName.toLowerCase().includes('nama tuk')) return;
+
+                    const isoDate = normalizeDateToIso(rawDate, fmtDate);
+                    if (!isoDate) return;
+
+                    const assessors = [];
+                    for (let c = 2; c < cells.length; c++) {
+                        const cellVal = cells[c] ? String(cells[c].v || cells[c].f || '').trim() : '';
+                        if (cellVal && !cellVal.toLowerCase().startsWith('asesor')) {
+                            cellVal.split(/[;\n|]/).forEach(part => {
+                                const cleanName = part.trim();
+                                if (cleanName) assessors.push(cleanName);
+                            });
+                        }
+                    }
+
+                    parsedSchedules.push({
+                        id: `gs-${idx + 1}`,
+                        date: isoDate,
+                        tuk: tukName,
+                        assessors: assessors
+                    });
+                });
+
+                appState.schedules = parsedSchedules;
+                if (isManual) appState.currentPage = 1;
+                saveAppState();
+                renderScheduleTable();
+                updateConnectionUI(true);
+
+                const now = new Date();
+                const syncTimeEl = document.getElementById('last-sync-time');
+                if (syncTimeEl) {
+                    syncTimeEl.textContent = `Sync ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                }
+                if (isManual) {
+                    showToast(`Berhasil memuat ${parsedSchedules.length} jadwal dari Google Sheets.`, 'success');
+                }
+            } catch (err) {
+                console.error(err);
+                updateConnectionUI(false);
+                if (isManual) {
+                    showToast('Gagal mengambil data Google Sheets. Pastikan akses link sudah Publik.', 'error');
+                }
+            } finally {
+                if (syncIcon) syncIcon.classList.remove('fa-spin');
+            }
         }
 
-        function saveDisplaySettings() {
-            const getVal = (id, fallback) => {
-                const el = document.getElementById(id);
-                return el ? el.value : fallback;
-            };
-            appState.settings.aiAutoMode = getVal('setting-ai-auto-mode', 'on_slide');
-            appState.settings.aiVoice = getVal('setting-ai-voice', 'Aoede');
-            appState.settings.badge = getVal('setting-badge', appState.settings.badge).trim() || 'LSP / TUK RESMI';
-            appState.settings.title = getVal('setting-title', appState.settings.title).trim() || 'JADWAL UJI KOMPETENSI (UJK)';
-            appState.settings.subtitle = getVal('setting-subtitle', appState.settings.subtitle).trim();
-            appState.settings.rowsPerPage = parseInt(getVal('setting-rows-per-page', '7'), 10) || 7;
-            appState.settings.slideInterval = parseInt(getVal('setting-slide-interval', '10'), 10);
-            appState.settings.runningText = getVal('setting-running-text', appState.settings.runningText).trim();
+        function startGoogleSheetPolling() {
+            if (syncIntervalTimer) clearInterval(syncIntervalTimer);
+            const sheetId = extractSpreadsheetId(appState.gsheet.url);
+            if (!sheetId) {
+                updateConnectionUI(false);
+                return;
+            }
+            const intervalSec = Math.max(5, parseInt(appState.gsheet.syncInterval, 10) || 10);
+            fetchGoogleSheetData(false);
+            syncIntervalTimer = setInterval(() => fetchGoogleSheetData(false), intervalSec * 1000);
+        }
 
+        function connectGoogleSheet() {
+            const urlInput = document.getElementById('gsheet-url-input');
+            const nameInput = document.getElementById('gsheet-sheet-name');
+            const intervalInput = document.getElementById('gsheet-sync-interval');
+
+            const urlVal = urlInput ? urlInput.value.trim() : '';
+            if (!extractSpreadsheetId(urlVal)) {
+                showToast('Masukkan link Google Sheets yang valid terlebih dahulu.', 'error');
+                return;
+            }
+
+            appState.gsheet.url = urlVal;
+            appState.gsheet.sheetName = (nameInput && nameInput.value.trim()) || 'Jadwal_UJK';
+            appState.gsheet.syncInterval = (intervalInput && intervalInput.value) || '10';
+            appState.currentPage = 1;
             saveAppState();
-            applySettingsToUI();
+
+            fetchGoogleSheetData(true);
+            startGoogleSheetPolling();
+        }
+
+        function disconnectGoogleSheet() {
+            if (syncIntervalTimer) clearInterval(syncIntervalTimer);
+            appState.gsheet.url = '';
+            appState.schedules = [...DEFAULT_SCHEDULES];
+            appState.currentPage = 1;
+            saveAppState();
+
+            const urlInput = document.getElementById('gsheet-url-input');
+            if (urlInput) urlInput.value = '';
+            updateConnectionUI(false);
             renderScheduleTable();
-            startAutoPagination();
-            startAiPeriodicAnnouncement();
-            showToast('Pengaturan display & pembaca AI berhasil disimpan.', 'success');
+            showToast('Koneksi Google Sheets diputuskan. Kembali ke data contoh.', 'info');
         }
 
-        function toggleAdminDrawer() {
-            const drawer = document.getElementById('admin-drawer');
-            const backdrop = document.getElementById('admin-backdrop');
-            if (!drawer || !backdrop) return;
+        function manualSyncNow() {
+            fetchGoogleSheetData(true);
+        }
 
-            const isClosed = drawer.classList.contains('translate-x-full');
-            if (isClosed) {
-                populateDrawerInputs();
-                drawer.classList.remove('translate-x-full');
-                backdrop.classList.remove('hidden');
+        function updateConnectionUI(isConnected) {
+            const labelEl = document.getElementById('connection-label');
+            const dotEl = document.getElementById('connection-dot');
+            const drawerStatus = document.getElementById('gsheet-drawer-status');
+            const manualBtn = document.getElementById('btn-manual-sync');
+
+            if (isConnected) {
+                if (labelEl) labelEl.textContent = 'Google Sheets Live';
+                if (dotEl) dotEl.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+                if (drawerStatus) {
+                    drawerStatus.textContent = 'Terhubung Live';
+                    drawerStatus.className = 'text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200 border border-emerald-400/40';
+                }
+                if (manualBtn) {
+                    manualBtn.classList.remove('hidden');
+                    manualBtn.classList.add('inline-flex');
+                }
             } else {
-                drawer.classList.add('translate-x-full');
-                backdrop.classList.add('hidden');
+                if (labelEl) labelEl.textContent = 'Mode Siap Pakai';
+                if (dotEl) dotEl.className = 'w-2 h-2 rounded-full bg-[#FFFFFF] animate-pulse';
+                if (drawerStatus) {
+                    drawerStatus.textContent = 'Belum Terhubung';
+                    drawerStatus.className = 'text-[11px] font-bold px-2 py-0.5 rounded bg-[#464c5e] text-[#E2E8F0]';
+                }
+                if (manualBtn) {
+                    manualBtn.classList.add('hidden');
+                    manualBtn.classList.remove('inline-flex');
+                }
             }
         }
 
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {});
-            } else {
-                document.exitFullscreen().catch(() => {});
-            }
-        }
+        function startAutoPagination() {
+            if (autoSlideTimer) clearInterval(autoSlideTimer);
+            const sec = parseInt(appState.settings.slideInterval, 10);
+            const infoEl = document.getElementById('auto-slide-info');
 
-        document.addEventListener('fullscreenchange', () => {
-            const icon = document.getElementById('icon-fullscreen');
-            if (icon) {
-                icon.className = document.fullscreenElement
-                    ? 'fa-solid fa-compress text-base sm:text-lg'
-                    : 'fa-solid fa-expand text-base sm:text-lg';
+            if (!sec || sec <= 0) {
+                if (infoEl) infoEl.textContent = 'Auto-slide nonaktif';
+                return;
             }
-        });
+            if (infoEl) infoEl.textContent = `Auto-slide aktif (${sec} dtk)`;
+            autoSlideTimer = setInterval(() => nextPage(true), sec * 1000);
+        }
 
         /* =====================================================================
-           I. EXPORT LAPORAN EXCEL (.XLSX) & PDF (.PDF)
+           J. EXPORT CSV TEMPLATE, EXCEL (.XLSX) & PDF (.PDF)
         ===================================================================== */
+        function downloadTemplateCSV() {
+            const today = getRelativeIsoDate(0);
+            const tomorrow = getRelativeIsoDate(1);
+            const csvLines = [
+                'Tanggal_UJK,Nama_TUK,Asesor_1,Asesor_2',
+                `${today},"TUK Sewaktu Lab Komputer 01","Ir. Budi Santoso, M.Kom.","Dr. Siti Aminah, S.T., M.T."`,
+                `${tomorrow},"TUK Mandiri Ruang Praktik Utama","Ahmad Fauzi, S.Kom., M.M.",""`
+            ];
+            const blob = new Blob([csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Template_Jadwal_UJK_GoogleSheets.csv';
+            link.click();
+            showToast('Template CSV berhasil diunduh.', 'success');
+        }
+
         function exportToExcel() {
             if (typeof XLSX === 'undefined') {
                 showToast('Library Excel belum siap.', 'error');
                 return;
             }
-            const data = getFilteredSchedules().map((item, idx) => ({
+            const filtered = getFilteredSchedules();
+            const rows = filtered.map((item, idx) => ({
                 'No': idx + 1,
                 'Tanggal UJK': formatTanggalDenganHari(item.date),
                 'Nama TUK / Ruang': item.tuk,
-                'Nama Asesor Kompetensi': (item.assessors || []).join('; ')
+                'Nama Asesor Kompetensi': (item.assessors || []).join('; '),
+                'Status': getScheduleLiveStatus(item).label
             }));
-            const ws = XLSX.utils.json_to_sheet(data);
+            const ws = XLSX.utils.json_to_sheet(rows);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Jadwal_UJK');
+            XLSX.utils.book_append_sheet(wb, ws, 'Jadwal UJK');
             XLSX.writeFile(wb, `Jadwal_UJK_${getRelativeIsoDate(0)}.xlsx`);
-            showToast('Laporan Excel (.xlsx) berhasil diunduh.', 'success');
+            showToast('Laporan Excel berhasil diunduh.', 'success');
         }
 
         function exportToPDF() {
@@ -1823,67 +1481,197 @@
             }
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+            const filtered = getFilteredSchedules();
 
             doc.setFillColor(44, 49, 66);
-            doc.rect(0, 0, 297, 22, 'F');
+            doc.rect(0, 0, 297, 26, 'F');
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text(appState.settings.title || 'JADWAL UJI KOMPETENSI (UJK)', 14, 10);
+            doc.setFont('helvetica', 'bold');
+            doc.text(appState.settings.title || 'JADWAL UJI KOMPETENSI (UJK)', 14, 11);
             doc.setFontSize(9);
-            doc.setFont(undefined, 'normal');
-            doc.text(appState.settings.subtitle || '', 14, 16.5);
+            doc.setFont('helvetica', 'normal');
+            doc.text(appState.settings.subtitle || 'Lembaga Sertifikasi Profesi', 14, 18);
 
-            const rows = getFilteredSchedules().map((item, idx) => [
+            const bodyData = filtered.map((item, idx) => [
                 idx + 1,
                 formatTanggalDenganHari(item.date),
                 item.tuk,
-                (item.assessors || []).map((a, i) => `${i + 1}. ${a}`).join('\n')
+                (item.assessors || []).map((a, i) => `${i + 1}. ${a}`).join('\n') || '-',
+                getScheduleLiveStatus(item).label
             ]);
 
             doc.autoTable({
-                startY: 27,
-                head: [['No', 'Tanggal UJK', 'Nama TUK / Ruang', 'Nama Asesor Kompetensi']],
-                body: rows,
-                theme: 'grid',
-                headStyles: { fillColor: [44, 49, 66], textColor: [255, 255, 255], fontStyle: 'bold' },
-                alternateRowStyles: { fillColor: [238, 240, 245] },
+                startY: 32,
+                head: [['No', 'Tanggal UJK', 'Nama TUK / Ruang', 'Nama Asesor Kompetensi', 'Status']],
+                body: bodyData,
+                headStyles: { fillColor: [57, 62, 81], textColor: 255, fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [241, 245, 249] },
                 styles: { fontSize: 9, cellPadding: 3 }
             });
 
             doc.save(`Jadwal_UJK_${getRelativeIsoDate(0)}.pdf`);
-            showToast('Laporan PDF (.pdf) berhasil diunduh.', 'success');
+            showToast('Laporan PDF berhasil diunduh.', 'success');
         }
 
         /* =====================================================================
-           J. UTILITAS KEAMANAN TEKS, TOAST & SHORTCUT KEYBOARD
+           K. MANAJEMEN STATE, DRAWER PENGATURAN, FULLSCREEN & INISIALISASI
         ===================================================================== */
-        function escapeHtml(text) {
-            return String(text || '')
+        let appState = {
+            schedules: [...DEFAULT_SCHEDULES],
+            currentPage: 1,
+            filter: {
+                mode: 'today_tomorrow',
+                specificDate: getRelativeIsoDate(0)
+            },
+            gsheet: {
+                url: '',
+                sheetName: 'Jadwal_UJK',
+                syncInterval: '10'
+            },
+            settings: {
+                badge: 'LSP / TUK RESMI',
+                title: 'JADWAL UJI KOMPETENSI (UJK)',
+                subtitle: 'Lembaga Sertifikasi Profesi • Informasi Pelaksanaan Asesmen Real-Time',
+                rowsPerPage: '7',
+                slideInterval: '10',
+                runningText: 'Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan kelengkapan portofolio.',
+                bellStyle: 'airport_chime',
+                autoBell: 'slide_and_status',
+                stationMelody: 'playlist',
+                bgmVolume: '0.14'
+            }
+        };
+
+        function loadAppState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed.schedules) && parsed.schedules.length > 0) {
+                        appState.schedules = parsed.schedules;
+                    }
+                    if (parsed.filter) appState.filter = { ...appState.filter, ...parsed.filter };
+                    if (parsed.gsheet) appState.gsheet = { ...appState.gsheet, ...parsed.gsheet };
+                    if (parsed.settings) appState.settings = { ...appState.settings, ...parsed.settings };
+                }
+            } catch (e) {
+                console.warn('Gagal memuat state lokal:', e);
+            }
+        }
+
+        function saveAppState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+            } catch (e) {
+                console.warn('Gagal menyimpan state lokal:', e);
+            }
+        }
+
+        function applySettingsToUI() {
+            const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+
+            setText('header-badge-text', appState.settings.badge);
+            setText('header-main-title', appState.settings.title);
+            setText('header-subtitle', appState.settings.subtitle);
+            setText('running-text-content', appState.settings.runningText);
+
+            setVal('setting-badge', appState.settings.badge);
+            setVal('setting-title', appState.settings.title);
+            setVal('setting-subtitle', appState.settings.subtitle);
+            setVal('setting-rows-per-page', appState.settings.rowsPerPage);
+            setVal('setting-slide-interval', appState.settings.slideInterval);
+            setVal('setting-running-text', appState.settings.runningText);
+            setVal('setting-bell-style', appState.settings.bellStyle);
+            setVal('setting-auto-bell', appState.settings.autoBell);
+            setVal('setting-station-melody', appState.settings.stationMelody);
+            setVal('setting-bgm-volume', appState.settings.bgmVolume);
+
+            setVal('gsheet-url-input', appState.gsheet.url);
+            setVal('gsheet-sheet-name', appState.gsheet.sheetName);
+            setVal('gsheet-sync-interval', appState.gsheet.syncInterval);
+
+            const filterModeEl = document.getElementById('quick-filter-mode');
+            const specificDateEl = document.getElementById('quick-specific-date');
+            if (filterModeEl) filterModeEl.value = appState.filter.mode || 'today_tomorrow';
+            if (specificDateEl) {
+                specificDateEl.value = appState.filter.specificDate || getRelativeIsoDate(0);
+                if (appState.filter.mode === 'specific') specificDateEl.classList.remove('hidden');
+                else specificDateEl.classList.add('hidden');
+            }
+        }
+
+        function saveDisplaySettings() {
+            const getVal = (id, fallback) => { const el = document.getElementById(id); return el ? el.value : fallback; };
+
+            appState.settings.badge = getVal('setting-badge', appState.settings.badge);
+            appState.settings.title = getVal('setting-title', appState.settings.title);
+            appState.settings.subtitle = getVal('setting-subtitle', appState.settings.subtitle);
+            appState.settings.rowsPerPage = getVal('setting-rows-per-page', appState.settings.rowsPerPage);
+            appState.settings.slideInterval = getVal('setting-slide-interval', appState.settings.slideInterval);
+            appState.settings.runningText = getVal('setting-running-text', appState.settings.runningText);
+            appState.settings.bellStyle = getVal('setting-bell-style', appState.settings.bellStyle);
+            appState.settings.autoBell = getVal('setting-auto-bell', appState.settings.autoBell);
+            appState.settings.stationMelody = getVal('setting-station-melody', appState.settings.stationMelody);
+            appState.settings.bgmVolume = getVal('setting-bgm-volume', appState.settings.bgmVolume);
+
+            saveAppState();
+            applySettingsToUI();
+            renderScheduleTable();
+            startAutoPagination();
+            showToast('Semua pengaturan berhasil disimpan.', 'success');
+        }
+
+        function toggleAdminDrawer() {
+            const drawer = document.getElementById('admin-drawer');
+            const backdrop = document.getElementById('admin-backdrop');
+            if (!drawer || !backdrop) return;
+
+            const isClosed = drawer.classList.contains('translate-x-full');
+            if (isClosed) {
+                backdrop.classList.remove('hidden');
+                drawer.classList.remove('translate-x-full');
+            } else {
+                drawer.classList.add('translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str || '')
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
+                .replace(/'/g, '&#39;');
         }
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
 
-            const iconClass = type === 'success'
-                ? 'fa-circle-check text-emerald-300'
-                : type === 'error'
-                    ? 'fa-circle-exclamation text-rose-300'
-                    : 'fa-circle-info text-[#FFFFFF]';
-
+            const iconMap = {
+                success: 'fa-circle-check text-emerald-400',
+                error: 'fa-circle-exclamation text-rose-400',
+                info: 'fa-circle-info text-[#FFFFFF]'
+            };
             const toast = document.createElement('div');
-            toast.className = 'pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl bg-[#393e51] text-[#FFFFFF] border border-[#545b72] shadow-2xl text-xs sm:text-sm font-semibold transition-all duration-300';
-            toast.innerHTML = `<i class="fa-solid ${iconClass}"></i><span>${escapeHtml(message)}</span>`;
+            toast.className = 'pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl bg-[#2c3142]/95 border border-[#545b72] text-[#FFFFFF] text-xs font-bold shadow-xl backdrop-blur-md transition-all duration-300';
+            toast.innerHTML = `<i class="fa-solid ${iconMap[type] || iconMap.info} text-sm"></i><span>${escapeHtml(message)}</span>`;
             container.appendChild(toast);
 
             setTimeout(() => {
                 toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-8px)';
                 setTimeout(() => toast.remove(), 300);
             }, 3500);
         }
@@ -1895,9 +1683,9 @@
             } else if (e.altKey && e.key.toLowerCase() === 'm') {
                 e.preventDefault();
                 toggleBackgroundMusic();
-            } else if (e.altKey && e.key.toLowerCase() === 's') {
+            } else if (e.altKey && e.key.toLowerCase() === 'b') {
                 e.preventDefault();
-                toggleScheduleAnnouncement();
+                triggerStationAnnouncement('MANUAL');
             } else if (e.key === 'Escape') {
                 const drawer = document.getElementById('admin-drawer');
                 if (drawer && !drawer.classList.contains('translate-x-full')) {
@@ -1906,49 +1694,14 @@
             }
         });
 
-        /* =====================================================================
-           K. INISIALISASI APLIKASI SAAT HALAMAN DIMUAT
-        ===================================================================== */
         window.addEventListener('DOMContentLoaded', () => {
             loadAppState();
-            configureDeviceMode();
             applySettingsToUI();
             renderScheduleTable();
             startLiveClock();
             startAutoPagination();
-            startSyncPolling();
-            startAiPeriodicAnnouncement();
-
-            // Pemuatan daftar suara browser untuk Smart TV
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.getVoices();
-                if (typeof window.speechSynthesis.onvoiceschanged !== 'undefined') {
-                    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-                }
-            }
-
-            // Buka kunci audio otomatis apabila pengguna menekan tombol/remote mana saja di TV
-            const unlockOnFirstInteraction = () => {
-                if (!tvAudioUnlocked) {
-                    tvAudioUnlocked = true;
-                    const banner = document.getElementById('tv-audio-unlock-banner');
-                    if (banner) banner.classList.add('hidden');
-                    try {
-                        const ctx = ensureAudioContext();
-                        if (ctx && ctx.state === 'suspended') ctx.resume();
-                    } catch (e) {}
-                }
-                document.removeEventListener('click', unlockOnFirstInteraction);
-                document.removeEventListener('keydown', unlockOnFirstInteraction);
-            };
-            document.addEventListener('click', unlockOnFirstInteraction);
-            document.addEventListener('keydown', unlockOnFirstInteraction);
-
-            // Coba jalankan pembacaan AI otomatis 3 detik setelah halaman TV terbuka
-            if (appState.settings.aiAutoMode && appState.settings.aiAutoMode !== 'manual') {
-                setTimeout(() => {
-                    if (!isAnnouncing) announceCurrentPageSchedules(true);
-                }, 3000);
+            if (extractSpreadsheetId(appState.gsheet.url)) {
+                startGoogleSheetPolling();
             }
         });
     </script>
