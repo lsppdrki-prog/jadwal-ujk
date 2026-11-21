@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Display Jadwal UJK - Sistem Informasi Pelaksanaan Asesmen</title>
 
     <!-- Google Fonts: Inter & JetBrains Mono -->
@@ -35,17 +36,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
     <style>
-        /* Latar Kisi Geometris Steel Slate Bergerak Halus */
+        /* Latar Kisi Geometris Electric Midnight Bergerak Halus */
         @keyframes gridDrift {
             0% { background-position: 0 0, 0 0, 0 0; }
             100% { background-position: 0 0, 48px 48px, 48px 48px; }
         }
         .bg-motion-grid {
-            background-color: #2c3142;
+            background-color: #090d16;
             background-image:
-                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08) 0%, transparent 65%),
-                linear-gradient(to right, rgba(84, 91, 114, 0.35) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(84, 91, 114, 0.35) 1px, transparent 1px);
+                radial-gradient(circle at 50% 0%, rgba(0, 229, 255, 0.16) 0%, rgba(255, 46, 147, 0.08) 40%, transparent 72%),
+                linear-gradient(to right, rgba(0, 229, 255, 0.12) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 46, 147, 0.10) 1px, transparent 1px);
             background-size: 100% 100%, 48px 48px, 48px 48px;
             animation: gridDrift 24s linear infinite;
         }
@@ -62,8 +63,8 @@
             left: 0;
             width: 35%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
-            animation: headerShimmer 8s ease-in-out infinite;
+            background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.18), transparent);
+            animation: headerShimmer 7s ease-in-out infinite;
             pointer-events: none;
         }
 
@@ -76,10 +77,10 @@
         .scan-beam {
             position: absolute;
             bottom: 0;
-            width: 22%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #FFFFFF, transparent);
-            animation: scanBeam 6s linear infinite;
+            width: 28%;
+            height: 2.5px;
+            background: linear-gradient(90deg, transparent, #00E5FF, #FF2E93, transparent);
+            animation: scanBeam 5s linear infinite;
             pointer-events: none;
         }
 
@@ -100,7 +101,7 @@
         }
         .eq-bar {
             width: 2.5px;
-            background-color: #2c3142;
+            background-color: #090d16;
             border-radius: 9999px;
             animation: eqPulse 0.85s ease-in-out infinite;
         }
@@ -121,79 +122,79 @@
             animation-play-state: paused;
         }
 
-        /* Scrollbar Halus Steel Slate */
+        /* Scrollbar Halus Electric Cyan */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #2c3142;
+            background: #090d16;
         }
         ::-webkit-scrollbar-thumb {
-            background: #545b72;
+            background: #00E5FF;
             border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #6c748f;
+            background: #FF2E93;
         }
     </style>
 </head>
-<body class="bg-motion-grid text-[#FFFFFF] font-sans antialiased selection:bg-[#FFFFFF] selection:text-[#2c3142] overflow-x-hidden">
+<body class="bg-motion-grid text-[#FFFFFF] font-sans antialiased selection:bg-[#FFD60A] selection:text-[#090d16] overflow-x-hidden">
 
     <!-- Wrapper Utama Layar Penuh (100dvh Anti-Potong pada Smart TV & Desktop) -->
     <div class="min-h-[100dvh] flex flex-col justify-between">
 
         <!-- HEADER UTAMA -->
-        <header id="main-header" class="relative overflow-hidden header-shimmer bg-[#2c3142]/95 backdrop-blur-md border-b border-[#545b72] px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_10px_30px_rgba(20,23,32,0.55)] shrink-0">
+        <header id="main-header" class="relative overflow-hidden header-shimmer bg-gradient-to-r from-[#0d1323] via-[#151e36] to-[#1e1333] backdrop-blur-md border-b-2 border-[#00E5FF]/50 px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_10px_35px_rgba(0,229,255,0.18)] shrink-0">
             <div class="scan-beam"></div>
             <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
 
                 <!-- Kiri: Identitas Lembaga & Judul Board -->
                 <div class="flex items-center gap-3.5 min-w-0">
-                    <div id="header-icon-box" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#545b72] via-[#464c5e] to-[#2c3142] flex items-center justify-center text-[#FFFFFF] shadow-lg shrink-0 border border-[#545b72] transition-transform duration-500 hover:scale-105">
-                        <i id="header-icon-class" class="fa-solid fa-award text-2xl sm:text-3xl text-[#FFFFFF]"></i>
+                    <div id="header-icon-box" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#00E5FF] via-[#7B2CBF] to-[#FF2E93] flex items-center justify-center text-[#FFFFFF] shadow-[0_0_22px_rgba(0,229,255,0.45)] shrink-0 border border-[#00E5FF]/70 transition-transform duration-500 hover:scale-105">
+                        <i id="header-icon-class" class="fa-solid fa-award text-2xl sm:text-3xl text-[#FFFFFF] drop-shadow"></i>
                     </div>
                     <div class="min-w-0">
                         <div class="flex flex-wrap items-center gap-2 mb-0.5">
-                            <span id="header-badge-text" class="px-2.5 py-0.5 rounded-md bg-[#393e51] text-[#FFFFFF] border border-[#545b72] text-[11px] sm:text-xs font-extrabold uppercase tracking-wider">
+                            <span id="header-badge-text" class="px-2.5 py-0.5 rounded-md bg-[#FF2E93] text-[#FFFFFF] border border-[#FF75B5] text-[11px] sm:text-xs font-black uppercase tracking-wider shadow-[0_0_12px_rgba(255,46,147,0.45)]">
                                 LSP / TUK RESMI
                             </span>
-                            <span id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#2c3142] border border-[#505567] text-[11px] sm:text-xs font-semibold text-[#E2E8F0]">
-                                <span id="connection-dot" class="w-2 h-2 rounded-full bg-[#FFFFFF] animate-pulse"></span>
+                            <span id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#090d16]/90 border border-[#00E5FF]/50 text-[11px] sm:text-xs font-bold text-[#00E5FF]">
+                                <span id="connection-dot" class="w-2 h-2 rounded-full bg-[#00F59B] animate-pulse"></span>
                                 <span id="connection-label">Mode Siap Pakai</span>
                             </span>
                         </div>
-                        <h1 id="header-main-title" class="text-lg sm:text-2xl lg:text-3xl font-black tracking-tight text-[#FFFFFF] truncate">
+                        <h1 id="header-main-title" class="text-lg sm:text-2xl lg:text-3xl font-black tracking-tight text-[#FFFFFF] drop-shadow-[0_2px_10px_rgba(0,229,255,0.25)] truncate">
                             JADWAL UJI KOMPETENSI (UJK)
                         </h1>
-                        <p id="header-subtitle" class="text-xs sm:text-sm font-medium text-[#CBD5E1] truncate">
+                        <p id="header-subtitle" class="text-xs sm:text-sm font-semibold text-[#7DD3FC] truncate">
                             Lembaga Sertifikasi Profesi • Informasi Pelaksanaan Asesmen Real-Time
                         </p>
                     </div>
                 </div>
 
                 <!-- Kanan: Jam Digital Real-Time WIB & Tombol Ikon -->
-                <div class="flex items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 border-[#464c5e] pt-2.5 lg:pt-0">
+                <div class="flex items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 border-[#00E5FF]/30 pt-2.5 lg:pt-0">
                     <div class="text-left lg:text-right">
-                        <div id="live-date" class="text-xs sm:text-sm font-bold text-[#CBD5E1] uppercase tracking-wider">
+                        <div id="live-date" class="text-xs sm:text-sm font-extrabold text-[#00E5FF] uppercase tracking-wider">
                             MEMUAT TANGGAL...
                         </div>
                         <div class="flex items-baseline gap-1.5 justify-start lg:justify-end">
-                            <span id="live-clock" class="font-mono text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#FFFFFF] tracking-wider drop-shadow-[0_0_14px_rgba(255,255,255,0.2)]">
+                            <span id="live-clock" class="font-mono text-2xl sm:text-3xl lg:text-4xl font-black text-[#FFD60A] tracking-wider drop-shadow-[0_0_16px_rgba(255,214,10,0.45)]">
                                 00:00:00
                             </span>
-                            <span class="text-xs font-extrabold text-[#FFFFFF] bg-[#393e51] px-2 py-0.5 rounded-md border border-[#545b72]">
+                            <span class="text-xs font-black text-[#090d16] bg-[#FFD60A] px-2 py-0.5 rounded-md shadow-[0_0_10px_rgba(255,214,10,0.4)]">
                                 WIB
                             </span>
                         </div>
                     </div>
 
                     <!-- Tombol Ikon Kontrol -->
-                    <div id="header-control-buttons" class="flex items-center gap-2 pl-3 border-l border-[#464c5e]">
-                        <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Layar Penuh (F11)" aria-label="Layar Penuh" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#393e51] hover:bg-[#505567] text-[#FFFFFF] border border-[#545b72] flex items-center justify-center transition-all duration-300 hover:scale-105 cursor-pointer shadow-sm">
+                    <div id="header-control-buttons" class="flex items-center gap-2 pl-3 border-l border-[#00E5FF]/30">
+                        <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Layar Penuh (F11)" aria-label="Layar Penuh" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#131c31] hover:bg-[#00E5FF] text-[#00E5FF] hover:text-[#090d16] border border-[#00E5FF]/60 flex items-center justify-center transition-all duration-300 hover:scale-105 cursor-pointer shadow-[0_0_12px_rgba(0,229,255,0.2)]">
                             <i id="icon-fullscreen" class="fa-solid fa-expand text-base sm:text-lg"></i>
                         </button>
-                        <button id="btn-admin-drawer" onclick="toggleAdminDrawer()" title="Pengaturan & Google Sheets (Alt + A)" aria-label="Pengaturan Google Sheets" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-b from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] flex items-center justify-center transition-all duration-300 hover:scale-105 cursor-pointer shadow-[0_4px_14px_rgba(255,255,255,0.2)]">
+                        <button id="btn-admin-drawer" onclick="toggleAdminDrawer()" title="Pengaturan & Google Sheets (Alt + A)" aria-label="Pengaturan Google Sheets" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-[#FF2E93] to-[#FF6B00] hover:from-[#FF4da3] hover:to-[#FF8533] text-[#FFFFFF] flex items-center justify-center transition-all duration-300 hover:scale-105 cursor-pointer shadow-[0_4px_18px_rgba(255,46,147,0.45)]">
                             <i class="fa-solid fa-table-cells text-base sm:text-lg"></i>
                         </button>
                     </div>
@@ -203,17 +204,17 @@
 
         <!-- KONTEN UTAMA: PAPAN TABEL JADWAL UJK -->
         <main class="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 py-3 sm:py-4 min-h-0">
-            <div class="flex-1 flex flex-col bg-[#393e51]/92 backdrop-blur-md border border-[#545b72] rounded-2xl shadow-[0_24px_60px_rgba(20,23,32,0.65)] overflow-hidden min-h-0">
+            <div class="flex-1 flex flex-col bg-[#0f1626]/95 backdrop-blur-md border-2 border-[#00E5FF]/40 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.85)] overflow-hidden min-h-0">
 
                 <!-- Bilah Filter Tanggal UJK & Status Sinkronisasi -->
-                <div class="bg-[#2c3142]/85 border-b border-[#545b72] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <div class="bg-[#131c31] border-b border-[#00E5FF]/30 px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
                     <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                        <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#FFFFFF]">
-                            <i class="fa-solid fa-filter text-[#CBD5E1]"></i>
+                        <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-extrabold text-[#00E5FF]">
+                            <i class="fa-solid fa-filter text-[#FFD60A]"></i>
                             <span>Filter Jadwal:</span>
                         </span>
 
-                        <select id="quick-filter-mode" onchange="handleQuickFilterChange()" class="bg-[#2c3142] text-[#FFFFFF] border border-[#545b72] rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#FFFFFF] transition cursor-pointer">
+                        <select id="quick-filter-mode" onchange="handleQuickFilterChange()" class="bg-[#090d16] text-[#FFFFFF] border border-[#00E5FF]/60 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-bold focus:outline-none focus:border-[#FFD60A] transition cursor-pointer">
                             <option value="today_tomorrow">Hari Ini & Besok</option>
                             <option value="today">Hari Ini Saja</option>
                             <option value="specific">Pilih Tanggal UJK Tertentu</option>
@@ -221,85 +222,85 @@
                             <option value="all">Semua Tanggal UJK</option>
                         </select>
 
-                        <input type="date" id="quick-specific-date" onchange="handleQuickSpecificDateChange()" class="hidden bg-[#2c3142] text-[#FFFFFF] border border-[#545b72] rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#FFFFFF] cursor-pointer">
+                        <input type="date" id="quick-specific-date" onchange="handleQuickSpecificDateChange()" class="hidden bg-[#090d16] text-[#FFFFFF] border border-[#00E5FF]/60 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-bold focus:outline-none focus:border-[#FFD60A] cursor-pointer">
 
-                        <span id="active-filter-badge" class="px-2.5 py-1 rounded-lg bg-[#464c5e] text-[#FFFFFF] border border-[#545b72] text-xs font-bold">
+                        <span id="active-filter-badge" class="px-2.5 py-1 rounded-lg bg-[#00E5FF]/15 text-[#00E5FF] border border-[#00E5FF]/50 text-xs font-extrabold">
                             Hari Ini & Besok
                         </span>
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <span id="last-sync-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#2c3142] border border-[#505567] text-xs text-[#E2E8F0] font-mono">
-                            <i class="fa-solid fa-circle-check text-[11px] text-[#FFFFFF]"></i>
+                        <span id="last-sync-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#090d16] border border-[#00F59B]/40 text-xs text-[#00F59B] font-mono font-bold">
+                            <i class="fa-solid fa-circle-check text-[11px] text-[#00F59B]"></i>
                             <span id="last-sync-time">Data Siap</span>
                         </span>
-                        <button id="btn-manual-sync" onclick="manualSyncNow()" title="Sinkronkan Data Google Sheets Sekarang" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#464c5e] hover:bg-[#545b72] text-[#FFFFFF] border border-[#545b72] text-xs font-bold transition cursor-pointer">
+                        <button id="btn-manual-sync" onclick="manualSyncNow()" title="Sinkronkan Data Google Sheets Sekarang" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#00E5FF] hover:bg-[#38BDF8] text-[#090d16] text-xs font-black transition cursor-pointer shadow">
                             <i id="icon-manual-sync" class="fa-solid fa-arrows-rotate text-[11px]"></i>
                             <span>Sync</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Tabel Utama Display (3 Kolom dengan Palet Steel Slate) -->
+                <!-- Tabel Utama Display (Palet Mencolok Kontras Tinggi) -->
                 <div class="flex-1 overflow-auto min-h-0">
                     <table class="w-full table-fixed text-left border-collapse">
-                        <thead class="sticky top-0 z-10 text-xs sm:text-sm uppercase tracking-wider border-b border-[#545b72]">
+                        <thead class="sticky top-0 z-10 text-xs sm:text-sm uppercase tracking-wider border-b-2 border-[#00E5FF]/60">
                             <tr>
-                                <th class="w-[24%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#393e51] text-[#FFFFFF] border-r border-[#545b72]">
-                                    <i class="fa-regular fa-calendar-days text-[#CBD5E1] mr-2"></i>Tanggal UJK
+                                <th class="w-[24%] py-3.5 px-4 sm:px-6 font-black bg-[#0d253f] text-[#00E5FF] border-r border-[#00E5FF]/30">
+                                    <i class="fa-regular fa-calendar-days text-[#FFD60A] mr-2"></i>Tanggal UJK
                                 </th>
-                                <th class="w-[33%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#464c5e] text-[#FFFFFF] border-r border-[#545b72]">
-                                    <i class="fa-solid fa-location-dot text-[#E2E8F0] mr-2"></i>Nama TUK / Ruang
+                                <th class="w-[33%] py-3.5 px-4 sm:px-6 font-black bg-[#1b1942] text-[#FFFFFF] border-r border-[#00E5FF]/30">
+                                    <i class="fa-solid fa-location-dot text-[#FF2E93] mr-2"></i>Nama TUK / Ruang
                                 </th>
-                                <th class="w-[27%] py-3.5 px-4 sm:px-6 font-extrabold bg-[#505567] text-[#FFFFFF] border-r border-[#545b72]">
-                                    <i class="fa-solid fa-user-tie text-[#FFFFFF] mr-2"></i>Nama Asesor Kompetensi
+                                <th class="w-[27%] py-3.5 px-4 sm:px-6 font-black bg-[#2b143b] text-[#FFD60A] border-r border-[#00E5FF]/30">
+                                    <i class="fa-solid fa-user-tie text-[#00F59B] mr-2"></i>Nama Asesor Kompetensi
                                 </th>
-                                <th class="w-[16%] py-3.5 px-3 sm:px-5 font-extrabold bg-[#545b72] text-[#FFFFFF] text-center">
-                                    <i class="fa-solid fa-signal text-[#FFFFFF] mr-1.5"></i>Status
+                                <th class="w-[16%] py-3.5 px-3 sm:px-5 font-black bg-[#0f292e] text-[#00F59B] text-center">
+                                    <i class="fa-solid fa-signal text-[#00F59B] mr-1.5"></i>Status
                                 </th>
                             </tr>
                         </thead>
-                        <tbody id="schedule-table-body" class="divide-y divide-[#545b72]/70 text-[#FFFFFF]">
+                        <tbody id="schedule-table-body" class="divide-y divide-[#00E5FF]/20 text-[#FFFFFF]">
                             <!-- Baris jadwal dirender otomatis oleh JavaScript -->
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Footer Tabel: Statistik, Audio Backsound, Pembaca AI & Navigasi Halaman -->
-                <div class="bg-[#2c3142]/85 border-t border-[#545b72] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
-                    <div class="flex items-center gap-2 text-xs sm:text-sm text-[#CBD5E1]">
-                        <span id="total-count-label" class="font-bold text-[#FFFFFF]">Menampilkan 0 jadwal</span>
-                        <span class="hidden sm:inline text-[#545b72]">•</span>
-                        <span id="auto-slide-info" class="hidden sm:inline text-xs text-[#CBD5E1]">Auto-slide aktif (10 dtk)</span>
+                <!-- Footer Tabel: Statistik, Audio YouTube, Bel Stasiun & Navigasi Halaman -->
+                <div class="bg-[#131c31] border-t border-[#00E5FF]/30 px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                    <div class="flex items-center gap-2 text-xs sm:text-sm text-[#94A3B8]">
+                        <span id="total-count-label" class="font-extrabold text-[#00E5FF]">Menampilkan 0 jadwal</span>
+                        <span class="hidden sm:inline text-[#00E5FF]/40">•</span>
+                        <span id="auto-slide-info" class="hidden sm:inline text-xs font-semibold text-[#FFD60A]">Auto-slide aktif (10 dtk)</span>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
-                        <!-- Tombol Backsound Instrumen Stasiun KAI -->
-                        <button id="btn-toggle-bgm" onclick="toggleBackgroundMusic()" title="Nyalakan / Matikan Backsound Instrumen Stasiun (Alt + M)" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#393e51] hover:bg-[#505567] text-[#E2E8F0] border border-[#545b72] text-xs font-bold transition-all duration-300 cursor-pointer">
+                        <!-- Tombol Musik Playlist YouTube / YouTube Music -->
+                        <button id="btn-toggle-bgm" onclick="toggleBackgroundMusic()" title="Nyalakan / Matikan Playlist YouTube / YouTube Music (Alt + M)" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1e1333] hover:bg-[#FF2E93] text-[#FF75B5] hover:text-[#FFFFFF] border border-[#FF2E93]/60 text-xs font-extrabold transition-all duration-300 cursor-pointer">
                             <span id="bgm-eq-bars" class="hidden items-end gap-0.5 h-3">
                                 <span class="eq-bar"></span>
                                 <span class="eq-bar"></span>
                                 <span class="eq-bar"></span>
                             </span>
-                            <i id="icon-bgm-status" class="fa-solid fa-music text-[#FFFFFF]"></i>
-                            <span id="text-bgm-status">Backsound</span>
+                            <i id="icon-bgm-status" class="fa-brands fa-youtube text-[#FF2E93] text-sm"></i>
+                            <span id="text-bgm-status">Musik YouTube</span>
                         </button>
 
                         <!-- Tombol Bel Pemberitahuan Bandara / Stasiun -->
-                        <button id="btn-station-bell" onclick="triggerStationAnnouncement('MANUAL')" title="Bunyikan Bel Pemberitahuan Bandara / Stasiun (Alt + B)" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] border border-[#FFFFFF] text-xs font-extrabold transition-all duration-300 cursor-pointer shadow">
+                        <button id="btn-station-bell" onclick="triggerStationAnnouncement('MANUAL')" title="Bunyikan Bel Pemberitahuan Bandara / Stasiun (Alt + B)" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#FFD60A] to-[#FF9F1C] hover:from-[#FFE033] hover:to-[#FFB03A] text-[#090d16] border border-[#FFD60A] text-xs font-black transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(255,214,10,0.4)]">
                             <i id="icon-bell-status" class="fa-solid fa-bell"></i>
                             <span id="text-bell-status">Bel Pemberitahuan</span>
                         </button>
 
                         <!-- Navigasi Halaman -->
-                        <div class="flex items-center gap-1.5 pl-1 border-l border-[#545b72]" id="pagination-nav-buttons">
-                            <button onclick="prevPage()" title="Halaman Sebelumnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-[#393e51] hover:bg-[#505567] text-[#FFFFFF] border border-[#545b72] transition cursor-pointer">
+                        <div class="flex items-center gap-1.5 pl-1 border-l border-[#00E5FF]/30" id="pagination-nav-buttons">
+                            <button onclick="prevPage()" title="Halaman Sebelumnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-[#090d16] hover:bg-[#00E5FF] text-[#00E5FF] hover:text-[#090d16] border border-[#00E5FF]/50 transition cursor-pointer">
                                 <i class="fa-solid fa-chevron-left text-xs"></i>
                             </button>
-                            <span id="page-indicator" class="font-mono text-xs sm:text-sm font-extrabold px-2.5 py-1 rounded-lg bg-[#2c3142] text-[#FFFFFF] border border-[#545b72]">
+                            <span id="page-indicator" class="font-mono text-xs sm:text-sm font-black px-2.5 py-1 rounded-lg bg-[#090d16] text-[#FFD60A] border border-[#FFD60A]/50">
                                 HALAMAN 1 / 1
                             </span>
-                            <button onclick="nextPage()" title="Halaman Berikutnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-[#393e51] hover:bg-[#505567] text-[#FFFFFF] border border-[#545b72] transition cursor-pointer">
+                            <button onclick="nextPage()" title="Halaman Berikutnya" class="p-1.5 sm:px-2.5 sm:py-1 rounded-lg bg-[#090d16] hover:bg-[#00E5FF] text-[#00E5FF] hover:text-[#090d16] border border-[#00E5FF]/50 transition cursor-pointer">
                                 <i class="fa-solid fa-chevron-right text-xs"></i>
                             </button>
                         </div>
@@ -308,96 +309,92 @@
             </div>
         </main>
 
-        <!-- PITA PENGUMUMAN BAWAH (RUNNING TEXT) -->
-        <footer class="bg-[#2c3142]/95 border-t border-[#545b72] px-4 py-2 flex items-center gap-3 shrink-0 overflow-hidden">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-gradient-to-r from-[#545b72] to-[#464c5e] text-[#FFFFFF] border border-[#545b72] text-xs font-extrabold uppercase tracking-wider shrink-0 shadow-sm">
+        <!-- RUNNING TEXT PENGUMUMAN BAWAH -->
+        <footer class="bg-gradient-to-r from-[#090d16] via-[#131c31] to-[#090d16] border-t-2 border-[#FF2E93]/60 px-4 py-2 flex items-center gap-3 shrink-0 overflow-hidden">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-gradient-to-r from-[#FF2E93] to-[#FF6B00] text-[#FFFFFF] text-xs font-black uppercase tracking-wider shrink-0 shadow-[0_0_12px_rgba(255,46,147,0.5)]">
                 <i class="fa-solid fa-bullhorn"></i> INFO UJK
             </span>
             <div class="relative flex-1 overflow-hidden whitespace-nowrap">
-                <div id="running-text-content" class="animate-marquee text-sm sm:text-base font-medium text-[#E2E8F0]">
+                <div id="running-text-content" class="animate-marquee text-xs sm:text-sm font-bold text-[#FFD60A]">
                     Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan kelengkapan portofolio.
                 </div>
             </div>
         </footer>
     </div>
 
-    <!-- BACKDROP & DRAWER PENGATURAN OPERATOR -->
-    <div id="admin-backdrop" onclick="toggleAdminDrawer()" class="fixed inset-0 bg-[#2c3142]/80 backdrop-blur-xs z-40 hidden transition-opacity"></div>
+    <!-- BACKDROP DRAWER PENGATURAN -->
+    <div id="admin-backdrop" onclick="toggleAdminDrawer()" class="hidden fixed inset-0 z-40 bg-black/75 backdrop-blur-xs transition-opacity"></div>
 
-    <aside id="admin-drawer" class="fixed top-0 right-0 h-[100dvh] w-full max-w-xl bg-[#2c3142] border-l border-[#545b72] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
-        <!-- Header Drawer -->
-        <div class="px-5 py-4 bg-[#393e51] border-b border-[#545b72] flex items-center justify-between shrink-0">
+    <!-- DRAWER PENGATURAN OPERATOR -->
+    <aside id="admin-drawer" class="fixed top-0 right-0 z-50 h-full w-full max-w-xl bg-[#0d1323] border-l-2 border-[#00E5FF]/50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="px-5 py-4 bg-gradient-to-r from-[#131c31] to-[#1e1333] border-b border-[#00E5FF]/40 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FFFFFF] to-[#E2E8F0] text-[#2c3142] flex items-center justify-center shadow">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#00E5FF] to-[#FF2E93] text-[#FFFFFF] flex items-center justify-center font-black shadow">
                     <i class="fa-solid fa-sliders"></i>
                 </div>
                 <div>
-                    <h2 class="text-base font-extrabold text-[#FFFFFF]">Pengaturan Display & Google Sheets</h2>
-                    <p class="text-xs text-[#CBD5E1]">Sinkronisasi Data, Pembaca AI & Kustomisasi Layar</p>
+                    <h2 class="text-sm sm:text-base font-black text-[#FFFFFF]">Pengaturan Display & Google Sheets</h2>
+                    <p class="text-[11px] text-[#00E5FF]">Shortcut: Alt + A (Panel) • Alt + M (Musik YT) • Alt + B (Bel)</p>
                 </div>
             </div>
-            <button onclick="toggleAdminDrawer()" class="w-9 h-9 rounded-xl bg-[#464c5e] hover:bg-[#545b72] text-[#FFFFFF] flex items-center justify-center transition cursor-pointer">
+            <button onclick="toggleAdminDrawer()" class="w-9 h-9 rounded-xl bg-[#090d16] hover:bg-[#FF2E93] text-[#FFFFFF] border border-[#00E5FF]/40 flex items-center justify-center cursor-pointer transition">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
-        <!-- Isi Scrollable Drawer -->
-        <div class="flex-1 overflow-y-auto p-5 space-y-5">
-
-            <!-- BAGIAN 1: KONEKSI GOOGLE SHEETS -->
-            <section class="bg-[#393e51]/80 border border-[#545b72] rounded-2xl p-4 space-y-3.5">
+        <div class="flex-1 overflow-y-auto p-5 space-y-4">
+            <!-- BAGIAN 1: SINKRONISASI GOOGLE SHEETS -->
+            <section class="bg-[#131c31]/90 border border-[#00E5FF]/35 rounded-2xl p-4 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-extrabold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-table text-[#CBD5E1]"></i> 1. Koneksi Google Sheets (Real-Time)
+                    <h3 class="text-sm font-extrabold text-[#00E5FF] uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-table text-[#00F59B]"></i> 1. Koneksi Google Sheets
                     </h3>
-                    <span id="gsheet-drawer-status" class="text-[11px] font-bold px-2 py-0.5 rounded bg-[#464c5e] text-[#E2E8F0]">
-                        Belum Terhubung
-                    </span>
+                    <span id="gsheet-drawer-status" class="text-[11px] font-bold px-2 py-0.5 rounded bg-[#090d16] text-[#94A3B8] border border-[#00E5FF]/30">Belum Terhubung</span>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Link Google Sheets (Publik / Siapa saja yang memiliki link)</label>
-                    <input type="url" id="gsheet-url-input" placeholder="https://docs.google.com/spreadsheets/d/..." class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                    <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Link Google Sheets (Akses Publik / Viewer)</label>
+                    <input type="url" id="gsheet-url-input" placeholder="https://docs.google.com/spreadsheets/d/..." class="w-full bg-[#090d16] border border-[#00E5FF]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Nama Tab Sheet</label>
-                        <input type="text" id="gsheet-sheet-name" value="Jadwal_UJK" placeholder="Jadwal_UJK" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Nama Tab / Sheet</label>
+                        <input type="text" id="gsheet-sheet-name" value="Jadwal_UJK" class="w-full bg-[#090d16] border border-[#00E5FF]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Interval Sinkronisasi</label>
-                        <select id="gsheet-sync-interval" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
-                            <option value="10">Setiap 10 Detik (Real-Time)</option>
+                        <select id="gsheet-sync-interval" class="w-full bg-[#090d16] border border-[#00E5FF]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
+                            <option value="10">Setiap 10 Detik</option>
                             <option value="30">Setiap 30 Detik</option>
                             <option value="60">Setiap 1 Menit</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="flex flex-wrap gap-2 pt-1">
-                    <button onclick="connectGoogleSheet()" class="flex-1 bg-gradient-to-r from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] font-extrabold text-xs py-2.5 px-4 rounded-xl shadow transition cursor-pointer flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-link"></i> Hubungkan & Sinkronkan
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="connectGoogleSheet()" class="flex-1 bg-gradient-to-r from-[#00E5FF] to-[#00F59B] hover:opacity-90 text-[#090d16] font-black text-xs py-2 px-3 rounded-xl transition cursor-pointer">
+                        <i class="fa-solid fa-link mr-1"></i> Hubungkan Sheets
                     </button>
-                    <button onclick="disconnectGoogleSheet()" class="bg-[#464c5e] hover:bg-[#545b72] text-[#FFFFFF] border border-[#545b72] font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer">
+                    <button onclick="disconnectGoogleSheet()" class="bg-[#090d16] hover:bg-[#FF2E93] text-[#FFFFFF] border border-[#FF2E93]/50 font-bold text-xs py-2 px-3 rounded-xl transition cursor-pointer">
                         Putuskan
                     </button>
-                    <button onclick="downloadTemplateCSV()" class="bg-[#2c3142] hover:bg-[#464c5e] text-[#E2E8F0] border border-[#545b72] font-bold text-xs py-2.5 px-3 rounded-xl transition cursor-pointer flex items-center gap-1.5">
-                        <i class="fa-solid fa-file-csv"></i> Template CSV
+                    <button onclick="downloadTemplateCSV()" class="bg-[#090d16] hover:bg-[#1e293b] text-[#FFD60A] border border-[#FFD60A]/50 font-bold text-xs py-2 px-3 rounded-xl transition cursor-pointer">
+                        <i class="fa-solid fa-download mr-1"></i> Template CSV
                     </button>
                 </div>
             </section>
 
-            <!-- BAGIAN 2: BEL PEMBERITAHUAN STASIUN/BANDARA & BACKSOUND -->
-            <section class="bg-[#393e51]/80 border border-[#545b72] rounded-2xl p-4 space-y-3.5">
-                <h3 class="text-sm font-extrabold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-bell text-[#CBD5E1]"></i> 2. Bel Pemberitahuan Bandara/Stasiun & Backsound
+            <!-- BAGIAN 2: BEL PEMBERITAHUAN STASIUN/BANDARA & PLAYLIST YOUTUBE -->
+            <section class="bg-[#131c31]/90 border border-[#FF2E93]/40 rounded-2xl p-4 space-y-3.5">
+                <h3 class="text-sm font-extrabold text-[#FF2E93] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-brands fa-youtube text-[#FF2E93]"></i> 2. Bel Pemberitahuan & Playlist YouTube / YouTube Music
                 </h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Nada Bel Pemberitahuan</label>
-                        <select id="setting-bell-style" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                        <select id="setting-bell-style" class="w-full bg-[#090d16] border border-[#FF2E93]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
                             <option value="airport_chime">Chime Bandara Internasional (4 Nada)</option>
                             <option value="kai_westminster">Bel Stasiun Kereta Api (Westminster)</option>
                             <option value="boarding_dingdong">Ding-Dong Panggilan Ruang Tunggu</option>
@@ -405,7 +402,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Pemicu Otomatis Bel Pemberitahuan</label>
-                        <select id="setting-auto-bell" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                        <select id="setting-auto-bell" class="w-full bg-[#090d16] border border-[#FF2E93]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
                             <option value="slide_and_status">Setiap Ganti Slide, Status & Jam 12:00 ISOMA</option>
                             <option value="slide_only">Setiap Pergantian Slide Halaman & ISOMA</option>
                             <option value="status_only">Pergantian Status (07:30, 08:00, 15:23) & 12:00 ISOMA</option>
@@ -416,61 +413,91 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Instrumen Backsound Stasiun KAI</label>
-                        <select id="setting-station-melody" onchange="handleMelodySelectChange()" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
-                            <option value="playlist">Semua Lagu Stasiun (Playlist Otomatis)</option>
-                            <option value="sepasang_mata_bola">Sepasang Mata Bola (Yogyakarta)</option>
-                            <option value="bengawan_solo">Bengawan Solo (Solo Balapan/Jebres)</option>
-                            <option value="sabilulungan">Sabilulungan (Bandung)</option>
-                            <option value="manuk_dadali">Manuk Dadali (Bandung)</option>
-                            <option value="karatagan_pahlawan">Karatagan Pahlawan (Bandung)</option>
-                            <option value="ayun_ambing">Ayun-Ayun Ambing (Gamelan Daop 2)</option>
-                            <option value="rek_ayo_rek">Rek Ayo Rek (Surabaya Gubeng)</option>
-                            <option value="surabaya_oh_surabaya">Surabaya Oh Surabaya (Pasar Turi)</option>
-                            <option value="sungai_serayu">Di Tepinya Sungai Serayu (Purwokerto)</option>
-                            <option value="gambang_semarang">Gambang Semarang (Semarang)</option>
-                            <option value="kota_cirebon">Kota Cirebon (Stasiun Cirebon)</option>
-                            <option value="chime">Nada Chime Stasiun Lembut</option>
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Sumber Playlist YouTube</label>
+                        <select id="setting-yt-mode" onchange="handleYtModeChange()" class="w-full bg-[#090d16] border border-[#FF2E93]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
+                            <option value="search">Cari Otomatis Lagu/Playlist (Kata Kunci)</option>
+                            <option value="url">Link Video / Playlist YouTube & YT Music</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Volume Backsound</label>
-                        <select id="setting-bgm-volume" onchange="handleBgmVolumeChange()" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
-                            <option value="0.08">Sangat Lembut (8%)</option>
-                            <option value="0.14" selected>Lembut Ruang Tunggu (14%)</option>
-                            <option value="0.22">Sedang (22%)</option>
-                            <option value="0.32">Cukup Terdengar (32%)</option>
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Volume Musik YouTube</label>
+                        <select id="setting-bgm-volume" onchange="handleBgmVolumeChange()" class="w-full bg-[#090d16] border border-[#FF2E93]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
+                            <option value="15">Sangat Lembut (15%)</option>
+                            <option value="30" selected>Lembut Ruang Tunggu (30%)</option>
+                            <option value="50">Sedang (50%)</option>
+                            <option value="75">Cukup Terdengar (75%)</option>
                         </select>
+                    </div>
+                </div>
+
+                <div id="yt-search-group">
+                    <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Kata Kunci Pencarian Otomatis Lagu/Playlist</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="setting-yt-query" placeholder="Contoh: musik instrumental ruang tunggu santai" class="flex-1 bg-[#090d16] border border-[#FF2E93]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
+                        <button type="button" onclick="applyAndPlayYouTubeConfig()" class="px-3 py-2 rounded-xl bg-[#FF2E93] text-[#FFFFFF] font-extrabold text-xs hover:bg-[#FF4da3] transition cursor-pointer shrink-0">
+                            <i class="fa-solid fa-magnifying-glass mr-1"></i> Putar
+                        </button>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 mt-2">
+                        <button type="button" onclick="setQuickYtPreset('musik instrumental gamelan jawa santai')" class="px-2 py-1 rounded-lg bg-[#090d16] hover:bg-[#FF2E93]/30 text-[11px] text-[#00E5FF] border border-[#00E5FF]/40 cursor-pointer">Gamelan Santai</button>
+                        <button type="button" onclick="setQuickYtPreset('smooth jazz instrumental lobby music')" class="px-2 py-1 rounded-lg bg-[#090d16] hover:bg-[#FF2E93]/30 text-[11px] text-[#00E5FF] border border-[#00E5FF]/40 cursor-pointer">Jazz Lobby</button>
+                        <button type="button" onclick="setQuickYtPreset('musik piano instrumental menenangkan')" class="px-2 py-1 rounded-lg bg-[#090d16] hover:bg-[#FF2E93]/30 text-[11px] text-[#00E5FF] border border-[#00E5FF]/40 cursor-pointer">Piano Lembut</button>
+                        <button type="button" onclick="setQuickYtPreset('musik instrumental indonesia klasik')" class="px-2 py-1 rounded-lg bg-[#090d16] hover:bg-[#FF2E93]/30 text-[11px] text-[#00E5FF] border border-[#00E5FF]/40 cursor-pointer">Instrumental Nusantara</button>
+                    </div>
+                </div>
+
+                <div id="yt-url-group" class="hidden">
+                    <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Link Video atau Playlist (youtube.com / music.youtube.com)</label>
+                    <div class="flex gap-2">
+                        <input type="url" id="setting-yt-url" placeholder="https://music.youtube.com/playlist?list=..." class="flex-1 bg-[#090d16] border border-[#FF2E93]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
+                        <button type="button" onclick="applyAndPlayYouTubeConfig()" class="px-3 py-2 rounded-xl bg-[#FF2E93] text-[#FFFFFF] font-extrabold text-xs hover:bg-[#FF4da3] transition cursor-pointer shrink-0">
+                            <i class="fa-solid fa-play mr-1"></i> Putar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between bg-[#090d16] border border-[#FF2E93]/40 rounded-xl px-3 py-2">
+                    <div class="min-w-0 pr-2">
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-[#FF75B5]">Status Pemutar YouTube</div>
+                        <div id="yt-now-playing-label" class="text-xs font-extrabold text-[#FFFFFF] truncate">Siap memutar playlist otomatis</div>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button type="button" onclick="toggleYtMiniPreview()" title="Tampilkan / Sembunyikan Layar Mini YouTube" class="px-2.5 py-1.5 rounded-lg bg-[#131c31] hover:bg-[#00E5FF] text-[#00E5FF] hover:text-[#090d16] border border-[#00E5FF]/40 text-xs font-bold transition cursor-pointer">
+                            <i class="fa-solid fa-tv"></i>
+                        </button>
+                        <button type="button" onclick="nextYouTubeTrack()" title="Lagu Berikutnya dalam Playlist" class="px-2.5 py-1.5 rounded-lg bg-[#FF2E93] hover:bg-[#FF4da3] text-[#FFFFFF] text-xs font-bold transition cursor-pointer">
+                            <i class="fa-solid fa-forward-step mr-1"></i> Lagu Berikutnya
+                        </button>
                     </div>
                 </div>
             </section>
 
             <!-- BAGIAN 3: KUSTOMISASI TAMPILAN & RUNNING TEXT -->
-            <section class="bg-[#393e51]/80 border border-[#545b72] rounded-2xl p-4 space-y-3.5">
-                <h3 class="text-sm font-extrabold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-desktop text-[#CBD5E1]"></i> 3. Kustomisasi Header & Layar TV
+            <section class="bg-[#131c31]/90 border border-[#FFD60A]/40 rounded-2xl p-4 space-y-3.5">
+                <h3 class="text-sm font-extrabold text-[#FFD60A] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-desktop text-[#FFD60A]"></i> 3. Kustomisasi Header & Layar TV
                 </h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Badge Lembaga</label>
-                        <input type="text" id="setting-badge" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                        <input type="text" id="setting-badge" class="w-full bg-[#090d16] border border-[#FFD60A]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#00E5FF]">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Judul Utama Layar</label>
-                        <input type="text" id="setting-title" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                        <input type="text" id="setting-title" class="w-full bg-[#090d16] border border-[#FFD60A]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#00E5FF]">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Subjudul Lembaga / Keterangan</label>
-                    <input type="text" id="setting-subtitle" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                    <input type="text" id="setting-subtitle" class="w-full bg-[#090d16] border border-[#FFD60A]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#00E5FF]">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Baris per Halaman TV</label>
-                        <select id="setting-rows-per-page" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                        <select id="setting-rows-per-page" class="w-full bg-[#090d16] border border-[#FFD60A]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#00E5FF]">
                             <option value="5">5 Baris (Huruf Sangat Besar)</option>
                             <option value="7">7 Baris (Standar TV 43"-55")</option>
                             <option value="10">10 Baris (Layar Besar)</option>
@@ -478,7 +505,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Durasi Auto-Slide Halaman</label>
-                        <select id="setting-slide-interval" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]">
+                        <select id="setting-slide-interval" class="w-full bg-[#090d16] border border-[#FFD60A]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#00E5FF]">
                             <option value="8">8 Detik</option>
                             <option value="10">10 Detik</option>
                             <option value="15">15 Detik</option>
@@ -489,25 +516,25 @@
 
                 <div>
                     <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Teks Pengumuman Berjalan (Running Text)</label>
-                    <textarea id="setting-running-text" rows="2" class="w-full bg-[#2c3142] border border-[#545b72] rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFFFFF]"></textarea>
+                    <textarea id="setting-running-text" rows="2" class="w-full bg-[#090d16] border border-[#FFD60A]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#00E5FF]"></textarea>
                 </div>
 
-                <button onclick="saveDisplaySettings()" class="w-full bg-gradient-to-r from-[#FFFFFF] to-[#E2E8F0] hover:from-[#FFFFFF] hover:to-[#CBD5E1] text-[#2c3142] font-extrabold text-xs py-2.5 px-4 rounded-xl shadow transition cursor-pointer flex items-center justify-center gap-2">
+                <button onclick="saveDisplaySettings()" class="w-full bg-gradient-to-r from-[#FFD60A] to-[#FF9F1C] hover:opacity-95 text-[#090d16] font-black text-xs py-2.5 px-4 rounded-xl shadow transition cursor-pointer flex items-center justify-center gap-2">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan Semua Pengaturan
                 </button>
             </section>
 
             <!-- BAGIAN 4: EXPORT LAPORAN -->
-            <section class="bg-[#393e51]/80 border border-[#545b72] rounded-2xl p-4 space-y-3">
-                <h3 class="text-sm font-extrabold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-file-export text-[#CBD5E1]"></i> 4. Unduh Laporan Jadwal
+            <section class="bg-[#131c31]/90 border border-[#00F59B]/40 rounded-2xl p-4 space-y-3">
+                <h3 class="text-sm font-extrabold text-[#00F59B] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-file-export text-[#00F59B]"></i> 4. Unduh Laporan Jadwal
                 </h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <button onclick="exportToExcel()" class="bg-[#2c3142] hover:bg-[#464c5e] text-[#FFFFFF] border border-[#545b72] font-bold text-xs py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-excel text-emerald-400"></i> Unduh Excel (.xlsx)
+                    <button onclick="exportToExcel()" class="bg-[#090d16] hover:bg-[#00F59B]/20 text-[#00F59B] border border-[#00F59B]/50 font-bold text-xs py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-excel text-[#00F59B]"></i> Unduh Excel (.xlsx)
                     </button>
-                    <button onclick="exportToPDF()" class="bg-[#2c3142] hover:bg-[#464c5e] text-[#FFFFFF] border border-[#545b72] font-bold text-xs py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-pdf text-rose-400"></i> Unduh PDF (.pdf)
+                    <button onclick="exportToPDF()" class="bg-[#090d16] hover:bg-[#FF2E93]/20 text-[#FF75B5] border border-[#FF2E93]/50 font-bold text-xs py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-pdf text-[#FF2E93]"></i> Unduh PDF (.pdf)
                     </button>
                 </div>
             </section>
@@ -515,24 +542,24 @@
     </aside>
 
     <!-- BANNER PEMBERITAHUAN PANGGILAN ALA BANDARA / STASIUN -->
-    <div id="station-notice-banner" class="hidden fixed bottom-14 right-4 z-40 max-w-md bg-[#2c3142]/95 backdrop-blur-md border-2 border-[#FFFFFF] rounded-2xl p-4 shadow-[0_16px_40px_rgba(0,0,0,0.65)] transition-all duration-300">
+    <div id="station-notice-banner" class="hidden fixed bottom-14 right-4 z-40 max-w-md bg-[#0d1323]/95 backdrop-blur-md border-2 border-[#FFD60A] rounded-2xl p-4 shadow-[0_16px_45px_rgba(255,214,10,0.35)] transition-all duration-300">
         <div class="flex items-start gap-3">
-            <div class="w-11 h-11 rounded-xl bg-[#FFFFFF] text-[#2c3142] flex items-center justify-center shrink-0 animate-bounce">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#FFD60A] to-[#FF2E93] text-[#090d16] flex items-center justify-center shrink-0 animate-bounce">
                 <i class="fa-solid fa-bell text-lg"></i>
             </div>
             <div class="min-w-0 flex-1">
                 <div class="flex items-center justify-between gap-2">
-                    <span id="station-notice-badge" class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-[#545b72] text-[#FFFFFF]">
+                    <span id="station-notice-badge" class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-[#FF2E93] text-[#FFFFFF]">
                         PEMBERITAHUAN TUK
                     </span>
                     <button onclick="hideStationNoticeBanner()" class="text-[#CBD5E1] hover:text-[#FFFFFF] text-xs cursor-pointer">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
-                <p id="station-notice-title" class="text-xs sm:text-sm font-extrabold text-[#FFFFFF] mt-1">
+                <p id="station-notice-title" class="text-xs sm:text-sm font-extrabold text-[#FFD60A] mt-1">
                     Perhatian Kepada Seluruh Peserta UJK
                 </p>
-                <p id="station-notice-desc" class="text-[11px] sm:text-xs text-[#CBD5E1] mt-0.5 leading-relaxed">
+                <p id="station-notice-desc" class="text-[11px] sm:text-xs text-[#FFFFFF] mt-0.5 leading-relaxed">
                     Dimohon mempersiapkan diri dan memeriksa kelengkapan berkas asesmen.
                 </p>
             </div>
@@ -542,244 +569,220 @@
     <!-- WADAH NOTIFIKASI TOAST -->
     <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
+    <!-- PEMUTAR YOUTUBE / YOUTUBE MUSIC (TETAP DALAM VIEWPORT AGAR BROWSER/TV MENGIZINKAN SUARA) -->
+    <div id="yt-hidden-player-host" class="fixed bottom-14 left-4 z-30 w-56 h-32 rounded-xl overflow-hidden border-2 border-[#FF2E93] bg-[#090d16] shadow-xl opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="yt-player-frame" class="w-full h-full"></div>
+    </div>
+
     <script>
         /* =====================================================================
            A. KONFIGURASI DEFAULT & STATE APLIKASI
         ===================================================================== */
-        const STORAGE_KEY = 'lsp_ujk_steel_slate_v1';
-        const GEMINI_API_KEY = ""; // Otomatis diisi oleh environment jika tersedia
+        const STORAGE_KEY = 'lsp_display_ujk_v4_state';
+        const STANDARD_START_MINUTES = 8 * 60;       // 08:00 WIB
+        const STANDARD_END_MINUTES = (15 * 60) + 23; // 15:23 WIB
+
+        const NAMA_HARI_ID = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const NAMA_BULAN_ID = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
 
         function getRelativeIsoDate(offsetDays = 0) {
-            const now = new Date();
-            now.setDate(now.getDate() + offsetDays);
-            const y = now.getFullYear();
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const d = String(now.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
+            const d = new Date();
+            d.setDate(d.getDate() + offsetDays);
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
         }
 
         const DEFAULT_SCHEDULES = [
-            { id: '1', date: getRelativeIsoDate(0), tuk: 'TUK Sewaktu Lab Komputer 01', assessors: ['Ir. Budi Santoso, M.Kom.', 'Dr. Siti Aminah, S.T., M.T.'] },
-            { id: '2', date: getRelativeIsoDate(0), tuk: 'TUK Mandiri Ruang Praktik Utama', assessors: ['Ahmad Fauzi, S.Kom., M.M.'] },
-            { id: '3', date: getRelativeIsoDate(0), tuk: 'TUK Sewaktu Gedung B Lantai 2', assessors: ['Rina Marlina, S.E., M.Ak.', 'Hendra Wijaya, S.T.'] },
-            { id: '4', date: getRelativeIsoDate(1), tuk: 'TUK Mandiri Studio Multimedia', assessors: ['Dewi Lestari, S.Ds., M.Sn.'] },
-            { id: '5', date: getRelativeIsoDate(1), tuk: 'TUK Sewaktu Aula Sertifikasi', assessors: ['Drs. Bambang Sutrisno, M.Pd.', 'Nadia Putri, S.Psi., M.Psi.'] }
+            {
+                id: 'demo-1',
+                date: getRelativeIsoDate(0),
+                tuk: 'TUK Sewaktu Lab Komputer 01',
+                assessors: ['Ir. Budi Santoso, M.Kom.', 'Dr. Siti Aminah, S.T., M.T.']
+            },
+            {
+                id: 'demo-2',
+                date: getRelativeIsoDate(0),
+                tuk: 'TUK Mandiri Ruang Praktik Utama',
+                assessors: ['Ahmad Fauzi, S.Kom., M.M.']
+            },
+            {
+                id: 'demo-3',
+                date: getRelativeIsoDate(1),
+                tuk: 'TUK Sewaktu Aula Gedung B',
+                assessors: ['Drs. Hendra Wijaya, M.Pd.', 'Rina Marlina, S.E., M.Ak.']
+            }
         ];
-// ... existing code ... -->
-        /* =====================================================================
-           D. KALKULASI STATUS REAL-TIME (STANDAR JAM 08:00 - 15:23 WIB)
-        ===================================================================== */
-        const STANDARD_START_MINUTES = (8 * 60) + 0;   // 08:00 WIB
-        const STANDARD_END_MINUTES   = (15 * 60) + 23; // 15:23 WIB
 
-        function getScheduleLiveStatus(item) {
-            const now = new Date();
-            const todayIso = getRelativeIsoDate(0);
-
-            if (!item.date || item.date > todayIso) {
-                return {
-                    code: 'TERJADWAL',
-                    label: 'TERJADWAL',
-                    badgeClass: 'bg-[#2c3142] text-[#CBD5E1] border-[#545b72]',
-                    dotHtml: '<span class="w-2 h-2 rounded-full bg-[#CBD5E1]"></span>'
-                };
-            }
-
-            if (item.date < todayIso) {
-                return {
-                    code: 'SELESAI',
-                    label: 'SELESAI',
-                    badgeClass: 'bg-[#2c3142]/75 text-[#94A3B8] border-[#464c5e]',
-                    dotHtml: '<i class="fa-solid fa-check text-[10px] text-[#94A3B8]"></i>'
-                };
-            }
-
-            // Tanggal hari ini: berjalan otomatis pada 08:00 - 15:23 WIB, lalu berubah SELESAI
-            const nowMin = (now.getHours() * 60) + now.getMinutes();
-
-            if (nowMin >= STANDARD_START_MINUTES && nowMin <= STANDARD_END_MINUTES) {
-                return {
-                    code: 'BERLANGSUNG',
-                    label: 'BERLANGSUNG',
-                    badgeClass: 'bg-emerald-500/25 text-white border-emerald-300 shadow-[0_0_14px_rgba(52,211,153,0.4)]',
-                    dotHtml: '<span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-90"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span></span>'
-                };
-            }
-
-            if (nowMin >= (STANDARD_START_MINUTES - 30) && nowMin < STANDARD_START_MINUTES) {
-                return {
-                    code: 'PERSIAPAN',
-                    label: 'PERSIAPAN',
-                    badgeClass: 'bg-amber-400/25 text-amber-100 border-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.3)]',
-                    dotHtml: '<span class="w-2.5 h-2.5 rounded-full bg-amber-300 animate-pulse"></span>'
-                };
-            }
-
-            if (nowMin < (STANDARD_START_MINUTES - 30)) {
-                return {
-                    code: 'TERJADWAL',
-                    label: 'TERJADWAL',
-                    badgeClass: 'bg-[#2c3142] text-[#E2E8F0] border-[#545b72]',
-                    dotHtml: '<span class="w-2 h-2 rounded-full bg-[#E2E8F0]"></span>'
-                };
-            }
-
-            return {
-                code: 'SELESAI',
-                label: 'SELESAI',
-                badgeClass: 'bg-[#2c3142]/75 text-[#94A3B8] border-[#464c5e]',
-                dotHtml: '<i class="fa-solid fa-check text-[10px] text-[#94A3B8]"></i>'
-            };
+        function formatTanggalDenganHari(isoDate) {
+            if (!isoDate) return '-';
+            const parts = String(isoDate).split('-');
+            if (parts.length !== 3) return isoDate;
+            const y = parseInt(parts[0], 10);
+            const m = parseInt(parts[1], 10) - 1;
+            const d = parseInt(parts[2], 10);
+            const dt = new Date(y, m, d);
+            if (isNaN(dt.getTime())) return isoDate;
+            return `${NAMA_HARI_ID[dt.getDay()]}, ${String(d).padStart(2, '0')} ${NAMA_BULAN_ID[m]} ${y}`;
         }
 
-        /* =====================================================================
-           E. FILTER TANGGAL, FORMAT HARI & RENDER TABEL JADWAL
-        ===================================================================== */
-        const NAMA_HARI_ID = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        const NAMA_BULAN_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        function getScheduleLiveStatus(item) {
+            const todayIso = getRelativeIsoDate(0);
+            if (!item || !item.date) {
+                return { code: 'TERJADWAL', label: 'TERJADWAL', badgeClass: 'bg-[#00E5FF]/15 text-[#00E5FF] border-[#00E5FF]/60', dotClass: 'bg-[#00E5FF]' };
+            }
+            if (item.date < todayIso) {
+                return { code: 'SELESAI', label: 'SELESAI', badgeClass: 'bg-[#1e293b]/90 text-[#94A3B8] border-[#475569]', dotClass: 'bg-[#64748B]' };
+            }
+            if (item.date > todayIso) {
+                return { code: 'TERJADWAL', label: 'TERJADWAL', badgeClass: 'bg-[#00E5FF]/15 text-[#00E5FF] border-[#00E5FF]/60', dotClass: 'bg-[#00E5FF]' };
+            }
 
-        function formatTanggalDenganHari(isoStr) {
-            if (!isoStr || !/^\d{4}-\d{2}-\d{2}$/.test(isoStr)) return isoStr || '-';
-            const [y, m, d] = isoStr.split('-').map(Number);
-            const dt = new Date(y, m - 1, d);
-            const hari = NAMA_HARI_ID[dt.getDay()] || '';
-            const bulan = NAMA_BULAN_ID[m - 1] || '';
-            return `${hari}, ${String(d).padStart(2, '0')} ${bulan} ${y}`;
+            const now = new Date();
+            const nowMin = (now.getHours() * 60) + now.getMinutes();
+
+            if (nowMin >= (STANDARD_START_MINUTES - 30) && nowMin < STANDARD_START_MINUTES) {
+                return { code: 'PERSIAPAN', label: 'PERSIAPAN', badgeClass: 'bg-[#FFD60A]/20 text-[#FFD60A] border-[#FFD60A]', dotClass: 'bg-[#FFD60A] animate-ping' };
+            }
+            if (nowMin >= STANDARD_START_MINUTES && nowMin <= STANDARD_END_MINUTES) {
+                return { code: 'BERLANGSUNG', label: 'BERLANGSUNG', badgeClass: 'bg-[#00F59B]/20 text-[#00F59B] border-[#00F59B]', dotClass: 'bg-[#00F59B] animate-pulse' };
+            }
+            if (nowMin > STANDARD_END_MINUTES) {
+                return { code: 'SELESAI', label: 'SELESAI', badgeClass: 'bg-[#1e293b]/90 text-[#94A3B8] border-[#475569]', dotClass: 'bg-[#64748B]' };
+            }
+            return { code: 'TERJADWAL', label: 'TERJADWAL', badgeClass: 'bg-[#00E5FF]/15 text-[#00E5FF] border-[#00E5FF]/60', dotClass: 'bg-[#00E5FF]' };
         }
 
         function getFilteredSchedules() {
+            const list = Array.isArray(appState.schedules) ? appState.schedules : [];
             const mode = appState.filter.mode || 'today_tomorrow';
             const today = getRelativeIsoDate(0);
             const tomorrow = getRelativeIsoDate(1);
             const yesterday = getRelativeIsoDate(-1);
 
-            return (appState.schedules || []).filter(item => {
-                if (mode === 'today') return item.date === today;
-                if (mode === 'today_tomorrow') return item.date === today || item.date === tomorrow;
-                if (mode === 'yesterday') return item.date === yesterday;
-                if (mode === 'specific') return !appState.filter.specificDate || item.date === appState.filter.specificDate;
-                return true;
-            });
+            if (mode === 'today') {
+                return list.filter(item => item.date === today);
+            }
+            if (mode === 'today_tomorrow') {
+                return list.filter(item => item.date === today || item.date === tomorrow);
+            }
+            if (mode === 'yesterday') {
+                return list.filter(item => item.date === yesterday);
+            }
+            if (mode === 'specific') {
+                const target = appState.filter.specificDate || today;
+                return list.filter(item => item.date === target);
+            }
+            return list;
         }
 
         function handleQuickFilterChange() {
-            const selectEl = document.getElementById('quick-filter-mode');
-            const dateInputEl = document.getElementById('quick-specific-date');
-            if (!selectEl) return;
+            const modeEl = document.getElementById('quick-filter-mode');
+            const specificEl = document.getElementById('quick-specific-date');
+            const badgeEl = document.getElementById('active-filter-badge');
+            if (!modeEl) return;
 
-            appState.filter.mode = selectEl.value;
-            if (appState.filter.mode === 'specific') {
-                if (!appState.filter.specificDate) {
-                    appState.filter.specificDate = getRelativeIsoDate(0);
-                }
-                if (dateInputEl) {
-                    dateInputEl.value = appState.filter.specificDate;
-                    dateInputEl.classList.remove('hidden');
-                }
-            } else if (dateInputEl) {
-                dateInputEl.classList.add('hidden');
-            }
-
+            appState.filter.mode = modeEl.value;
             appState.currentPage = 1;
+
+            const labels = {
+                today_tomorrow: 'Hari Ini & Besok',
+                today: 'Hari Ini Saja',
+                specific: `Tanggal: ${formatTanggalDenganHari(appState.filter.specificDate)}`,
+                yesterday: 'Hari Kemarin',
+                all: 'Semua Tanggal UJK'
+            };
+
+            if (specificEl) {
+                if (modeEl.value === 'specific') specificEl.classList.remove('hidden');
+                else specificEl.classList.add('hidden');
+            }
+            if (badgeEl) badgeEl.textContent = labels[modeEl.value] || 'Hari Ini & Besok';
+
             saveAppState();
             renderScheduleTable();
         }
 
         function handleQuickSpecificDateChange() {
-            const dateInputEl = document.getElementById('quick-specific-date');
-            if (!dateInputEl) return;
-            appState.filter.specificDate = dateInputEl.value;
+            const specificEl = document.getElementById('quick-specific-date');
+            const badgeEl = document.getElementById('active-filter-badge');
+            if (!specificEl) return;
+
+            appState.filter.specificDate = specificEl.value || getRelativeIsoDate(0);
             appState.currentPage = 1;
+            if (badgeEl) badgeEl.textContent = `Tanggal: ${formatTanggalDenganHari(appState.filter.specificDate)}`;
+
             saveAppState();
             renderScheduleTable();
         }
 
-        function updateActiveFilterBadge() {
-            const badge = document.getElementById('active-filter-badge');
-            if (!badge) return;
-            const mode = appState.filter.mode || 'today_tomorrow';
-            const mapLabel = {
-                today_tomorrow: 'Hari Ini & Besok',
-                today: 'Hari Ini Saja',
-                yesterday: 'Hari Kemarin',
-                all: 'Semua Tanggal UJK',
-                specific: appState.filter.specificDate ? formatTanggalDenganHari(appState.filter.specificDate) : 'Tanggal Tertentu'
-            };
-            badge.textContent = mapLabel[mode] || 'Hari Ini & Besok';
-        }
-
         function renderScheduleTable() {
             const tbody = document.getElementById('schedule-table-body');
+            const totalLabel = document.getElementById('total-count-label');
+            const pageIndicator = document.getElementById('page-indicator');
             if (!tbody) return;
 
-            updateActiveFilterBadge();
             const filtered = getFilteredSchedules();
-            const perPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
-            const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+            const rowsPerPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
+            const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
 
             if (appState.currentPage > totalPages) appState.currentPage = 1;
-            const startIdx = (appState.currentPage - 1) * perPage;
-            const pageItems = filtered.slice(startIdx, startIdx + perPage);
+            if (appState.currentPage < 1) appState.currentPage = 1;
 
-            const countLabel = document.getElementById('total-count-label');
-            const pageIndicator = document.getElementById('page-indicator');
-            if (countLabel) countLabel.textContent = `Menampilkan ${filtered.length} jadwal`;
+            if (totalLabel) totalLabel.textContent = `Menampilkan ${filtered.length} jadwal UJK`;
             if (pageIndicator) pageIndicator.textContent = `HALAMAN ${appState.currentPage} / ${totalPages}`;
 
-            if (pageItems.length === 0) {
+            if (filtered.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="py-16 px-6 text-center bg-[#2c3142]/50">
-                            <div class="inline-flex flex-col items-center gap-2 text-[#CBD5E1]">
-                                <i class="fa-regular fa-calendar-xmark text-4xl text-[#545b72] mb-1"></i>
-                                <p class="text-base sm:text-lg font-extrabold text-[#FFFFFF]">Tidak Ada Jadwal UJK pada Filter Ini</p>
-                                <p class="text-xs sm:text-sm text-[#CBD5E1]">Ubah pilihan filter tanggal di atas atau hubungkan data Google Sheets.</p>
-                            </div>
+                        <td colspan="4" class="py-16 px-6 text-center text-[#CBD5E1]">
+                            <i class="fa-regular fa-calendar-xmark text-4xl mb-3 block opacity-70"></i>
+                            <div class="text-base sm:text-lg font-extrabold text-[#FFFFFF]">Tidak Ada Jadwal UJK pada Filter Ini</div>
+                            <div class="text-xs sm:text-sm mt-1">Silakan pilih filter tanggal lain atau perbarui data Google Sheets.</div>
                         </td>
                     </tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = pageItems.map((item, idx) => {
-                const statusInfo = getScheduleLiveStatus(item);
-                const isFinished = statusInfo.code === 'SELESAI';
-                const rowBg = idx % 2 === 0 ? 'bg-[#393e51]/90' : 'bg-[#2c3142]/95';
-                const badgeBg = 'bg-[#2c3142] text-[#FFFFFF] border-[#545b72]';
-                const delayMs = idx * 45;
+            const startIdx = (appState.currentPage - 1) * rowsPerPage;
+            const pageItems = filtered.slice(startIdx, startIdx + rowsPerPage);
 
-                const assessorsHtml = (item.assessors || []).map((name, aIdx) => `
-                    <div class="flex items-start gap-2 ${aIdx > 0 ? 'mt-1.5' : ''}">
-                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-[#2c3142] border border-[#545b72] text-[11px] font-extrabold text-[#FFFFFF] shrink-0 mt-0.5">
-                            ${aIdx + 1}
-                        </span>
-                        <span class="font-semibold text-sm sm:text-base lg:text-lg text-[#FFFFFF] leading-snug break-words">
-                            ${escapeHtml(name)}
-                        </span>
-                    </div>
-                `).join('');
+            tbody.innerHTML = pageItems.map((item, idx) => {
+                const isOddRow = idx % 2 === 0;
+                const rowBg = isOddRow ? 'bg-[#11192e]/95' : 'bg-[#18122b]/95';
+                const statusInfo = getScheduleLiveStatus(item);
+                const assessorsHtml = (item.assessors && item.assessors.length > 0)
+                    ? item.assessors.map((a, i) => `
+                        <div class="flex items-start gap-2">
+                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-gradient-to-br from-[#FF2E93] to-[#7B2CBF] text-[#FFFFFF] text-[11px] font-black shrink-0 mt-0.5">${i + 1}</span>
+                            <span class="font-bold text-sm sm:text-base lg:text-lg text-[#FFD60A] leading-snug">${escapeHtml(a)}</span>
+                        </div>
+                    `).join('')
+                    : '<span class="text-xs sm:text-sm text-[#94A3B8] italic">Menunggu penugasan asesor</span>';
 
                 return `
-                    <tr style="animation-delay: ${delayMs}ms" class="animate-row-in ${rowBg} ${isFinished ? 'opacity-75' : ''} transition-colors duration-200">
-                        <td class="py-4 px-4 sm:px-6 align-middle border-r border-[#545b72]/70">
-                            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border ${badgeBg} shadow-xs">
-                                <i class="fa-regular fa-calendar text-[#E2E8F0] text-xs sm:text-sm"></i>
-                                <span class="font-bold text-xs sm:text-sm lg:text-base tracking-tight">
-                                    ${escapeHtml(formatTanggalDenganHari(item.date))}
-                                </span>
+                    <tr class="${rowBg} hover:bg-[#00E5FF]/15 transition-colors animate-row-in" style="animation-delay: ${idx * 60}ms;">
+                        <td class="py-3.5 px-4 sm:px-6 border-r border-[#00E5FF]/20 align-middle">
+                            <div class="font-extrabold text-sm sm:text-base lg:text-lg text-[#00E5FF]">
+                                ${escapeHtml(formatTanggalDenganHari(item.date))}
                             </div>
                         </td>
-                        <td class="py-4 px-4 sm:px-6 align-top border-r border-[#545b72]/70">
-                            <div class="font-extrabold text-sm sm:text-base lg:text-xl text-[#FFFFFF] break-words leading-snug">
+                        <td class="py-3.5 px-4 sm:px-6 border-r border-[#00E5FF]/20 align-middle">
+                            <div class="font-black text-sm sm:text-base lg:text-lg text-[#FFFFFF]">
                                 ${escapeHtml(item.tuk)}
                             </div>
                         </td>
-                        <td class="py-4 px-4 sm:px-6 align-top border-r border-[#545b72]/70">
-                            ${assessorsHtml || '<span class="text-sm text-[#CBD5E1] italic">-</span>'}
+                        <td class="py-3.5 px-4 sm:px-6 border-r border-[#00E5FF]/20 align-middle space-y-1.5">
+                            ${assessorsHtml}
                         </td>
-                        <td class="py-4 px-3 sm:px-4 align-middle text-center">
-                            <span class="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl border text-[11px] sm:text-xs font-black tracking-wider uppercase ${statusInfo.badgeClass}">
-                                ${statusInfo.dotHtml}
+                        <td class="py-3.5 px-3 sm:px-5 text-center align-middle">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[11px] sm:text-xs font-black tracking-wider ${statusInfo.badgeClass}">
+                                <span class="w-2 h-2 rounded-full ${statusInfo.dotClass}"></span>
                                 <span>${statusInfo.label}</span>
                             </span>
                         </td>
@@ -788,107 +791,329 @@
             }).join('');
         }
 
-        function prevPage() {
+        function nextPage(isAuto = false) {
             const filtered = getFilteredSchedules();
-            const perPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
-            const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-            appState.currentPage = appState.currentPage <= 1 ? totalPages : appState.currentPage - 1;
-            renderScheduleTable();
-            notifySlideChangeIfEnabled(totalPages);
-        }
-
-        function nextPage(isAutoSlide = false) {
-            const filtered = getFilteredSchedules();
-            const perPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
-            const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-            if (totalPages <= 1 && isAutoSlide) return;
+            const rowsPerPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
+            const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+            if (totalPages <= 1) return;
 
             appState.currentPage = appState.currentPage >= totalPages ? 1 : appState.currentPage + 1;
             renderScheduleTable();
-            if (totalPages > 1) {
-                notifySlideChangeIfEnabled(totalPages);
-            }
-        }
 
-        function notifySlideChangeIfEnabled(totalPages) {
-            const mode = appState.settings.autoBell || 'slide_and_status';
-            if (mode === 'slide_and_status' || mode === 'slide_only') {
+            const bellMode = appState.settings.autoBell || 'slide_and_status';
+            if (bellMode === 'slide_and_status' || bellMode === 'slide_only') {
                 triggerStationAnnouncement('SLIDE_CHANGE', {
                     currentPage: appState.currentPage,
                     totalPages: totalPages
                 });
             }
+            if (!isAuto) startAutoPagination();
+        }
+
+        function prevPage() {
+            const filtered = getFilteredSchedules();
+            const rowsPerPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
+            const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+            if (totalPages <= 1) return;
+
+            appState.currentPage = appState.currentPage <= 1 ? totalPages : appState.currentPage - 1;
+            renderScheduleTable();
+
+            const bellMode = appState.settings.autoBell || 'slide_and_status';
+            if (bellMode === 'slide_and_status' || bellMode === 'slide_only') {
+                triggerStationAnnouncement('SLIDE_CHANGE', {
+                    currentPage: appState.currentPage,
+                    totalPages: totalPages
+                });
+            }
+            startAutoPagination();
         }
 
         /* =====================================================================
-           F. BACKSOUND 11 INSTRUMEN MELODI KHAS STASIUN KAI (WEB AUDIO API)
+           F. PEMUTAR MUSIK & PLAYLIST YOUTUBE / YOUTUBE MUSIC OTOMATIS
         ===================================================================== */
         let audioCtx = null;
         let isBgmPlaying = false;
-        let bgmNoteTimer = null;
-        let bgmPlaylistIndex = 0;
-        let bgmNoteIndex = 0;
+        let ytPlayer = null;
+        let ytApiReady = false;
+        let ytPendingPlay = false;
+        let ytMiniVisible = false;
 
-        const NOTE_FREQS = {
-            C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
-            C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.00, B5: 987.77
+        // Kumpulan Playlist / Lagu Instrumental YouTube Terverifikasi (Bebas Blokir Embed)
+        const VERIFIED_YT_PRESETS = {
+            gamelan: ['jfKfPfyJRdk', '4xDzrJKXOOY', '5qap5aO4i9A'],
+            jazz: ['Dx5qFachd3A', 'DSGyEsJ17cI', 'fEvM-OUbaKs'],
+            piano: ['4Tr0otuiQuU', 'lCOF9LN_Zxs', '7maJOI3QMu0'],
+            nusantara: ['jfKfPfyJRdk', 'Dx5qFachd3A', '4Tr0otuiQuU']
         };
 
-        const STATION_MELODIES = {
-            sepasang_mata_bola: [
-                ['E4', 0.45], ['G4', 0.45], ['C5', 0.7], ['B4', 0.4], ['A4', 0.45], ['G4', 0.7],
-                ['F4', 0.45], ['A4', 0.45], ['D5', 0.7], ['C5', 0.4], ['B4', 0.45], ['C5', 0.9]
-            ],
-            bengawan_solo: [
-                ['G4', 0.4], ['E4', 0.4], ['G4', 0.55], ['C5', 0.8], ['B4', 0.4], ['A4', 0.4], ['G4', 0.7],
-                ['A4', 0.4], ['G4', 0.4], ['F4', 0.55], ['E4', 0.55], ['D4', 0.55], ['C4', 0.95]
-            ],
-            sabilulungan: [
-                ['E5', 0.35], ['D5', 0.35], ['C5', 0.45], ['A4', 0.45], ['G4', 0.55], ['A4', 0.45],
-                ['C5', 0.35], ['D5', 0.35], ['E5', 0.55], ['D5', 0.45], ['C5', 0.85]
-            ],
-            manuk_dadali: [
-                ['G4', 0.35], ['C5', 0.45], ['C5', 0.35], ['D5', 0.35], ['E5', 0.55], ['C5', 0.45],
-                ['D5', 0.35], ['E5', 0.35], ['F5', 0.55], ['E5', 0.45], ['D5', 0.45], ['C5', 0.85]
-            ],
-            karatagan_pahlawan: [
-                ['C5', 0.4], ['G4', 0.35], ['C5', 0.45], ['E5', 0.65], ['D5', 0.4], ['C5', 0.4], ['B4', 0.6],
-                ['A4', 0.4], ['B4', 0.4], ['C5', 0.55], ['D5', 0.55], ['E5', 0.85]
-            ],
-            ayun_ambing: [
-                ['A4', 0.5], ['E5', 0.5], ['D5', 0.5], ['C5', 0.5], ['A4', 0.75],
-                ['G4', 0.5], ['A4', 0.5], ['C5', 0.5], ['D5', 0.5], ['E5', 0.9]
-            ],
-            rek_ayo_rek: [
-                ['G4', 0.35], ['E4', 0.35], ['G4', 0.45], ['A4', 0.45], ['G4', 0.35], ['E4', 0.35], ['C4', 0.55],
-                ['D4', 0.35], ['E4', 0.35], ['G4', 0.45], ['A4', 0.45], ['G4', 0.8]
-            ],
-            surabaya_oh_surabaya: [
-                ['C5', 0.45], ['B4', 0.45], ['A4', 0.65], ['G4', 0.45], ['E4', 0.45], ['G4', 0.7],
-                ['A4', 0.45], ['G4', 0.45], ['F4', 0.55], ['E4', 0.55], ['D4', 0.55], ['C4', 0.9]
-            ],
-            sungai_serayu: [
-                ['E4', 0.45], ['G4', 0.45], ['A4', 0.65], ['C5', 0.55], ['B4', 0.45], ['A4', 0.65],
-                ['G4', 0.45], ['E4', 0.45], ['D4', 0.55], ['E4', 0.55], ['C4', 0.95]
-            ],
-            gambang_semarang: [
-                ['C5', 0.35], ['D5', 0.35], ['E5', 0.45], ['G5', 0.55], ['E5', 0.35], ['D5', 0.35], ['C5', 0.55],
-                ['A4', 0.4], ['C5', 0.4], ['D5', 0.5], ['E5', 0.5], ['C5', 0.85]
-            ],
-            kota_cirebon: [
-                ['G4', 0.45], ['A4', 0.45], ['C5', 0.65], ['D5', 0.45], ['E5', 0.65],
-                ['D5', 0.45], ['C5', 0.45], ['A4', 0.55], ['G4', 0.85]
-            ],
-            chime: [
-                ['C5', 0.45], ['E5', 0.45], ['G5', 0.45], ['C5', 0.9]
-            ]
+        function resolvePresetVideosByKeyword(queryStr) {
+            const q = String(queryStr || '').toLowerCase();
+            if (q.includes('gamelan') || q.includes('jawa')) return VERIFIED_YT_PRESETS.gamelan;
+            if (q.includes('jazz') || q.includes('lobby')) return VERIFIED_YT_PRESETS.jazz;
+            if (q.includes('piano') || q.includes('tenang')) return VERIFIED_YT_PRESETS.piano;
+            return VERIFIED_YT_PRESETS.nusantara;
+        }
+
+        function toggleYtMiniPreview() {
+            ytMiniVisible = !ytMiniVisible;
+            const host = document.getElementById('yt-hidden-player-host');
+            if (!host) return;
+            if (ytMiniVisible) {
+                host.classList.remove('opacity-0', 'pointer-events-none');
+                host.classList.add('opacity-95', 'pointer-events-auto');
+            } else {
+                host.classList.add('opacity-0', 'pointer-events-none');
+                host.classList.remove('opacity-95', 'pointer-events-auto');
+            }
+        }
+
+        function loadYouTubeIframeAPI() {
+            if (window.YT && window.YT.Player) {
+                ytApiReady = true;
+                initYouTubePlayerInstance();
+                return;
+            }
+            if (!document.getElementById('yt-iframe-api-script')) {
+                const tag = document.createElement('script');
+                tag.id = 'yt-iframe-api-script';
+                tag.src = 'https://www.youtube.com/iframe_api';
+                document.head.appendChild(tag);
+            }
+        }
+
+        window.onYouTubeIframeAPIReady = function () {
+            ytApiReady = true;
+            initYouTubePlayerInstance();
         };
 
-        const BGM_PLAYLIST_KEYS = [
-            'sepasang_mata_bola', 'bengawan_solo', 'sabilulungan', 'manuk_dadali',
-            'karatagan_pahlawan', 'ayun_ambing', 'rek_ayo_rek', 'surabaya_oh_surabaya',
-            'sungai_serayu', 'gambang_semarang', 'kota_cirebon'
-        ];
+        function parseYouTubeSource(urlStr) {
+            if (!urlStr) return { videoId: '', listId: '' };
+            try {
+                const urlObj = new URL(urlStr.trim());
+                const listId = urlObj.searchParams.get('list') || '';
+                let videoId = urlObj.searchParams.get('v') || '';
+                if (!videoId && urlObj.hostname.includes('youtu.be')) {
+                    videoId = urlObj.pathname.replace('/', '').split('/')[0];
+                }
+                if (!videoId && urlObj.pathname.includes('/embed/')) {
+                    videoId = urlObj.pathname.split('/embed/')[1].split('/')[0];
+                }
+                return { videoId, listId };
+            } catch (e) {
+                return { videoId: '', listId: '' };
+            }
+        }
+
+        function unlockYouTubeSound() {
+            if (!ytPlayer) return;
+            const vol = parseInt(appState.settings.bgmVolume, 10) || 30;
+            const targetVol = isBellRinging ? Math.max(5, Math.round(vol * 0.2)) : vol;
+            try {
+                if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
+                if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(targetVol);
+            } catch (e) {}
+        }
+
+        function initYouTubePlayerInstance() {
+            if (ytPlayer || !window.YT || !window.YT.Player) return;
+
+            const playerVars = {
+                autoplay: 0,
+                controls: 1,
+                disablekb: 1,
+                fs: 0,
+                loop: 1,
+                modestbranding: 1,
+                playsinline: 1,
+                rel: 0
+            };
+
+            ytPlayer = new YT.Player('yt-player-frame', {
+                height: '128',
+                width: '224',
+                host: 'https://www.youtube.com',
+                videoId: VERIFIED_YT_PRESETS.nusantara[0],
+                playerVars: playerVars,
+                events: {
+                    onReady: () => {
+                        try {
+                            const iframeEl = ytPlayer.getIframe ? ytPlayer.getIframe() : null;
+                            if (iframeEl) {
+                                iframeEl.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+                                iframeEl.setAttribute('allow', 'autoplay; encrypted-media');
+                            }
+                        } catch (e) {}
+                        unlockYouTubeSound();
+                        if (ytPendingPlay || isBgmPlaying) {
+                            ytPendingPlay = false;
+                            loadAndStartYouTubePlaylist();
+                        }
+                    },
+                    onStateChange: (event) => {
+                        if (!window.YT) return;
+                        if (event.data === YT.PlayerState.PLAYING) {
+                            unlockYouTubeSound();
+                            const data = ytPlayer.getVideoData ? ytPlayer.getVideoData() : null;
+                            const title = (data && data.title) ? data.title : 'Memutar Playlist YouTube...';
+                            updateYtNowPlayingLabel(`Memutar: ${title}`);
+                            const textEl = document.getElementById('text-bgm-status');
+                            if (textEl && isBgmPlaying) textEl.textContent = 'YouTube Aktif';
+                        } else if (event.data === YT.PlayerState.UNSTARTED || event.data === YT.PlayerState.CUED) {
+                            if (isBgmPlaying && ytPlayer.playVideo) {
+                                unlockYouTubeSound();
+                                ytPlayer.playVideo();
+                            }
+                        } else if (event.data === YT.PlayerState.ENDED) {
+                            if (ytPlayer.nextVideo) ytPlayer.nextVideo();
+                        }
+                    },
+                    onError: () => {
+                        updateYtNowPlayingLabel('Video tidak bisa diputar, beralih ke lagu berikutnya...');
+                        if (ytPlayer && ytPlayer.nextVideo) {
+                            setTimeout(() => {
+                                unlockYouTubeSound();
+                                ytPlayer.nextVideo();
+                            }, 1000);
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadAndStartYouTubePlaylist() {
+            if (!ytPlayer || typeof ytPlayer.loadPlaylist !== 'function') {
+                ytPendingPlay = true;
+                loadYouTubeIframeAPI();
+                return;
+            }
+
+            unlockYouTubeSound();
+            const mode = appState.settings.ytMode || 'search';
+
+            if (mode === 'url') {
+                const parsed = parseYouTubeSource(appState.settings.ytUrl || '');
+                if (parsed.listId) {
+                    ytPlayer.loadPlaylist({ list: parsed.listId, listType: 'playlist', index: 0 });
+                    ytPlayer.setLoop(true);
+                    setTimeout(() => { unlockYouTubeSound(); ytPlayer.playVideo(); }, 400);
+                    updateYtNowPlayingLabel('Memuat Playlist YouTube / YT Music...');
+                    return;
+                }
+                if (parsed.videoId) {
+                    ytPlayer.loadPlaylist([parsed.videoId, ...VERIFIED_YT_PRESETS.nusantara], 0);
+                    ytPlayer.setLoop(true);
+                    setTimeout(() => { unlockYouTubeSound(); ytPlayer.playVideo(); }, 400);
+                    updateYtNowPlayingLabel('Memutar Lagu YouTube...');
+                    return;
+                }
+                showToast('Link YouTube tidak valid, memutar playlist instrumental bawaan.', 'info');
+            }
+
+            const query = (appState.settings.ytQuery || 'musik instrumental ruang tunggu santai').trim();
+            const videoList = resolvePresetVideosByKeyword(query);
+            ytPlayer.loadPlaylist(videoList, 0);
+            ytPlayer.setLoop(true);
+            setTimeout(() => {
+                unlockYouTubeSound();
+                if (ytPlayer.playVideo) ytPlayer.playVideo();
+            }, 400);
+            updateYtNowPlayingLabel(`Memutar Playlist: "${query}"...`);
+        }
+
+        function updateYtNowPlayingLabel(text) {
+            const el = document.getElementById('yt-now-playing-label');
+            if (el) el.textContent = text;
+        }
+
+        function toggleBackgroundMusic() {
+            isBgmPlaying = !isBgmPlaying;
+
+            const btn = document.getElementById('btn-toggle-bgm');
+            const eq = document.getElementById('bgm-eq-bars');
+            const icon = document.getElementById('icon-bgm-status');
+            const text = document.getElementById('text-bgm-status');
+
+            if (isBgmPlaying) {
+                ensureAudioContext();
+                loadAndStartYouTubePlaylist();
+                if (btn) btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#FF2E93] to-[#FF6B00] text-[#FFFFFF] border border-[#FF75B5] text-xs font-black transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(255,46,147,0.45)]';
+                if (eq) { eq.classList.remove('hidden'); eq.classList.add('inline-flex'); }
+                if (icon) icon.classList.add('hidden');
+                if (text) text.textContent = 'YouTube Aktif';
+                showToast('Playlist YouTube / YT Music mulai diputar.', 'info');
+            } else {
+                ytPendingPlay = false;
+                if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+                    ytPlayer.pauseVideo();
+                }
+                updateYtNowPlayingLabel('Pemutar dijeda');
+                if (btn) btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1e1333] hover:bg-[#FF2E93] text-[#FF75B5] hover:text-[#FFFFFF] border border-[#FF2E93]/60 text-xs font-extrabold transition-all duration-300 cursor-pointer';
+                if (eq) { eq.classList.add('hidden'); eq.classList.remove('inline-flex'); }
+                if (icon) icon.classList.remove('hidden');
+                if (text) text.textContent = 'Musik YouTube';
+                showToast('Musik YouTube dijeda.', 'info');
+            }
+        }
+
+        function nextYouTubeTrack() {
+            if (!isBgmPlaying) {
+                toggleBackgroundMusic();
+                return;
+            }
+            if (ytPlayer && typeof ytPlayer.nextVideo === 'function') {
+                ytPlayer.nextVideo();
+                showToast('Berpindah ke lagu berikutnya dalam playlist.', 'info');
+            }
+        }
+
+        function handleYtModeChange() {
+            const modeEl = document.getElementById('setting-yt-mode');
+            const searchGrp = document.getElementById('yt-search-group');
+            const urlGrp = document.getElementById('yt-url-group');
+            if (!modeEl) return;
+
+            const isUrl = modeEl.value === 'url';
+            if (searchGrp) searchGrp.classList.toggle('hidden', isUrl);
+            if (urlGrp) urlGrp.classList.toggle('hidden', !isUrl);
+        }
+
+        function setQuickYtPreset(queryText) {
+            const modeEl = document.getElementById('setting-yt-mode');
+            const queryEl = document.getElementById('setting-yt-query');
+            if (modeEl) modeEl.value = 'search';
+            if (queryEl) queryEl.value = queryText;
+            handleYtModeChange();
+            applyAndPlayYouTubeConfig();
+        }
+
+        function applyAndPlayYouTubeConfig() {
+            const modeEl = document.getElementById('setting-yt-mode');
+            const queryEl = document.getElementById('setting-yt-query');
+            const urlEl = document.getElementById('setting-yt-url');
+
+            if (modeEl) appState.settings.ytMode = modeEl.value;
+            if (queryEl) appState.settings.ytQuery = queryEl.value.trim() || 'musik instrumental ruang tunggu santai';
+            if (urlEl) appState.settings.ytUrl = urlEl.value.trim();
+            saveAppState();
+
+            if (!isBgmPlaying) {
+                toggleBackgroundMusic();
+            } else {
+                loadAndStartYouTubePlaylist();
+            }
+        }
+
+        function handleBgmVolumeChange() {
+            const el = document.getElementById('setting-bgm-volume');
+            if (!el) return;
+            appState.settings.bgmVolume = el.value;
+            saveAppState();
+            const vol = parseInt(el.value, 10) || 30;
+            if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
+                ytPlayer.setVolume(isBellRinging ? Math.max(5, Math.round(vol * 0.2)) : vol);
+            }
+        }
 
         function ensureAudioContext() {
             if (!audioCtx) {
@@ -899,99 +1124,6 @@
                 audioCtx.resume().catch(() => {});
             }
             return audioCtx;
-        }
-
-        function playSoftBellNote(freq, durationSec, volume) {
-            const ctx = ensureAudioContext();
-            if (!ctx) return;
-
-            const now = ctx.currentTime;
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, now);
-
-            const effectiveVol = isBellRinging ? volume * 0.15 : volume;
-            gain.gain.setValueAtTime(0.0001, now);
-            gain.gain.exponentialRampToValueAtTime(Math.max(0.001, effectiveVol), now + 0.04);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec + 0.35);
-
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(now);
-            osc.stop(now + durationSec + 0.4);
-        }
-
-        function stepBgmLoop() {
-            if (!isBgmPlaying) return;
-
-            const selectedKey = appState.settings.stationMelody || 'playlist';
-            const melodyKey = selectedKey === 'playlist'
-                ? BGM_PLAYLIST_KEYS[bgmPlaylistIndex % BGM_PLAYLIST_KEYS.length]
-                : (STATION_MELODIES[selectedKey] ? selectedKey : 'sepasang_mata_bola');
-
-            const notes = STATION_MELODIES[melodyKey];
-            const [noteName, dur] = notes[bgmNoteIndex % notes.length];
-            const freq = NOTE_FREQS[noteName] || 440;
-            const vol = parseFloat(appState.settings.bgmVolume) || 0.14;
-
-            playSoftBellNote(freq, dur, vol);
-
-            bgmNoteIndex++;
-            let nextDelayMs = (dur + 0.12) * 1000;
-
-            if (bgmNoteIndex >= notes.length) {
-                bgmNoteIndex = 0;
-                if (selectedKey === 'playlist') {
-                    bgmPlaylistIndex = (bgmPlaylistIndex + 1) % BGM_PLAYLIST_KEYS.length;
-                }
-                nextDelayMs += 1800; // Jeda antarlirik melodi ruang tunggu
-            }
-
-            bgmNoteTimer = setTimeout(stepBgmLoop, nextDelayMs);
-        }
-
-        function toggleBackgroundMusic() {
-            isBgmPlaying = !isBgmPlaying;
-            if (bgmNoteTimer) clearTimeout(bgmNoteTimer);
-
-            const btn = document.getElementById('btn-toggle-bgm');
-            const eq = document.getElementById('bgm-eq-bars');
-            const icon = document.getElementById('icon-bgm-status');
-            const text = document.getElementById('text-bgm-status');
-
-            if (isBgmPlaying) {
-                ensureAudioContext();
-                bgmNoteIndex = 0;
-                stepBgmLoop();
-                if (btn) btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FFFFFF] text-[#2c3142] border border-[#FFFFFF] text-xs font-extrabold transition-all duration-300 cursor-pointer shadow';
-                if (eq) { eq.classList.remove('hidden'); eq.classList.add('inline-flex'); }
-                if (icon) icon.classList.add('hidden');
-                if (text) text.textContent = 'Backsound Aktif';
-                showToast('Backsound instrumen stasiun dinyalakan.', 'info');
-            } else {
-                if (btn) btn.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#393e51] hover:bg-[#505567] text-[#E2E8F0] border border-[#545b72] text-xs font-bold transition-all duration-300 cursor-pointer';
-                if (eq) { eq.classList.add('hidden'); eq.classList.remove('inline-flex'); }
-                if (icon) icon.classList.remove('hidden');
-                if (text) text.textContent = 'Backsound';
-                showToast('Backsound dimatikan.', 'info');
-            }
-        }
-
-        function handleMelodySelectChange() {
-            const el = document.getElementById('setting-station-melody');
-            if (!el) return;
-            appState.settings.stationMelody = el.value;
-            bgmNoteIndex = 0;
-            saveAppState();
-        }
-
-        function handleBgmVolumeChange() {
-            const el = document.getElementById('setting-bgm-volume');
-            if (!el) return;
-            appState.settings.bgmVolume = el.value;
-            saveAppState();
         }
 
         /* =====================================================================
@@ -1029,6 +1161,11 @@
             const pattern = STATION_BELL_PATTERNS[style] || STATION_BELL_PATTERNS.airport_chime;
 
             isBellRinging = true;
+            const normalVol = parseInt(appState.settings.bgmVolume, 10) || 30;
+            if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
+                ytPlayer.setVolume(Math.max(4, Math.round(normalVol * 0.18)));
+            }
+
             const bellBtn = document.getElementById('btn-station-bell');
             if (bellBtn) bellBtn.classList.add('ring-4', 'ring-white/40');
 
@@ -1065,6 +1202,9 @@
             const totalMs = Math.ceil((pattern[pattern.length - 1].delay + pattern[pattern.length - 1].dur + 0.5) * 1000);
             setTimeout(() => {
                 isBellRinging = false;
+                if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
+                    ytPlayer.setVolume(parseInt(appState.settings.bgmVolume, 10) || 30);
+                }
                 if (bellBtn) bellBtn.classList.remove('ring-4', 'ring-white/40');
             }, totalMs);
         }
@@ -1538,8 +1678,10 @@
                 runningText: 'Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan kelengkapan portofolio.',
                 bellStyle: 'airport_chime',
                 autoBell: 'slide_and_status',
-                stationMelody: 'playlist',
-                bgmVolume: '0.14'
+                ytMode: 'search',
+                ytQuery: 'musik instrumental ruang tunggu santai',
+                ytUrl: '',
+                bgmVolume: '30'
             }
         };
 
@@ -1585,8 +1727,11 @@
             setVal('setting-running-text', appState.settings.runningText);
             setVal('setting-bell-style', appState.settings.bellStyle);
             setVal('setting-auto-bell', appState.settings.autoBell);
-            setVal('setting-station-melody', appState.settings.stationMelody);
-            setVal('setting-bgm-volume', appState.settings.bgmVolume);
+            setVal('setting-yt-mode', appState.settings.ytMode || 'search');
+            setVal('setting-yt-query', appState.settings.ytQuery || 'musik instrumental ruang tunggu santai');
+            setVal('setting-yt-url', appState.settings.ytUrl || '');
+            setVal('setting-bgm-volume', appState.settings.bgmVolume || '30');
+            handleYtModeChange();
 
             setVal('gsheet-url-input', appState.gsheet.url);
             setVal('gsheet-sheet-name', appState.gsheet.sheetName);
@@ -1613,13 +1758,18 @@
             appState.settings.runningText = getVal('setting-running-text', appState.settings.runningText);
             appState.settings.bellStyle = getVal('setting-bell-style', appState.settings.bellStyle);
             appState.settings.autoBell = getVal('setting-auto-bell', appState.settings.autoBell);
-            appState.settings.stationMelody = getVal('setting-station-melody', appState.settings.stationMelody);
+            appState.settings.ytMode = getVal('setting-yt-mode', appState.settings.ytMode);
+            appState.settings.ytQuery = getVal('setting-yt-query', appState.settings.ytQuery);
+            appState.settings.ytUrl = getVal('setting-yt-url', appState.settings.ytUrl);
             appState.settings.bgmVolume = getVal('setting-bgm-volume', appState.settings.bgmVolume);
 
             saveAppState();
             applySettingsToUI();
             renderScheduleTable();
             startAutoPagination();
+            if (isBgmPlaying) {
+                loadAndStartYouTubePlaylist();
+            }
             showToast('Semua pengaturan berhasil disimpan.', 'success');
         }
 
@@ -1700,6 +1850,7 @@
             renderScheduleTable();
             startLiveClock();
             startAutoPagination();
+            loadYouTubeIframeAPI();
             if (extractSpreadsheetId(appState.gsheet.url)) {
                 startGoogleSheetPolling();
             }
