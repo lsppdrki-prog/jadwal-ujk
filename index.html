@@ -39,79 +39,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
-        /* Latar Kisi Geometris Colorful Aurora Lembut & Sejuk di Mata */
-        @keyframes gridDrift {
-            0% { background-position: 0 0, 0 0, 0 0, 0 0, 0 0; }
-            100% { background-position: 0 0, 0 0, 0 0, 48px 48px, 48px 48px; }
-        }
+        /* Latar Kisi Geometris Statis Ringan */
         .bg-motion-grid {
             background-color: #161b2e;
             background-image:
-                radial-gradient(circle at 14% 12%, rgba(94, 234, 212, 0.16) 0%, transparent 48%),
-                radial-gradient(circle at 86% 14%, rgba(192, 132, 252, 0.16) 0%, transparent 48%),
-                radial-gradient(circle at 50% 92%, rgba(251, 191, 36, 0.12) 0%, transparent 52%),
+                radial-gradient(circle at 14% 12%, rgba(94, 234, 212, 0.14) 0%, transparent 48%),
+                radial-gradient(circle at 86% 14%, rgba(192, 132, 252, 0.14) 0%, transparent 48%),
+                radial-gradient(circle at 50% 92%, rgba(251, 191, 36, 0.10) 0%, transparent 52%),
                 linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
-            animation: gridDrift 28s linear infinite;
         }
-
-        /* Sapuan Kilau & Garis Pemindai Header Pastel Harmonis */
-        @keyframes headerShimmer {
-            0% { transform: translateX(-100%) skewX(-20deg); }
-            50%, 100% { transform: translateX(250%) skewX(-20deg); }
-        }
-        .header-shimmer::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 35%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
-            animation: headerShimmer 8s ease-in-out infinite;
-            pointer-events: none;
-        }
-
-        @keyframes scanBeam {
-            0% { left: -20%; opacity: 0; }
-            20% { opacity: 0.9; }
-            80% { opacity: 0.9; }
-            100% { left: 100%; opacity: 0; }
-        }
-        .scan-beam {
-            position: absolute;
-            bottom: 0;
-            width: 34%;
-            height: 2.5px;
-            background: linear-gradient(90deg, transparent, #5EEAD4, #6EE7B7, #FCD34D, #F9A8D4, transparent);
-            animation: scanBeam 6s linear infinite;
-            pointer-events: none;
-        }
-
-        /* Animasi Baris Masuk Bertahap */
-        @keyframes rowReveal {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-row-in {
-            opacity: 0;
-            animation: rowReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-
-        /* Equalizer Backsound Hidup */
-        @keyframes eqPulse {
-            0%, 100% { height: 25%; }
-            50% { height: 100%; }
-        }
-        .eq-bar {
-            width: 2.5px;
-            background-color: #161b2e;
-            border-radius: 9999px;
-            animation: eqPulse 0.85s ease-in-out infinite;
-        }
-        .eq-bar:nth-child(2) { animation-delay: 0.2s; }
-        .eq-bar:nth-child(3) { animation-delay: 0.4s; }
 
         /* Running Text Pengumuman Bawah */
         @keyframes marqueeScroll {
@@ -127,49 +65,13 @@
             animation-play-state: paused;
         }
 
-        /* Partikel Aurora Melayang Halus di Latar Belakang TV */
-        @keyframes floatOrbSlow {
-            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-            33% { transform: translate3d(38px, -28px, 0) scale(1.08); }
-            66% { transform: translate3d(-26px, 22px, 0) scale(0.95); }
-        }
-        @keyframes floatOrbReverse {
-            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-            50% { transform: translate3d(-42px, -30px, 0) scale(1.1); }
-        }
-        .aurora-orb-1 {
-            animation: floatOrbSlow 18s ease-in-out infinite;
-        }
-        .aurora-orb-2 {
-            animation: floatOrbReverse 22s ease-in-out infinite;
-        }
-
-        /* Animasi Pergantian Slide Halaman */
+        /* Animasi Pergantian Slide Halaman (Satu-satunya Animasi Transisi Halaman) */
         @keyframes slidePageEnter {
-            0% { opacity: 0; transform: translateX(24px) scale(0.992); }
-            100% { opacity: 1; transform: translateX(0) scale(1); }
+            0% { opacity: 0; transform: translateX(28px); }
+            100% { opacity: 1; transform: translateX(0); }
         }
         .animate-slide-enter {
-            animation: slidePageEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-
-        /* Efek Kilau Badge Aktif & Border Bercahaya */
-        @keyframes badgeGleam {
-            0% { background-position: -200% center; }
-            100% { background-position: 200% center; }
-        }
-        .badge-live-gleam {
-            background-size: 200% auto;
-            animation: badgeGleam 4s linear infinite;
-        }
-
-        /* Animasi Detik Jam Digital */
-        @keyframes clockSecondTick {
-            0% { transform: scale(1.04); filter: brightness(1.2); }
-            100% { transform: scale(1); filter: brightness(1); }
-        }
-        .clock-tick-pulse {
-            animation: clockSecondTick 0.35s ease-out;
+            animation: slidePageEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         /* Scrollbar Halus Pastel */
@@ -191,24 +93,16 @@
 </head>
 <body class="bg-motion-grid text-[#F8FAFC] font-sans antialiased selection:bg-[#FDE68A] selection:text-[#161b2e] overflow-x-hidden relative">
 
-    <!-- Lapisan Cahaya Aurora Melayang di Latar Belakang TV -->
-    <div aria-hidden="true" class="pointer-events-none fixed inset-0 overflow-hidden z-0">
-        <div class="aurora-orb-1 absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#5EEAD4]/10 blur-3xl"></div>
-        <div class="aurora-orb-2 absolute top-1/3 -right-24 w-[28rem] h-[28rem] rounded-full bg-[#C084FC]/10 blur-3xl"></div>
-        <div class="aurora-orb-1 absolute -bottom-28 left-1/3 w-[26rem] h-[26rem] rounded-full bg-[#FDE68A]/10 blur-3xl"></div>
-    </div>
-
     <!-- Wrapper Utama Layar Penuh (100dvh Anti-Potong pada Smart TV & Desktop) -->
     <div class="relative z-10 min-h-[100dvh] flex flex-col justify-between">
 
-        <!-- HEADER UTAMA (Palet Colorful Lembut & Sejuk di Mata) -->
-        <header id="main-header" class="relative overflow-hidden header-shimmer bg-gradient-to-r from-[#1b2945] via-[#27244d] to-[#362447] backdrop-blur-md border-b border-[#94A3B8]/30 px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_8px_32px_rgba(15,23,42,0.55)] shrink-0">
-            <div class="scan-beam"></div>
+        <!-- HEADER UTAMA (Palet Colorful Lembut & Statis Ringan) -->
+        <header id="main-header" class="relative overflow-hidden bg-gradient-to-r from-[#1b2945] via-[#27244d] to-[#362447] border-b border-[#94A3B8]/30 px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_8px_32px_rgba(15,23,42,0.55)] shrink-0">
             <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
 
                 <!-- Kiri: Identitas Lembaga & Judul Board -->
                 <div class="flex items-center gap-3.5 min-w-0">
-                    <div id="header-icon-box" title="LSP Ratu Kompetensi Indonesia (3D Interactive Logo)" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-[#FFFFFF] via-[#F8FAFC] to-[#E2E8F0] flex items-center justify-center shadow-[0_6px_24px_rgba(125,211,252,0.4)] shrink-0 border-2 border-[#7DD3FC]/70 overflow-hidden cursor-grab active:cursor-grabbing">
+                    <div id="header-icon-box" title="LSP Ratu Kompetensi Indonesia" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-[#FFFFFF] via-[#F8FAFC] to-[#E2E8F0] flex items-center justify-center shadow-[0_6px_24px_rgba(125,211,252,0.4)] shrink-0 border-2 border-[#7DD3FC]/70 overflow-hidden">
                         <div id="logo-3d-canvas-container" class="w-full h-full"></div>
                     </div>
                     <div class="min-w-0">
@@ -217,7 +111,7 @@
                                 LSP RATU KOMPETENSI INDONESIA
                             </span>
                             <span id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#161b2e]/75 border border-[#6EE7B7]/45 text-[11px] sm:text-xs font-bold text-[#6EE7B7]">
-                                <span id="connection-dot" class="w-2 h-2 rounded-full bg-[#6EE7B7] animate-pulse"></span>
+                                <span id="connection-dot" class="w-2 h-2 rounded-full bg-[#6EE7B7]"></span>
                                 <span id="connection-label">Mode Siap Pakai</span>
                             </span>
                         </div>
@@ -248,10 +142,10 @@
 
                     <!-- Tombol Ikon Kontrol -->
                     <div id="header-control-buttons" class="flex items-center gap-2 pl-3 border-l border-[#94A3B8]/25">
-                        <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Layar Penuh (F11)" aria-label="Layar Penuh" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1e293b]/90 hover:bg-[#5EEAD4] text-[#5EEAD4] hover:text-[#161b2e] border border-[#5EEAD4]/45 flex items-center justify-center transition-all duration-300 hover:scale-105 cursor-pointer">
+                        <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Layar Penuh (F11)" aria-label="Layar Penuh" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1e293b]/90 hover:bg-[#5EEAD4] text-[#5EEAD4] hover:text-[#161b2e] border border-[#5EEAD4]/45 flex items-center justify-center transition-colors duration-200 cursor-pointer">
                             <i id="icon-fullscreen" class="fa-solid fa-expand text-base sm:text-lg"></i>
                         </button>
-                        <button id="btn-admin-drawer" onclick="toggleAdminDrawer()" title="Pengaturan & Google Sheets (Alt + A)" aria-label="Pengaturan Google Sheets" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-[#C084FC] to-[#F472B6] hover:opacity-90 text-[#161b2e] flex items-center justify-center transition-all duration-300 hover:scale-105 cursor-pointer shadow">
+                        <button id="btn-admin-drawer" onclick="toggleAdminDrawer()" title="Pengaturan & Google Sheets (Alt + A)" aria-label="Pengaturan Google Sheets" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-[#C084FC] to-[#F472B6] hover:opacity-90 text-[#161b2e] flex items-center justify-center transition-opacity duration-200 cursor-pointer shadow">
                             <i class="fa-solid fa-table-cells text-base sm:text-lg"></i>
                         </button>
                     </div>
@@ -261,7 +155,7 @@
 
         <!-- KONTEN UTAMA: PAPAN TABEL JADWAL UJK -->
         <main class="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 py-3 sm:py-4 min-h-0">
-            <div class="flex-1 flex flex-col bg-[#1b2238]/95 backdrop-blur-md border border-[#94A3B8]/35 rounded-2xl shadow-[0_18px_50px_rgba(10,15,28,0.65)] overflow-hidden min-h-0">
+            <div class="flex-1 flex flex-col bg-[#1b2238]/95 border border-[#94A3B8]/35 rounded-2xl shadow-[0_18px_50px_rgba(10,15,28,0.65)] overflow-hidden min-h-0">
 
                 <!-- Bilah Filter Tanggal UJK & Status Sinkronisasi -->
                 <div class="bg-gradient-to-r from-[#1f2942] via-[#262547] to-[#2e2342] border-b border-[#94A3B8]/25 px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
@@ -302,34 +196,28 @@
                     </div>
                 </div>
 
-                <!-- Progress Bar Animasi Pergantian Auto-Slide -->
+                <!-- Progress Bar Pergantian Auto-Slide -->
                 <div class="w-full h-1 bg-[#161b2e] overflow-hidden shrink-0">
-                    <div id="auto-slide-progress-bar" class="h-full w-0 bg-gradient-to-r from-[#5EEAD4] via-[#C084FC] to-[#FDE68A] transition-none"></div>
+                    <div id="auto-slide-progress-bar" class="h-full w-0 bg-gradient-to-r from-[#5EEAD4] via-[#FDE68A] to-[#F472B6]"></div>
                 </div>
 
-                <!-- Tabel Utama Display (Palet Colorful Soft Pastel yang Nyaman di Mata) -->
+                <!-- Tabel Utama Display (3 Kolom Ekstra Luas: Tanggal/Status/Total Asesi, Nama TUK & Skema, Nama Asesor) -->
                 <div class="flex-1 overflow-auto min-h-0">
                     <table class="w-full table-fixed text-left border-collapse">
-                        <thead class="sticky top-0 z-10 text-xs sm:text-sm uppercase tracking-wider border-b border-[#94A3B8]/35">
+                        <thead class="sticky top-0 z-10 text-xs sm:text-sm lg:text-base uppercase tracking-wider border-b-2 border-[#94A3B8]/40">
                             <tr>
-                                <th class="w-[19%] py-3.5 px-3 sm:px-5 font-extrabold bg-gradient-to-r from-[#1d4e6e] to-[#1e5c82] text-[#E0F2FE] border-r border-[#FFFFFF]/15">
-                                    <i class="fa-regular fa-calendar-days text-[#7DD3FC] mr-1.5"></i>Tanggal UJK
+                                <th class="w-[25%] py-4 px-5 sm:px-6 font-extrabold bg-gradient-to-r from-[#1d4e6e] via-[#1e5c82] to-[#1e5c4b] text-[#E0F2FE] border-r border-[#FFFFFF]/15">
+                                    <i class="fa-regular fa-calendar-days text-[#7DD3FC] mr-2"></i>Tanggal, Status & Asesi
                                 </th>
-                                <th class="w-[24%] py-3.5 px-3 sm:px-5 font-extrabold bg-gradient-to-r from-[#453275] to-[#523b8a] text-[#EDE9FE] border-r border-[#FFFFFF]/15">
-                                    <i class="fa-solid fa-location-dot text-[#C4B5FD] mr-1.5"></i>Nama TUK & Asesi
+                                <th class="w-[45%] py-4 px-5 sm:px-6 font-extrabold bg-gradient-to-r from-[#453275] via-[#5a3478] to-[#7c3550] text-[#F3E8FF] border-r border-[#FFFFFF]/15">
+                                    <i class="fa-solid fa-location-dot text-[#C4B5FD] mr-2"></i>Nama TUK & Skema
                                 </th>
-                                <th class="w-[22%] py-3.5 px-3 sm:px-5 font-extrabold bg-gradient-to-r from-[#6b2d5c] to-[#7d366c] text-[#FCE7F3] border-r border-[#FFFFFF]/15">
-                                    <i class="fa-solid fa-certificate text-[#F9A8D4] mr-1.5"></i>Skema Sertifikasi
-                                </th>
-                                <th class="w-[21%] py-3.5 px-3 sm:px-5 font-extrabold bg-gradient-to-r from-[#6e4b23] to-[#825829] text-[#FEF3C7] border-r border-[#FFFFFF]/15">
-                                    <i class="fa-solid fa-user-tie text-[#FCD34D] mr-1.5"></i>Nama Asesor
-                                </th>
-                                <th class="w-[14%] py-3.5 px-2 sm:px-4 font-extrabold bg-gradient-to-r from-[#1e5c4b] to-[#236e59] text-[#D1FAE5] text-center">
-                                    <i class="fa-solid fa-signal text-[#6EE7B7] mr-1"></i>Status
+                                <th class="w-[30%] py-4 px-5 sm:px-6 font-extrabold bg-gradient-to-r from-[#6e4b23] to-[#825829] text-[#FEF3C7]">
+                                    <i class="fa-solid fa-user-tie text-[#FCD34D] mr-2"></i>Nama Asesor
                                 </th>
                             </tr>
                         </thead>
-                        <tbody id="schedule-table-body" class="divide-y divide-[#94A3B8]/20 text-[#F8FAFC]">
+                        <tbody id="schedule-table-body" class="divide-y-2 divide-[#94A3B8]/30 text-[#F8FAFC]">
                             <!-- Baris jadwal dirender otomatis oleh JavaScript -->
                         </tbody>
                     </table>
@@ -349,16 +237,6 @@
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
-                        <!-- Tombol Musik Playlist YouTube / YouTube Music (Ikon Saja) -->
-                        <button id="btn-toggle-bgm" onclick="toggleBackgroundMusic()" title="Nyalakan / Matikan Playlist YouTube / YouTube Music (Alt + M)" aria-label="Musik YouTube" class="w-9 h-9 rounded-lg bg-[#28203d] hover:bg-[#F472B6] text-[#F9A8D4] hover:text-[#161b2e] border border-[#F472B6]/45 flex items-center justify-center transition-all duration-300 cursor-pointer">
-                            <span id="bgm-eq-bars" class="hidden items-end gap-0.5 h-3.5">
-                                <span class="eq-bar"></span>
-                                <span class="eq-bar"></span>
-                                <span class="eq-bar"></span>
-                            </span>
-                            <i id="icon-bgm-status" class="fa-brands fa-youtube text-[#F9A8D4] text-base"></i>
-                        </button>
-
                         <!-- Tombol Bel Pemberitahuan Bandara / Stasiun (Ikon Saja) -->
                         <button id="btn-station-bell" onclick="triggerStationAnnouncement('MANUAL')" title="Bunyikan Bel Pemberitahuan Bandara / Stasiun (Alt + B)" aria-label="Bel Pemberitahuan" class="w-9 h-9 rounded-lg bg-gradient-to-r from-[#FDE68A] to-[#FCD34D] hover:opacity-90 text-[#161b2e] border border-[#FDE68A]/70 flex items-center justify-center transition-all duration-300 cursor-pointer">
                             <i id="icon-bell-status" class="fa-solid fa-bell text-sm"></i>
@@ -396,7 +274,7 @@
     </div>
 
     <!-- BACKDROP DRAWER PENGATURAN -->
-    <div id="admin-backdrop" onclick="toggleAdminDrawer()" class="hidden fixed inset-0 z-40 bg-black/75 backdrop-blur-xs transition-opacity"></div>
+    <div id="admin-backdrop" onclick="toggleAdminDrawer()" class="hidden fixed inset-0 z-40 bg-black/75 backdrop-blur-sm transition-opacity"></div>
 
     <!-- DRAWER PENGATURAN OPERATOR -->
     <aside id="admin-drawer" class="fixed top-0 right-0 z-50 h-full w-full max-w-xl bg-[#0d1323] border-l-2 border-[#00E5FF]/50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
@@ -407,7 +285,7 @@
                 </div>
                 <div>
                     <h2 class="text-sm sm:text-base font-black text-[#FFFFFF]">Pengaturan Display & Google Sheets</h2>
-                    <p class="text-[11px] text-[#00E5FF]">Shortcut: Alt + A (Panel) • Alt + M (Musik YT) • Alt + B (Bel)</p>
+                    <p class="text-[11px] text-[#00E5FF]">Shortcut: Alt + A (Panel) • Alt + B (Bel Pemberitahuan)</p>
                 </div>
             </div>
             <button onclick="toggleAdminDrawer()" class="w-9 h-9 rounded-xl bg-[#090d16] hover:bg-[#FF2E93] text-[#FFFFFF] border border-[#00E5FF]/40 flex items-center justify-center cursor-pointer transition">
@@ -518,29 +396,29 @@
                         <button type="button" onclick="setQuickYtPreset('musik instrumental indonesia klasik')" class="px-2 py-1 rounded-lg bg-[#090d16] hover:bg-[#FF2E93]/30 text-[11px] text-[#00E5FF] border border-[#00E5FF]/40 cursor-pointer">Instrumental Nusantara</button>
                     </div>
                 </div>
+            <!-- BAGIAN 2: BEL PEMBERITAHUAN STASIUN/BANDARA -->
+            <section class="bg-[#131c31]/90 border border-[#FF2E93]/40 rounded-2xl p-4 space-y-3.5">
+                <h3 class="text-sm font-extrabold text-[#FF2E93] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-bell text-[#FFD60A]"></i> 2. Bel Pemberitahuan Ruang Tunggu & Pengingat ISOMA
+                </h3>
 
-                <div id="yt-url-group" class="hidden">
-                    <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Link Video atau Playlist (youtube.com / music.youtube.com)</label>
-                    <div class="flex gap-2">
-                        <input type="url" id="setting-yt-url" placeholder="https://music.youtube.com/playlist?list=..." class="flex-1 bg-[#090d16] border border-[#FF2E93]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
-                        <button type="button" onclick="applyAndPlayYouTubeConfig()" class="px-3 py-2 rounded-xl bg-[#FF2E93] text-[#FFFFFF] font-extrabold text-xs hover:bg-[#FF4da3] transition cursor-pointer shrink-0">
-                            <i class="fa-solid fa-play mr-1"></i> Putar
-                        </button>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Nada Bel Pemberitahuan</label>
+                        <select id="setting-bell-style" class="w-full bg-[#090d16] border border-[#FF2E93]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
+                            <option value="airport_chime">Chime Bandara Internasional (4 Nada)</option>
+                            <option value="kai_westminster">Bel Stasiun Kereta Api (Westminster)</option>
+                            <option value="boarding_dingdong">Ding-Dong Panggilan Ruang Tunggu</option>
+                        </select>
                     </div>
-                </div>
-
-                <div class="flex items-center justify-between bg-[#090d16] border border-[#FF2E93]/40 rounded-xl px-3 py-2">
-                    <div class="min-w-0 pr-2">
-                        <div class="text-[10px] font-bold uppercase tracking-wider text-[#FF75B5]">Status Pemutar YouTube</div>
-                        <div id="yt-now-playing-label" class="text-xs font-extrabold text-[#FFFFFF] truncate">Siap memutar playlist otomatis</div>
-                    </div>
-                    <div class="flex items-center gap-1.5 shrink-0">
-                        <button type="button" onclick="toggleYtMiniPreview()" title="Tampilkan / Sembunyikan Layar Mini YouTube" class="px-2.5 py-1.5 rounded-lg bg-[#131c31] hover:bg-[#00E5FF] text-[#00E5FF] hover:text-[#090d16] border border-[#00E5FF]/40 text-xs font-bold transition cursor-pointer">
-                            <i class="fa-solid fa-tv"></i>
-                        </button>
-                        <button type="button" onclick="nextYouTubeTrack()" title="Lagu Berikutnya dalam Playlist" class="px-2.5 py-1.5 rounded-lg bg-[#FF2E93] hover:bg-[#FF4da3] text-[#FFFFFF] text-xs font-bold transition cursor-pointer">
-                            <i class="fa-solid fa-forward-step mr-1"></i> Lagu Berikutnya
-                        </button>
+                    <div>
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Pemicu Otomatis Bel Pemberitahuan</label>
+                        <select id="setting-auto-bell" class="w-full bg-[#090d16] border border-[#FF2E93]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFD60A]">
+                            <option value="slide_and_status">Setiap Ganti Slide, Status & Jam 12:00 ISOMA</option>
+                            <option value="slide_only">Setiap Pergantian Slide Halaman & ISOMA</option>
+                            <option value="status_only">Pergantian Status (07:30, 08:00, 15:23) & 12:00 ISOMA</option>
+                            <option value="off">Manual (Klik Tombol Bel Saja)</option>
+                        </select>
                     </div>
                 </div>
             </section>
@@ -571,6 +449,7 @@
                     <div>
                         <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Baris per Halaman TV</label>
                         <select id="setting-rows-per-page" class="w-full bg-[#090d16] border border-[#FFD60A]/40 rounded-xl px-3 py-2 text-xs text-[#FFFFFF] focus:outline-none focus:border-[#00E5FF]">
+                            <option value="4" selected>4 Baris (Default TV Besar)</option>
                             <option value="5">5 Baris (Huruf Sangat Besar)</option>
                             <option value="7">7 Baris (Standar TV 43"-55")</option>
                             <option value="10">10 Baris (Layar Besar)</option>
@@ -711,11 +590,6 @@
         </div>
     </div>
 
-    <!-- PEMUTAR YOUTUBE / YOUTUBE MUSIC (TETAP DALAM VIEWPORT AGAR BROWSER/TV MENGIZINKAN SUARA) -->
-    <div id="yt-hidden-player-host" class="fixed bottom-14 left-4 z-30 w-56 h-32 rounded-xl overflow-hidden border-2 border-[#FF2E93] bg-[#090d16] shadow-xl opacity-0 pointer-events-none transition-opacity duration-300">
-        <div id="yt-player-frame" class="w-full h-full"></div>
-    </div>
-
     <script>
         /* =====================================================================
            A. KONFIGURASI DEFAULT & STATE APLIKASI
@@ -795,15 +669,11 @@
                 badge: 'LSP RATU KOMPETENSI INDONESIA',
                 title: 'JADWAL UJK LSP RATU KOMPETENSI INDONESIA',
                 subtitle: 'LSP Ratu Kompetensi Indonesia • Informasi Pelaksanaan Asesmen Real-Time',
-                rowsPerPage: '7',
+                rowsPerPage: '4',
                 slideInterval: '10',
                 runningText: 'Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan kelengkapan portofolio.',
                 bellStyle: 'airport_chime',
-                autoBell: 'slide_and_status',
-                ytMode: 'search',
-                ytQuery: 'musik instrumental ruang tunggu santai',
-                ytUrl: '',
-                bgmVolume: '30'
+                autoBell: 'slide_and_status'
             }
         };
 
@@ -865,19 +735,13 @@
 
             setVal('setting-bell-style', s.bellStyle || 'airport_chime');
             setVal('setting-auto-bell', s.autoBell || 'slide_and_status');
-            setVal('setting-yt-mode', s.ytMode || 'search');
-            setVal('setting-yt-query', s.ytQuery || 'musik instrumental ruang tunggu santai');
-            setVal('setting-yt-url', s.ytUrl || '');
-            setVal('setting-bgm-volume', s.bgmVolume || '30');
 
             setVal('setting-badge', s.badge || '');
             setVal('setting-title', s.title || '');
             setVal('setting-subtitle', s.subtitle || '');
-            setVal('setting-rows-per-page', s.rowsPerPage || '7');
+            setVal('setting-rows-per-page', s.rowsPerPage || '4');
             setVal('setting-slide-interval', s.slideInterval || '10');
             setVal('setting-running-text', s.runningText || '');
-
-            handleYtModeChange();
 
             const modeEl = document.getElementById('quick-filter-mode');
             const calBtn = document.getElementById('btn-open-tv-calendar');
@@ -917,15 +781,11 @@
             appState.settings.badge = getVal('setting-badge', appState.settings.badge).trim() || 'LSP RATU KOMPETENSI INDONESIA';
             appState.settings.title = getVal('setting-title', appState.settings.title).trim() || 'JADWAL UJK LSP RATU KOMPETENSI INDONESIA';
             appState.settings.subtitle = getVal('setting-subtitle', appState.settings.subtitle).trim();
-            appState.settings.rowsPerPage = getVal('setting-rows-per-page', '7');
+            appState.settings.rowsPerPage = getVal('setting-rows-per-page', '4');
             appState.settings.slideInterval = getVal('setting-slide-interval', '10');
             appState.settings.runningText = getVal('setting-running-text', '').trim();
             appState.settings.bellStyle = getVal('setting-bell-style', 'airport_chime');
             appState.settings.autoBell = getVal('setting-auto-bell', 'slide_and_status');
-            appState.settings.ytMode = getVal('setting-yt-mode', 'search');
-            appState.settings.ytQuery = getVal('setting-yt-query', '').trim() || 'musik instrumental ruang tunggu santai';
-            appState.settings.ytUrl = getVal('setting-yt-url', '').trim();
-            appState.settings.bgmVolume = getVal('setting-bgm-volume', '30');
 
             appState.currentPage = 1;
             saveAppState();
@@ -1026,9 +886,6 @@
             if (e.altKey && (e.key === 'a' || e.key === 'A')) {
                 e.preventDefault();
                 toggleAdminDrawer();
-            } else if (e.altKey && (e.key === 'm' || e.key === 'M')) {
-                e.preventDefault();
-                toggleBackgroundMusic();
             } else if (e.altKey && (e.key === 'b' || e.key === 'B')) {
                 e.preventDefault();
                 triggerStationAnnouncement('MANUAL');
@@ -1119,10 +976,10 @@
             const nowMin = (now.getHours() * 60) + now.getMinutes();
 
             if (nowMin >= (STANDARD_START_MINUTES - 30) && nowMin < STANDARD_START_MINUTES) {
-                return { code: 'PERSIAPAN', label: 'PERSIAPAN', badgeClass: 'bg-[#FDE68A]/20 text-[#FDE68A] border-[#FDE68A]/60', dotClass: 'bg-[#FDE68A] animate-ping' };
+                return { code: 'PERSIAPAN', label: 'PERSIAPAN', badgeClass: 'bg-[#FDE68A]/20 text-[#FDE68A] border-[#FDE68A]/60', dotClass: 'bg-[#FDE68A]' };
             }
             if (nowMin >= STANDARD_START_MINUTES && nowMin <= STANDARD_END_MINUTES) {
-                return { code: 'BERLANGSUNG', label: 'BERLANGSUNG', badgeClass: 'bg-gradient-to-r from-[#6EE7B7]/25 via-[#A7F3D0]/35 to-[#6EE7B7]/25 badge-live-gleam text-[#6EE7B7] border-[#6EE7B7]/70 shadow-[0_0_14px_rgba(110,231,183,0.28)]', dotClass: 'bg-[#6EE7B7] animate-pulse' };
+                return { code: 'BERLANGSUNG', label: 'BERLANGSUNG', badgeClass: 'bg-[#6EE7B7]/25 text-[#6EE7B7] border-[#6EE7B7]/70', dotClass: 'bg-[#6EE7B7]' };
             }
             if (nowMin > STANDARD_END_MINUTES) {
                 return { code: 'SELESAI', label: 'SELESAI', badgeClass: 'bg-[#334155]/70 text-[#CBD5E1] border-[#64748B]/50', dotClass: 'bg-[#94A3B8]' };
@@ -1316,7 +1173,7 @@
                 }
 
                 cellsHtml += `
-                    <button type="button" data-cal-iso="${iso}" onclick="selectTvCalendarDate('${iso}')" onfocus="tvCalFocusedIso='${iso}'" class="relative h-11 sm:h-12 rounded-xl ${btnStyle} flex flex-col items-center justify-center text-sm sm:text-base font-bold transition-transform duration-150 focus:scale-105 focus:outline-none focus:ring-3 focus:ring-[#FDE68A] cursor-pointer">
+                    <button type="button" data-cal-iso="${iso}" onclick="selectTvCalendarDate('${iso}')" onfocus="tvCalFocusedIso='${iso}'" class="relative h-11 sm:h-12 rounded-xl ${btnStyle} flex flex-col items-center justify-center text-sm sm:text-base font-bold transition-transform duration-150 focus:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FDE68A] cursor-pointer">
                         <span>${day}</span>
                         ${hasSchedule ? `<span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#161b2e]' : 'bg-[#6EE7B7]'} mt-0.5"></span>` : ''}
                     </button>
@@ -1398,7 +1255,7 @@
             }
 
             const filtered = getFilteredSchedules();
-            const rowsPerPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
+            const rowsPerPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 4);
             const totalItems = filtered.length;
             const totalPages = Math.max(1, Math.ceil(totalItems / rowsPerPage));
 
@@ -1407,22 +1264,10 @@
 
             const totalAsesiAll = calculateTotalAsesi(filtered);
             if (totalLabel) {
-                animateNumericCounter(
-                    totalLabel,
-                    lastAnimatedScheduleCount,
-                    totalItems,
-                    (v) => `Menampilkan ${v} jadwal TUK`
-                );
-                lastAnimatedScheduleCount = totalItems;
+                totalLabel.textContent = `Menampilkan ${totalItems} jadwal TUK`;
             }
             if (totalAsesiLabel) {
-                animateNumericCounter(
-                    totalAsesiLabel,
-                    lastAnimatedAsesiCount,
-                    totalAsesiAll,
-                    (v) => `<i class="fa-solid fa-users text-[#F9A8D4] text-xs"></i><span>Total Asesi: ${v} Orang</span>`
-                );
-                lastAnimatedAsesiCount = totalAsesiAll;
+                totalAsesiLabel.innerHTML = `<i class="fa-solid fa-users text-[#F9A8D4] text-xs"></i><span>Total Asesi: ${totalAsesiAll} Orang</span>`;
             }
             if (pageIndicatorText) {
                 pageIndicatorText.textContent = `${appState.currentPage} / ${totalPages}`;
@@ -1431,13 +1276,13 @@
             if (totalItems === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="py-16 px-6 text-center bg-[#181f36]">
+                        <td colspan="3" class="py-16 px-6 text-center bg-[#181f36]">
                             <div class="inline-flex flex-col items-center gap-3 max-w-md mx-auto">
-                                <div class="w-14 h-14 rounded-2xl bg-[#252f4d] border border-[#7DD3FC]/35 flex items-center justify-center text-[#7DD3FC] text-2xl">
+                                <div class="w-16 h-16 rounded-2xl bg-[#252f4d] border border-[#7DD3FC]/35 flex items-center justify-center text-[#7DD3FC] text-3xl">
                                     <i class="fa-regular fa-calendar-xmark"></i>
                                 </div>
-                                <div class="text-base sm:text-lg font-extrabold text-[#F8FAFC]">Belum Ada Jadwal UJK pada Filter Ini</div>
-                                <p class="text-xs sm:text-sm text-[#CBD5E1]">Silakan pilih filter tanggal lain pada bilah di atas atau hubungkan Google Sheets melalui tombol pengaturan.</p>
+                                <div class="text-lg sm:text-xl font-extrabold text-[#F8FAFC]">Belum Ada Jadwal UJK pada Filter Ini</div>
+                                <p class="text-sm sm:text-base text-[#CBD5E1]">Silakan pilih filter tanggal lain pada bilah di atas atau hubungkan Google Sheets melalui tombol pengaturan.</p>
                             </div>
                         </td>
                     </tr>
@@ -1450,7 +1295,7 @@
 
             tbody.innerHTML = pageItems.map((item, idx) => {
                 const isOddRow = idx % 2 === 0;
-                const rowBg = isOddRow ? 'bg-[#1a2238]/95 hover:bg-[#242e4d]' : 'bg-[#212642]/95 hover:bg-[#2a3154]';
+                const rowBg = isOddRow ? 'bg-[#1a2238]/95 hover:bg-[#232d4a]' : 'bg-[#20263f]/95 hover:bg-[#283050]';
                 const statusInfo = getScheduleLiveStatus(item);
                 const schemes = parseSchemesFromItem(item);
                 const itemAsesiTotal = getItemTotalAsesi(item);
@@ -1460,61 +1305,57 @@
                     ? schemes.map(sc => {
                         const theme = getSchemeBadgeTheme(sc.name);
                         return `
-                            <div class="inline-flex items-center justify-between gap-2 px-2.5 py-1 rounded-lg border ${theme.box} text-xs sm:text-sm font-bold transition-transform duration-300 hover:scale-[1.02]">
-                                <span class="inline-flex items-center gap-1.5 truncate">
-                                    <i class="fa-solid ${theme.icon} text-xs shrink-0"></i>
-                                    <span class="truncate">${escapeHtml(sc.name)}</span>
-                                </span>
-                                ${sc.asesi > 0 ? `<span class="px-1.5 py-0.5 rounded border ${theme.count} font-mono text-[11px] font-extrabold shrink-0">${sc.asesi} Asesi</span>` : ''}
+                            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border ${theme.box} text-xs sm:text-sm lg:text-base font-extrabold tracking-tight">
+                                <i class="fa-solid ${theme.icon} text-xs sm:text-sm shrink-0"></i>
+                                <span>${escapeHtml(sc.name)}</span>
+                                ${sc.asesi > 0 ? `<span class="px-2 py-0.5 rounded-lg border ${theme.count} font-mono text-xs sm:text-sm lg:text-base font-black">${sc.asesi}</span>` : ''}
                             </div>
                         `;
                     }).join('')
-                    : `<span class="text-xs text-[#94A3B8]">-</span>`;
+                    : '';
 
                 const assessorsHtml = assessors.length > 0
                     ? assessors.map((asr, aIdx) => `
-                        <div class="flex items-start gap-2 text-xs sm:text-sm font-semibold text-[#FEF3C7]">
-                            <span class="w-5 h-5 rounded-md bg-[#FDE68A]/20 border border-[#FDE68A]/45 text-[#FDE68A] font-mono text-[11px] font-extrabold flex items-center justify-center shrink-0 mt-0.5">
+                        <div class="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-[#161b2e]/65 border border-[#FDE68A]/25 text-base sm:text-lg lg:text-xl font-extrabold text-[#FEF3C7]">
+                            <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#FDE68A]/20 border border-[#FDE68A]/50 text-[#FDE68A] font-mono text-sm sm:text-base font-black flex items-center justify-center shrink-0">
                                 ${aIdx + 1}
                             </span>
-                            <span class="leading-snug">${escapeHtml(asr)}</span>
+                            <span class="leading-snug tracking-tight">${escapeHtml(asr)}</span>
                         </div>
                     `).join('')
-                    : `<span class="text-xs text-[#94A3B8]">Belum ditentukan</span>`;
+                    : `<span class="text-base sm:text-lg text-[#94A3B8]">Belum ditentukan</span>`;
 
                 return `
-                    <tr class="${rowBg} transition-colors duration-200 animate-row-in" style="animation-delay: ${idx * 65}ms">
-                        <td class="py-3.5 px-3 sm:px-5 align-top border-r border-[#94A3B8]/15">
-                            <div class="text-xs sm:text-sm font-extrabold text-[#7DD3FC] leading-snug">
-                                ${escapeHtml(formatTanggalDenganHari(item.date))}
+                    <tr class="${rowBg} transition-colors duration-200">
+                        <td class="py-5 px-5 sm:px-6 align-middle border-r border-[#94A3B8]/20">
+                            <div class="flex flex-col items-start gap-2.5">
+                                <div class="text-base sm:text-lg lg:text-xl font-black text-[#7DD3FC] leading-snug">
+                                    ${escapeHtml(formatTanggalDenganHari(item.date))}
+                                </div>
+                                <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border ${statusInfo.badgeClass} text-xs sm:text-sm font-black tracking-wider">
+                                    <span class="w-2.5 h-2.5 rounded-full ${statusInfo.dotClass}"></span>
+                                    <span>${statusInfo.label}</span>
+                                </span>
+                                <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#F9A8D4]/20 border border-[#F9A8D4]/50 text-[#FCE7F3] font-mono text-xs sm:text-sm lg:text-base font-black">
+                                    <i class="fa-solid fa-users text-[#F9A8D4] text-xs sm:text-sm"></i>
+                                    <span>Total: ${itemAsesiTotal} Asesi</span>
+                                </span>
                             </div>
                         </td>
-                        <td class="py-3.5 px-3 sm:px-5 align-top border-r border-[#94A3B8]/15">
-                            <div class="text-sm sm:text-base font-black text-[#F8FAFC] leading-snug">
+                        <td class="py-4 px-5 sm:px-6 align-middle border-r border-[#94A3B8]/20">
+                            <div class="text-lg sm:text-xl lg:text-2xl font-black text-[#F8FAFC] leading-snug tracking-tight pb-2 border-b border-[#94A3B8]/20">
                                 ${escapeHtml(item.tuk)}
                             </div>
-                            ${itemAsesiTotal > 0 ? `
-                                <div class="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#C4B5FD]/15 border border-[#C4B5FD]/40 text-xs font-extrabold text-[#EDE9FE]">
-                                    <i class="fa-solid fa-user-group text-[#C4B5FD] text-[11px]"></i>
-                                    <span>${itemAsesiTotal} Asesi</span>
+                            ${schemesHtml ? `
+                                <div class="mt-2.5 flex flex-wrap items-center gap-2">
+                                    ${schemesHtml}
                                 </div>
                             ` : ''}
                         </td>
-                        <td class="py-3.5 px-3 sm:px-5 align-top border-r border-[#94A3B8]/15">
-                            <div class="flex flex-col gap-1.5">
-                                ${schemesHtml}
-                            </div>
-                        </td>
-                        <td class="py-3.5 px-3 sm:px-5 align-top border-r border-[#94A3B8]/15">
-                            <div class="flex flex-col gap-1.5">
+                        <td class="py-4 px-5 sm:px-6 align-middle">
+                            <div class="flex flex-col gap-2">
                                 ${assessorsHtml}
                             </div>
-                        </td>
-                        <td class="py-3.5 px-2 sm:px-4 align-middle text-center">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${statusInfo.badgeClass} text-[11px] sm:text-xs font-black tracking-wider">
-                                <span class="w-2 h-2 rounded-full ${statusInfo.dotClass}"></span>
-                                <span>${statusInfo.label}</span>
-                            </span>
                         </td>
                     </tr>
                 `;
@@ -1523,7 +1364,7 @@
 
         function prevPage() {
             const filtered = getFilteredSchedules();
-            const rowsPerPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
+            const rowsPerPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 4);
             const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
             if (totalPages <= 1) return;
 
@@ -1534,7 +1375,7 @@
 
         function nextPage(isAuto = false) {
             const filtered = getFilteredSchedules();
-            const rowsPerPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
+            const rowsPerPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 4);
             const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
             if (totalPages <= 1) {
                 restartSlideProgressBar();
@@ -1555,267 +1396,9 @@
         }
 
         /* =====================================================================
-           F2. PEMUTAR MUSIK YOUTUBE / YOUTUBE MUSIC OTOMATIS
-        ===================================================================== */
-        let ytPlayer = null;
-        let ytApiReady = false;
-        let ytPendingPlay = false;
-        let isBgmPlaying = false;
-        let audioCtx = null;
-
-        const VERIFIED_YT_PRESETS = {
-            gamelan: ['M7lc1UVf-VE', 'aqz-KE-bpKQ', 'ysz5S6PUM-U'],
-            jazz: ['M7lc1UVf-VE', 'aqz-KE-bpKQ', 'ysz5S6PUM-U'],
-            piano: ['M7lc1UVf-VE', 'aqz-KE-bpKQ', 'ysz5S6PUM-U'],
-            nusantara: ['M7lc1UVf-VE', 'aqz-KE-bpKQ', 'ysz5S6PUM-U']
-        };
-
-        function resolvePresetVideosByKeyword(keyword) {
-            const q = String(keyword || '').toLowerCase();
-            if (q.includes('gamelan')) return VERIFIED_YT_PRESETS.gamelan;
-            if (q.includes('jazz')) return VERIFIED_YT_PRESETS.jazz;
-            if (q.includes('piano')) return VERIFIED_YT_PRESETS.piano;
-            return VERIFIED_YT_PRESETS.nusantara;
-        }
-
-        function handleYtModeChange() {
-            const modeEl = document.getElementById('setting-yt-mode');
-            const searchGroup = document.getElementById('yt-search-group');
-            const urlGroup = document.getElementById('yt-url-group');
-            if (!modeEl || !searchGroup || !urlGroup) return;
-
-            if (modeEl.value === 'url') {
-                searchGroup.classList.add('hidden');
-                urlGroup.classList.remove('hidden');
-            } else {
-                urlGroup.classList.add('hidden');
-                searchGroup.classList.remove('hidden');
-            }
-        }
-
-        function setQuickYtPreset(queryText) {
-            const queryInput = document.getElementById('setting-yt-query');
-            const modeSelect = document.getElementById('setting-yt-mode');
-            if (modeSelect) modeSelect.value = 'search';
-            handleYtModeChange();
-            if (queryInput) queryInput.value = queryText;
-            applyAndPlayYouTubeConfig();
-        }
-
-        function toggleYtMiniPreview() {
-            const host = document.getElementById('yt-hidden-player-host');
-            if (!host) return;
-            const isHidden = host.classList.contains('opacity-0');
-            if (isHidden) {
-                host.classList.remove('opacity-0', 'pointer-events-none');
-                host.classList.add('opacity-100');
-            } else {
-                host.classList.add('opacity-0', 'pointer-events-none');
-                host.classList.remove('opacity-100');
-            }
-        }
-
-        function updateYtNowPlayingLabel(text) {
-            const lbl = document.getElementById('yt-now-playing-label');
-            if (lbl) lbl.textContent = text;
-        }
-
-        function unlockYouTubeSound() {
-            if (!ytPlayer) return;
-            try {
-                if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
-                const vol = parseInt(appState.settings.bgmVolume, 10) || 30;
-                if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(vol);
-            } catch (e) {}
-        }
-
-        function handleBgmVolumeChange() {
-            const volEl = document.getElementById('setting-bgm-volume');
-            if (!volEl) return;
-            appState.settings.bgmVolume = volEl.value;
-            saveAppState();
-            unlockYouTubeSound();
-        }
-
-        function parseYouTubeSource(rawUrl) {
-            const url = String(rawUrl || '').trim();
-            if (!url) return null;
-            const listMatch = url.match(/[?&]list=([a-zA-Z0-9_-]+)/);
-            const vidMatch = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
-            if (listMatch && listMatch[1]) {
-                return { type: 'playlist', listId: listMatch[1], videoId: vidMatch ? vidMatch[1] : null };
-            }
-            if (vidMatch && vidMatch[1]) {
-                return { type: 'video', videoId: vidMatch[1] };
-            }
-            return null;
-        }
-
-        function loadYouTubeIframeAPI() {
-            if (window.YT && window.YT.Player) {
-                ytApiReady = true;
-                initYouTubePlayerInstance();
-                return;
-            }
-            if (document.getElementById('yt-iframe-api-script')) return;
-            const tag = document.createElement('script');
-            tag.id = 'yt-iframe-api-script';
-            tag.src = 'https://www.youtube.com/iframe_api';
-            document.head.appendChild(tag);
-        }
-
-        window.onYouTubeIframeAPIReady = function () {
-            ytApiReady = true;
-            initYouTubePlayerInstance();
-        };
-
-        function initYouTubePlayerInstance() {
-            if (!ytApiReady || ytPlayer) return;
-            const frameEl = document.getElementById('yt-player-frame');
-            if (!frameEl) return;
-
-            const presetIds = resolvePresetVideosByKeyword(appState.settings.ytQuery);
-            ytPlayer = new YT.Player('yt-player-frame', {
-                height: '100%',
-                width: '100%',
-                videoId: presetIds[0],
-                playerVars: {
-                    autoplay: 0,
-                    controls: 1,
-                    rel: 0,
-                    playsinline: 1,
-                    loop: 1,
-                    playlist: presetIds.join(',')
-                },
-                events: {
-                    onReady: (event) => {
-                        const iframe = event.target.getIframe && event.target.getIframe();
-                        if (iframe) {
-                            iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-                            iframe.setAttribute('allow', 'autoplay; encrypted-media');
-                        }
-                        if (ytPendingPlay) {
-                            ytPendingPlay = false;
-                            loadAndStartYouTubePlaylist();
-                        }
-                    },
-                    onStateChange: (event) => {
-                        if (event.data === YT.PlayerState.PLAYING) {
-                            isBgmPlaying = true;
-                            unlockYouTubeSound();
-                            updateBgmButtonUI(true);
-                            const data = ytPlayer.getVideoData ? ytPlayer.getVideoData() : null;
-                            const title = data && data.title ? data.title : 'Playlist Instrumental Aktif';
-                            updateYtNowPlayingLabel(`Memutar: ${title}`);
-                        } else if (event.data === YT.PlayerState.ENDED) {
-                            if (ytPlayer && ytPlayer.nextVideo) ytPlayer.nextVideo();
-                        }
-                    },
-                    onError: () => {
-                        if (window.location.protocol === 'file:') {
-                            updateYtNowPlayingLabel('YouTube memblokir embed di file:// lokal (unggah ke GitHub Pages / server HTTP untuk memutar)');
-                            showToast('YouTube memblokir embed jika dibuka dari file:// lokal. Jalankan lewat GitHub Pages / localhost.', 'error');
-                            return;
-                        }
-                        updateYtNowPlayingLabel('Video tidak mengizinkan embed, beralih ke lagu berikutnya...');
-                        if (ytPlayer && ytPlayer.nextVideo) {
-                            setTimeout(() => {
-                                unlockYouTubeSound();
-                                ytPlayer.nextVideo();
-                            }, 1200);
-                        }
-                    }
-                }
-            });
-        }
-
-        function loadAndStartYouTubePlaylist() {
-            if (!ytApiReady || !ytPlayer || typeof ytPlayer.loadPlaylist !== 'function') {
-                ytPendingPlay = true;
-                loadYouTubeIframeAPI();
-                return;
-            }
-
-            const mode = appState.settings.ytMode || 'search';
-            if (mode === 'url') {
-                const parsed = parseYouTubeSource(appState.settings.ytUrl);
-                if (!parsed) {
-                    showToast('Link YouTube / YouTube Music tidak valid.', 'error');
-                    return;
-                }
-                if (parsed.type === 'playlist') {
-                    ytPlayer.loadPlaylist({ list: parsed.listId, listType: 'playlist', index: 0 });
-                } else {
-                    ytPlayer.loadPlaylist({ playlist: [parsed.videoId], index: 0 });
-                }
-            } else {
-                const videoIds = resolvePresetVideosByKeyword(appState.settings.ytQuery);
-                ytPlayer.loadPlaylist({ playlist: videoIds, index: 0 });
-            }
-
-            setTimeout(() => {
-                unlockYouTubeSound();
-                if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
-                    ytPlayer.playVideo();
-                }
-            }, 350);
-        }
-
-        function applyAndPlayYouTubeConfig() {
-            const modeEl = document.getElementById('setting-yt-mode');
-            const queryEl = document.getElementById('setting-yt-query');
-            const urlEl = document.getElementById('setting-yt-url');
-            if (modeEl) appState.settings.ytMode = modeEl.value;
-            if (queryEl) appState.settings.ytQuery = queryEl.value.trim() || 'musik instrumental ruang tunggu santai';
-            if (urlEl) appState.settings.ytUrl = urlEl.value.trim();
-            saveAppState();
-            loadAndStartYouTubePlaylist();
-        }
-
-        function nextYouTubeTrack() {
-            if (ytPlayer && typeof ytPlayer.nextVideo === 'function') {
-                unlockYouTubeSound();
-                ytPlayer.nextVideo();
-            } else {
-                loadAndStartYouTubePlaylist();
-            }
-        }
-
-        function updateBgmButtonUI(playing) {
-            const btn = document.getElementById('btn-toggle-bgm');
-            const eq = document.getElementById('bgm-eq-bars');
-            const icon = document.getElementById('icon-bgm-status');
-            if (!btn) return;
-
-            if (playing) {
-                btn.className = 'w-9 h-9 rounded-lg bg-gradient-to-r from-[#F472B6] to-[#F9A8D4] text-[#161b2e] border border-[#F9A8D4] flex items-center justify-center transition-all duration-300 cursor-pointer shadow';
-                btn.title = 'Musik YouTube Aktif (Klik untuk Jeda)';
-                if (eq) { eq.classList.remove('hidden'); eq.classList.add('inline-flex'); }
-                if (icon) icon.classList.add('hidden');
-            } else {
-                btn.className = 'w-9 h-9 rounded-lg bg-[#28203d] hover:bg-[#F472B6] text-[#F9A8D4] hover:text-[#161b2e] border border-[#F472B6]/45 flex items-center justify-center transition-all duration-300 cursor-pointer';
-                btn.title = 'Nyalakan / Matikan Playlist YouTube / YouTube Music (Alt + M)';
-                if (eq) { eq.classList.add('hidden'); eq.classList.remove('inline-flex'); }
-                if (icon) icon.classList.remove('hidden');
-            }
-        }
-
-        function toggleBackgroundMusic() {
-            if (isBgmPlaying) {
-                isBgmPlaying = false;
-                if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
-                    ytPlayer.pauseVideo();
-                }
-                updateBgmButtonUI(false);
-                updateYtNowPlayingLabel('Musik YouTube dijeda');
-            } else {
-                loadAndStartYouTubePlaylist();
-            }
-        }
-
-        /* =====================================================================
            G. BEL PEMBERITAHUAN BANDARA / STASIUN & PENGINGAT ISOMA 12:00 WIB
         ===================================================================== */
+        let audioCtx = null;
         let noticeBannerTimer = null;
 
         function playStationBellSound(style = 'airport_chime') {
@@ -1824,17 +1407,6 @@
                 if (!AudioContextClass) return;
                 if (!audioCtx) audioCtx = new AudioContextClass();
                 if (audioCtx.state === 'suspended') audioCtx.resume();
-
-                // Auto-ducking volume YouTube sementara saat bel berbunyi
-                const normalVol = parseInt(appState.settings.bgmVolume, 10) || 30;
-                if (isBgmPlaying && ytPlayer && typeof ytPlayer.setVolume === 'function') {
-                    ytPlayer.setVolume(Math.max(5, Math.floor(normalVol * 0.25)));
-                    setTimeout(() => {
-                        if (isBgmPlaying && ytPlayer && typeof ytPlayer.setVolume === 'function') {
-                            ytPlayer.setVolume(normalVol);
-                        }
-                    }, 3400);
-                }
 
                 const patterns = {
                     airport_chime: [
@@ -2084,7 +1656,7 @@
 
             if (isConnected) {
                 if (pill) pill.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#161b2e]/85 border border-[#6EE7B7]/60 text-[11px] sm:text-xs font-bold text-[#6EE7B7]';
-                if (dot) dot.className = 'w-2 h-2 rounded-full bg-[#6EE7B7] animate-ping';
+                if (dot) dot.className = 'w-2 h-2 rounded-full bg-[#6EE7B7]';
                 if (label) label.textContent = statusText || 'Google Sheets Aktif';
                 if (drawerStatus) {
                     drawerStatus.textContent = 'Terhubung Real-Time';
@@ -2096,7 +1668,7 @@
                 }
             } else {
                 if (pill) pill.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#161b2e]/75 border border-[#7DD3FC]/45 text-[11px] sm:text-xs font-bold text-[#7DD3FC]';
-                if (dot) dot.className = 'w-2 h-2 rounded-full bg-[#7DD3FC] animate-pulse';
+                if (dot) dot.className = 'w-2 h-2 rounded-full bg-[#7DD3FC]';
                 if (label) label.textContent = statusText || 'Mode Siap Pakai';
                 if (drawerStatus) {
                     drawerStatus.textContent = 'Belum Terhubung';
@@ -2304,7 +1876,7 @@
             if (!bar) return;
             const intervalSec = parseInt(appState.settings.slideInterval, 10) || 0;
             const filtered = getFilteredSchedules();
-            const rowsPerPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 7);
+            const rowsPerPage = Math.max(1, parseInt(appState.settings.rowsPerPage, 10) || 4);
             const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
 
             bar.style.transition = 'none';
@@ -2354,9 +1926,6 @@
 
                 if (clockEl) {
                     clockEl.textContent = `${hh}:${mm}:${ss}`;
-                    clockEl.classList.remove('clock-tick-pulse');
-                    void clockEl.offsetWidth;
-                    clockEl.classList.add('clock-tick-pulse');
                 }
 
                 // Refresh status tabel otomatis saat pergantian menit & bunyikan bel pengingat terjadwal
@@ -2631,21 +2200,12 @@
                 camera.aspect = w / h;
                 camera.updateProjectionMatrix();
                 renderer.setSize(w, h);
+                renderer.render(scene, camera);
             };
             window.addEventListener('resize', resizeLogoRenderer);
 
-            let clock3d = 0;
-            function animateLogo3D() {
-                requestAnimationFrame(animateLogo3D);
-                clock3d += 0.02;
-                if (!isDragging) {
-                    manualRotY += 0.015;
-                }
-                logoGroup.rotation.y = manualRotY;
-                logoGroup.position.y = Math.sin(clock3d * 1.5) * 0.08;
-                renderer.render(scene, camera);
-            }
-            animateLogo3D();
+            // Render logo statis (tanpa loop animasi berkelanjutan agar hemat CPU/GPU TV)
+            renderer.render(scene, camera);
         }
 
         /* =====================================================================
@@ -2658,7 +2218,6 @@
             startLiveClock();
             startAutoPagination();
             startGoogleSheetPolling();
-            loadYouTubeIframeAPI();
             init3DLogoAnimation();
         });
     </script>
