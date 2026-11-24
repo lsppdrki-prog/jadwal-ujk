@@ -38,34 +38,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
-        /* Palet Warna Light Mode Ramah Mata & Kontras Tinggi untuk Android TV (Soft Mist & Deep Navy) */
+        /* Palet Warna Dark Mode Ramah Mata & Kontras Tinggi untuk Google TV (Midnight Slate & Soft Ice) */
         :root {
-            --bg-canvas: #EEF2F6;
-            --bg-surface: #FFFFFF;
-            --bg-surface-alt: #F8FAFC;
-            --bg-surface-elevated: #E2E8F0;
-            --bg-row-odd: #FFFFFF;
-            --bg-row-even: #F1F5F9;
-            --bg-row-hover: #E0F2FE;
-            --border-subtle: #CBD5E1;
-            --border-strong: #1E3A8A;
-            --text-primary: #0F172A;
-            --text-secondary: #334155;
-            --accent-primary: #1E3A8A;
-            --grid-line: rgba(30, 58, 138, 0.05);
+            --bg-canvas: #0B1120;
+            --bg-surface: #111827;
+            --bg-surface-alt: #162033;
+            --bg-surface-elevated: #1E293B;
+            --bg-row-odd: #111827;
+            --bg-row-even: #162033;
+            --border-subtle: #283548;
+            --border-strong: #38BDF8;
+            --text-primary: #F8FAFC;
+            --text-secondary: #CBD5E1;
+            --accent-primary: #38BDF8;
+            --grid-line: rgba(56, 189, 248, 0.045);
         }
 
-        body {
-            background-color: #EEF2F6;
-            color: #0F172A;
+        html, body {
+            background-color: #0B1120 !important;
+            color: #F8FAFC !important;
+            color-scheme: dark;
         }
 
         /* Latar Kisi Geometris Statis Ringan */
         .bg-motion-grid {
-            background-color: var(--bg-canvas);
+            background-color: #0B1120;
             background-image:
-                linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-                linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+                linear-gradient(to right, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
             background-size: 48px 48px;
         }
 
@@ -92,78 +92,78 @@
             animation: slidePageEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
-        /* Scrollbar Halus */
+        /* Scrollbar Halus Dark Mode */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #EEF2F6;
+            background: #0B1120;
         }
         ::-webkit-scrollbar-thumb {
-            background: #94A3B8;
+            background: #334155;
             border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #64748B;
+            background: #475569;
         }
     </style>
 </head>
-<body class="bg-motion-grid text-[#0F172A] font-sans antialiased selection:bg-[#1E3A8A] selection:text-[#FFFFFF] overflow-x-hidden relative">
+<body class="bg-motion-grid bg-[#0B1120] text-[#F8FAFC] font-sans antialiased selection:bg-[#38BDF8] selection:text-[#0B1120] overflow-x-hidden relative">
 
-    <!-- Wrapper Utama Layar Penuh (Kompatibel Android TV) -->
-    <div class="relative z-10 min-h-screen flex flex-col justify-between">
+    <!-- Wrapper Utama Layar Penuh (Optimal untuk Google TV / Android TV) -->
+    <div class="relative z-10 min-h-screen flex flex-col justify-between bg-[#0B1120]">
 
-        <!-- HEADER UTAMA (Soft White & Deep Royal Navy) -->
-        <header id="main-header" class="relative overflow-hidden bg-[#FFFFFF] border-b-2 border-[#1E3A8A] px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_6px_24px_rgba(15,23,42,0.08)] shrink-0">
+        <!-- HEADER UTAMA (Deep Midnight & Royal Navy) -->
+        <header id="main-header" class="relative overflow-hidden bg-[#111827] border-b-2 border-[#1E3A8A] px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_8px_28px_rgba(2,6,23,0.65)] shrink-0">
             <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
 
                 <!-- Kiri: Identitas Lembaga & Judul Board -->
                 <div class="flex items-center gap-3.5 min-w-0">
-                    <div id="header-icon-box" title="LSP Ratu Kompetensi Indonesia" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-[#FFFFFF] via-[#F8FAFC] to-[#E2E8F0] flex items-center justify-center shadow-[0_4px_14px_rgba(30,58,138,0.15)] shrink-0 border-2 border-[#1E3A8A] overflow-hidden">
+                    <div id="header-icon-box" title="LSP Ratu Kompetensi Indonesia" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-[#F8FAFC] via-[#E2E8F0] to-[#CBD5E1] flex items-center justify-center shadow-[0_4px_16px_rgba(56,189,248,0.22)] shrink-0 border-2 border-[#38BDF8] overflow-hidden">
                         <div id="logo-3d-canvas-container" class="w-full h-full"></div>
                     </div>
                     <div class="min-w-0">
                         <div class="flex flex-wrap items-center gap-2 mb-0.5">
-                            <span id="header-badge-text" class="px-2.5 py-0.5 rounded-md bg-[#1E3A8A] text-[#FFFFFF] text-[11px] sm:text-xs font-extrabold uppercase tracking-wider">
+                            <span id="header-badge-text" class="px-2.5 py-0.5 rounded-md bg-[#1E3A8A] text-[#EFF6FF] border border-[#3B82F6]/50 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider">
                                 LSP RATU KOMPETENSI INDONESIA
                             </span>
-                            <span id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#F1F5F9] border border-[#CBD5E1] text-[11px] sm:text-xs font-bold text-[#0F172A]">
-                                <span id="connection-dot" class="w-2 h-2 rounded-full bg-[#0284C7]"></span>
+                            <span id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#1E293B] border border-[#334155] text-[11px] sm:text-xs font-bold text-[#E2E8F0]">
+                                <span id="connection-dot" class="w-2 h-2 rounded-full bg-[#38BDF8]"></span>
                                 <span id="connection-label">Mode Siap Pakai</span>
                             </span>
                         </div>
-                        <h1 id="header-main-title" class="text-lg sm:text-2xl lg:text-3xl font-black tracking-tight text-[#0F172A] truncate">
+                        <h1 id="header-main-title" class="text-lg sm:text-2xl lg:text-3xl font-black tracking-tight text-[#F8FAFC] truncate">
                             JADWAL UJK LSP RATU KOMPETENSI INDONESIA
                         </h1>
-                        <p id="header-subtitle" class="text-xs sm:text-sm font-semibold text-[#334155] truncate">
+                        <p id="header-subtitle" class="text-xs sm:text-sm font-semibold text-[#94A3B8] truncate">
                             LSP Ratu Kompetensi Indonesia • Informasi Pelaksanaan Asesmen Real-Time
                         </p>
                     </div>
                 </div>
 
                 <!-- Kanan: Jam Digital Real-Time WIB & Tombol Layar Penuh / Pengaturan -->
-                <div class="flex items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 border-[#CBD5E1] pt-2.5 lg:pt-0">
+                <div class="flex items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 border-[#283548] pt-2.5 lg:pt-0">
                     <div class="text-left lg:text-right">
-                        <div id="live-date" class="text-xs sm:text-sm font-bold text-[#334155] uppercase tracking-wider">
+                        <div id="live-date" class="text-xs sm:text-sm font-bold text-[#CBD5E1] uppercase tracking-wider">
                             MEMUAT TANGGAL...
                         </div>
                         <div class="flex items-baseline gap-1.5 justify-start lg:justify-end">
-                            <span id="live-clock" class="font-mono text-2xl sm:text-3xl lg:text-4xl font-black text-[#0F172A] tracking-wider">
+                            <span id="live-clock" class="font-mono text-2xl sm:text-3xl lg:text-4xl font-black text-[#F8FAFC] tracking-wider">
                                 00:00:00
                             </span>
-                            <span class="text-xs font-extrabold text-[#FFFFFF] bg-[#1E3A8A] px-2 py-0.5 rounded-md">
+                            <span class="text-xs font-extrabold text-[#0B1120] bg-[#38BDF8] px-2 py-0.5 rounded-md">
                                 WIB
                             </span>
                         </div>
                     </div>
 
                     <!-- Tombol Ikon Kontrol -->
-                    <div id="header-control-buttons" class="flex items-center gap-2 pl-3 border-l border-[#CBD5E1]">
-                        <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Layar Penuh (F11)" aria-label="Layar Penuh" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#F1F5F9] hover:bg-[#1E3A8A] text-[#0F172A] hover:text-[#FFFFFF] border border-[#CBD5E1] flex items-center justify-center transition-colors duration-200 cursor-pointer">
+                    <div id="header-control-buttons" class="flex items-center gap-2 pl-3 border-l border-[#283548]">
+                        <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Layar Penuh (F11)" aria-label="Layar Penuh" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1E293B] hover:bg-[#38BDF8] text-[#F8FAFC] hover:text-[#0B1120] border border-[#334155] flex items-center justify-center transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                             <i id="icon-fullscreen" class="fa-solid fa-expand text-base sm:text-lg"></i>
                         </button>
-                        <button id="btn-admin-drawer" onclick="toggleAdminDrawer()" title="Pengaturan & Google Sheets (Alt + A)" aria-label="Pengaturan Google Sheets" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1E3A8A] hover:bg-[#172554] text-[#FFFFFF] flex items-center justify-center transition-colors duration-200 cursor-pointer shadow">
+                        <button id="btn-admin-drawer" onclick="toggleAdminDrawer()" title="Pengaturan & Google Sheets (Alt + A)" aria-label="Pengaturan Google Sheets" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#1E3A8A] hover:bg-[#2563EB] text-[#FFFFFF] border border-[#3B82F6]/60 flex items-center justify-center transition-colors duration-200 cursor-pointer shadow focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                             <i class="fa-solid fa-table-cells text-base sm:text-lg"></i>
                         </button>
                     </div>
@@ -173,17 +173,17 @@
 
         <!-- KONTEN UTAMA: PAPAN TABEL JADWAL UJK -->
         <main class="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 py-3 sm:py-4 min-h-0">
-            <div class="flex-1 flex flex-col bg-[#FFFFFF] border-2 border-[#CBD5E1] rounded-2xl shadow-[0_8px_28px_rgba(15,23,42,0.08)] overflow-hidden min-h-0">
+            <div class="flex-1 flex flex-col bg-[#111827] border-2 border-[#283548] rounded-2xl shadow-[0_12px_36px_rgba(2,6,23,0.75)] overflow-hidden min-h-0">
 
                 <!-- Bilah Filter Tanggal UJK & Status Sinkronisasi -->
-                <div class="bg-[#F8FAFC] border-b border-[#CBD5E1] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <div class="bg-[#162033] border-b border-[#283548] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
                     <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                        <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#0F172A]">
-                            <i class="fa-solid fa-filter text-[#1E3A8A]"></i>
+                        <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#E2E8F0]">
+                            <i class="fa-solid fa-filter text-[#38BDF8]"></i>
                             <span>Filter Jadwal:</span>
                         </span>
 
-                        <select id="quick-filter-mode" onchange="handleQuickFilterChange()" class="bg-[#FFFFFF] text-[#0F172A] border border-[#94A3B8] rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#1E3A8A] transition cursor-pointer">
+                        <select id="quick-filter-mode" onchange="handleQuickFilterChange()" class="bg-[#0B1120] text-[#F8FAFC] border border-[#334155] rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#38BDF8] focus:ring-2 focus:ring-[#38BDF8] transition cursor-pointer">
                             <option value="today_tomorrow">Hari Ini & Besok</option>
                             <option value="today">Hari Ini Saja</option>
                             <option value="specific">Pilih Tanggal UJK Tertentu</option>
@@ -191,23 +191,23 @@
                             <option value="all">Semua Tanggal UJK</option>
                         </select>
 
-                        <button type="button" id="btn-open-tv-calendar" onclick="openTvCalendarModal()" class="hidden items-center gap-2 bg-[#FFFFFF] hover:bg-[#1E3A8A] text-[#0F172A] hover:text-[#FFFFFF] border border-[#1E3A8A] rounded-xl px-3.5 py-1.5 text-xs sm:text-sm font-extrabold transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]">
-                            <i class="fa-regular fa-calendar-days"></i>
+                        <button type="button" id="btn-open-tv-calendar" onclick="openTvCalendarModal()" class="hidden items-center gap-2 bg-[#0B1120] hover:bg-[#1E3A8A] text-[#F8FAFC] border border-[#38BDF8] rounded-xl px-3.5 py-1.5 text-xs sm:text-sm font-extrabold transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
+                            <i class="fa-regular fa-calendar-days text-[#38BDF8]"></i>
                             <span id="btn-tv-calendar-label">Pilih Tanggal</span>
                             <i class="fa-solid fa-caret-down text-xs opacity-80"></i>
                         </button>
 
-                        <span id="active-filter-badge" class="px-2.5 py-1 rounded-lg bg-[#EFF6FF] text-[#1E3A8A] border border-[#BFDBFE] text-xs font-bold">
+                        <span id="active-filter-badge" class="px-2.5 py-1 rounded-lg bg-[#1E3A8A]/60 text-[#93C5FD] border border-[#3B82F6]/40 text-xs font-bold">
                             Hari Ini & Besok
                         </span>
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <span id="last-sync-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FFFFFF] border border-[#CBD5E1] text-xs text-[#334155] font-mono font-semibold">
-                            <i class="fa-solid fa-circle-check text-[#059669] text-[11px]"></i>
+                        <span id="last-sync-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0B1120] border border-[#334155] text-xs text-[#CBD5E1] font-mono font-semibold">
+                            <i class="fa-solid fa-circle-check text-[#34D399] text-[11px]"></i>
                             <span id="last-sync-time">Data Siap</span>
                         </span>
-                        <button id="btn-manual-sync" onclick="manualSyncNow()" title="Sinkronkan Data Google Sheets Sekarang" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-[#FFFFFF] text-xs font-extrabold transition cursor-pointer">
+                        <button id="btn-manual-sync" onclick="manualSyncNow()" title="Sinkronkan Data Google Sheets Sekarang" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0284C7] hover:bg-[#0369A1] text-[#FFFFFF] text-xs font-extrabold transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                             <i id="icon-manual-sync" class="fa-solid fa-arrows-rotate text-[11px]"></i>
                             <span>Sync</span>
                         </button>
@@ -215,61 +215,61 @@
                 </div>
 
                 <!-- Progress Bar Pergantian Auto-Slide -->
-                <div class="w-full h-1 bg-[#E2E8F0] overflow-hidden shrink-0">
-                    <div id="auto-slide-progress-bar" class="h-full w-0 bg-[#1E3A8A]"></div>
+                <div class="w-full h-1 bg-[#0B1120] overflow-hidden shrink-0">
+                    <div id="auto-slide-progress-bar" class="h-full w-0 bg-[#38BDF8]"></div>
                 </div>
 
                 <!-- Tabel Utama Display (3 Kolom Ekstra Luas) -->
                 <div class="flex-1 overflow-auto min-h-0">
                     <table class="w-full table-fixed text-left border-collapse">
-                        <thead class="sticky top-0 z-10 text-xs sm:text-sm lg:text-base uppercase tracking-wider border-b-2 border-[#1E3A8A]">
+                        <thead class="sticky top-0 z-10 text-xs sm:text-sm lg:text-base uppercase tracking-wider border-b-2 border-[#38BDF8]/50">
                             <tr>
-                                <th class="w-[25%] py-4 px-5 sm:px-6 font-extrabold bg-[#0F172A] text-[#FFFFFF] border-r border-[#334155]">
-                                    <i class="fa-regular fa-calendar-days text-[#93C5FD] mr-2"></i>Tanggal, Status & Asesi
+                                <th class="w-[25%] py-4 px-5 sm:px-6 font-extrabold bg-[#0F172A] text-[#F8FAFC] border-r border-[#283548]">
+                                    <i class="fa-regular fa-calendar-days text-[#38BDF8] mr-2"></i>Tanggal, Status & Asesi
                                 </th>
-                                <th class="w-[45%] py-4 px-5 sm:px-6 font-extrabold bg-[#1E3A8A] text-[#FFFFFF] border-r border-[#3B82F6]/40">
-                                    <i class="fa-solid fa-location-dot text-[#BFDBFE] mr-2"></i>Nama TUK & Skema
+                                <th class="w-[45%] py-4 px-5 sm:px-6 font-extrabold bg-[#172554] text-[#F8FAFC] border-r border-[#1E3A8A]">
+                                    <i class="fa-solid fa-location-dot text-[#60A5FA] mr-2"></i>Nama TUK & Skema
                                 </th>
-                                <th class="w-[30%] py-4 px-5 sm:px-6 font-extrabold bg-[#1E40AF] text-[#FFFFFF]">
-                                    <i class="fa-solid fa-user-tie text-[#BFDBFE] mr-2"></i>Nama Asesor
+                                <th class="w-[30%] py-4 px-5 sm:px-6 font-extrabold bg-[#1E3A8A] text-[#F8FAFC]">
+                                    <i class="fa-solid fa-user-tie text-[#93C5FD] mr-2"></i>Nama Asesor
                                 </th>
                             </tr>
                         </thead>
-                        <tbody id="schedule-table-body" class="divide-y-2 divide-[#CBD5E1] text-[#0F172A]">
+                        <tbody id="schedule-table-body" class="divide-y-2 divide-[#283548] text-[#F8FAFC]">
                             <!-- Baris jadwal dirender otomatis oleh JavaScript -->
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Footer Tabel: Statistik, Bel Stasiun & Navigasi Halaman -->
-                <div class="bg-[#F8FAFC] border-t border-[#CBD5E1] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
-                    <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-[#334155]">
-                        <span id="total-count-label" class="font-bold text-[#0F172A]">Menampilkan 0 jadwal</span>
-                        <span class="text-[#94A3B8]">•</span>
-                        <span id="total-asesi-label" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#1E3A8A] font-bold text-[#FFFFFF]">
-                            <i class="fa-solid fa-users text-[#FFFFFF] text-xs"></i>
+                <div class="bg-[#162033] border-t border-[#283548] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                    <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-[#CBD5E1]">
+                        <span id="total-count-label" class="font-bold text-[#F8FAFC]">Menampilkan 0 jadwal</span>
+                        <span class="text-[#475569]">•</span>
+                        <span id="total-asesi-label" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#1E3A8A] border border-[#3B82F6]/50 font-bold text-[#EFF6FF]">
+                            <i class="fa-solid fa-users text-[#93C5FD] text-xs"></i>
                             <span>Total Asesi: 0 Orang</span>
                         </span>
-                        <span class="hidden sm:inline text-[#94A3B8]">•</span>
-                        <span id="auto-slide-info" class="hidden sm:inline text-xs font-semibold text-[#475569]">Auto-slide aktif (10 dtk)</span>
+                        <span class="hidden sm:inline text-[#475569]">•</span>
+                        <span id="auto-slide-info" class="hidden sm:inline text-xs font-semibold text-[#94A3B8]">Auto-slide aktif (10 dtk)</span>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
                         <!-- Tombol Bel Pemberitahuan Bandara / Stasiun (Ikon Saja) -->
-                        <button id="btn-station-bell" onclick="triggerStationAnnouncement('MANUAL')" title="Bunyikan Bel Pemberitahuan Bandara / Stasiun (Alt + B)" aria-label="Bel Pemberitahuan" class="w-9 h-9 rounded-lg bg-[#1E3A8A] hover:bg-[#172554] text-[#FFFFFF] flex items-center justify-center transition-all duration-300 cursor-pointer">
+                        <button id="btn-station-bell" onclick="triggerStationAnnouncement('MANUAL')" title="Bunyikan Bel Pemberitahuan Bandara / Stasiun (Alt + B)" aria-label="Bel Pemberitahuan" class="w-9 h-9 rounded-lg bg-[#0284C7] hover:bg-[#0369A1] text-[#FFFFFF] flex items-center justify-center transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                             <i id="icon-bell-status" class="fa-solid fa-bell text-sm"></i>
                         </button>
 
                         <!-- Navigasi Halaman (Ikon Saja) -->
-                        <div class="flex items-center gap-1.5 pl-2 border-l border-[#CBD5E1]" id="pagination-nav-buttons">
-                            <button onclick="prevPage()" title="Halaman Sebelumnya" aria-label="Halaman Sebelumnya" class="w-9 h-9 rounded-lg bg-[#FFFFFF] hover:bg-[#1E3A8A] text-[#0F172A] hover:text-[#FFFFFF] border border-[#94A3B8] flex items-center justify-center transition cursor-pointer">
+                        <div class="flex items-center gap-1.5 pl-2 border-l border-[#283548]" id="pagination-nav-buttons">
+                            <button onclick="prevPage()" title="Halaman Sebelumnya" aria-label="Halaman Sebelumnya" class="w-9 h-9 rounded-lg bg-[#0B1120] hover:bg-[#1E3A8A] text-[#F8FAFC] border border-[#334155] flex items-center justify-center transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                                 <i class="fa-solid fa-chevron-left text-xs"></i>
                             </button>
-                            <span id="page-indicator" title="Nomor Halaman" class="inline-flex items-center gap-1.5 font-mono text-xs sm:text-sm font-extrabold px-2.5 h-9 rounded-lg bg-[#FFFFFF] text-[#0F172A] border border-[#94A3B8]">
-                                <i class="fa-solid fa-layer-group text-[11px] text-[#1E3A8A]"></i>
+                            <span id="page-indicator" title="Nomor Halaman" class="inline-flex items-center gap-1.5 font-mono text-xs sm:text-sm font-extrabold px-2.5 h-9 rounded-lg bg-[#0B1120] text-[#38BDF8] border border-[#38BDF8]/40">
+                                <i class="fa-solid fa-layer-group text-[11px] text-[#38BDF8]"></i>
                                 <span id="page-indicator-text">1 / 1</span>
                             </span>
-                            <button onclick="nextPage()" title="Halaman Berikutnya" aria-label="Halaman Berikutnya" class="w-9 h-9 rounded-lg bg-[#FFFFFF] hover:bg-[#1E3A8A] text-[#0F172A] hover:text-[#FFFFFF] border border-[#94A3B8] flex items-center justify-center transition cursor-pointer">
+                            <button onclick="nextPage()" title="Halaman Berikutnya" aria-label="Halaman Berikutnya" class="w-9 h-9 rounded-lg bg-[#0B1120] hover:bg-[#1E3A8A] text-[#F8FAFC] border border-[#334155] flex items-center justify-center transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                                 <i class="fa-solid fa-chevron-right text-xs"></i>
                             </button>
                         </div>
@@ -279,12 +279,12 @@
         </main>
 
         <!-- RUNNING TEXT PENGUMUMAN BAWAH -->
-        <footer class="bg-[#FFFFFF] border-t-2 border-[#1E3A8A] px-4 py-2 flex items-center gap-3 shrink-0 overflow-hidden">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#1E3A8A] text-[#FFFFFF] text-xs font-extrabold uppercase tracking-wider shrink-0">
+        <footer class="bg-[#111827] border-t-2 border-[#1E3A8A] px-4 py-2 flex items-center gap-3 shrink-0 overflow-hidden">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#0284C7] text-[#FFFFFF] text-xs font-extrabold uppercase tracking-wider shrink-0">
                 <i class="fa-solid fa-bullhorn"></i> INFO UJK
             </span>
             <div class="relative flex-1 overflow-hidden whitespace-nowrap">
-                <div id="running-text-content" class="animate-marquee text-xs sm:text-sm font-bold text-[#0F172A]">
+                <div id="running-text-content" class="animate-marquee text-xs sm:text-sm font-bold text-[#F1F5F9]">
                     Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan kelengkapan portofolio.
                 </div>
             </div>
@@ -292,48 +292,48 @@
     </div>
 
     <!-- BACKDROP DRAWER PENGATURAN -->
-    <div id="admin-backdrop" onclick="toggleAdminDrawer()" class="hidden fixed inset-0 z-40 bg-[#0F172A]/60 backdrop-blur-sm transition-opacity"></div>
+    <div id="admin-backdrop" onclick="toggleAdminDrawer()" class="hidden fixed inset-0 z-40 bg-[#020617]/75 backdrop-blur-sm transition-opacity"></div>
 
-    <!-- DRAWER PENGATURAN OPERATOR -->
-    <aside id="admin-drawer" class="fixed top-0 right-0 z-50 h-full w-full max-w-xl bg-[#FFFFFF] text-[#0F172A] border-l-2 border-[#CBD5E1] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
-        <div class="px-5 py-4 bg-[#0F172A] text-[#FFFFFF] border-b border-[#334155] flex items-center justify-between shrink-0">
+    <!-- DRAWER PENGATURAN OPERATOR (DARK MODE) -->
+    <aside id="admin-drawer" class="fixed top-0 right-0 z-50 h-full w-full max-w-xl bg-[#111827] text-[#F8FAFC] border-l-2 border-[#283548] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="px-5 py-4 bg-[#0B1120] text-[#F8FAFC] border-b border-[#283548] flex items-center justify-between shrink-0">
             <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-[#1E3A8A] text-[#FFFFFF] flex items-center justify-center font-black shadow">
+                <div class="w-9 h-9 rounded-xl bg-[#1E3A8A] text-[#38BDF8] border border-[#38BDF8]/40 flex items-center justify-center font-black shadow">
                     <i class="fa-solid fa-sliders"></i>
                 </div>
                 <div>
-                    <h2 class="text-sm sm:text-base font-black text-[#FFFFFF]">Pengaturan Display & Google Sheets</h2>
-                    <p class="text-[11px] text-[#CBD5E1]">Shortcut: Alt + A (Panel) • Alt + B (Bel Pemberitahuan)</p>
+                    <h2 class="text-sm sm:text-base font-black text-[#F8FAFC]">Pengaturan Display & Google Sheets</h2>
+                    <p class="text-[11px] text-[#94A3B8]">Shortcut: Alt + A (Panel) • Alt + B (Bel Pemberitahuan)</p>
                 </div>
             </div>
-            <button onclick="toggleAdminDrawer()" class="w-9 h-9 rounded-xl bg-[#1E293B] hover:bg-[#334155] text-[#FFFFFF] flex items-center justify-center cursor-pointer transition">
+            <button onclick="toggleAdminDrawer()" class="w-9 h-9 rounded-xl bg-[#1E293B] hover:bg-[#334155] text-[#F8FAFC] flex items-center justify-center cursor-pointer transition">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
         <div class="flex-1 overflow-y-auto p-5 space-y-4">
             <!-- BAGIAN 1: SINKRONISASI GOOGLE SHEETS -->
-            <section class="bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl p-4 space-y-3">
+            <section class="bg-[#162033] border border-[#283548] rounded-2xl p-4 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-extrabold text-[#0F172A] uppercase tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-table text-[#1E3A8A]"></i> 1. Koneksi Google Sheets
+                    <h3 class="text-sm font-extrabold text-[#F8FAFC] uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-table text-[#38BDF8]"></i> 1. Koneksi Google Sheets
                     </h3>
-                    <span id="gsheet-drawer-status" class="text-[11px] font-bold px-2 py-0.5 rounded bg-[#FFFFFF] text-[#475569] border border-[#CBD5E1]">Belum Terhubung</span>
+                    <span id="gsheet-drawer-status" class="text-[11px] font-bold px-2 py-0.5 rounded bg-[#0B1120] text-[#94A3B8] border border-[#334155]">Belum Terhubung</span>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-[#334155] mb-1">Link Google Sheets (Akses Publik / Viewer)</label>
-                    <input type="url" id="gsheet-url-input" placeholder="https://docs.google.com/spreadsheets/d/..." class="w-full bg-[#FFFFFF] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#1E3A8A]">
+                    <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Link Google Sheets (Akses Publik / Viewer)</label>
+                    <input type="url" id="gsheet-url-input" placeholder="https://docs.google.com/spreadsheets/d/..." class="w-full bg-[#0B1120] border border-[#334155] rounded-xl px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#38BDF8]">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#334155] mb-1">Nama Tab / Sheet</label>
-                        <input type="text" id="gsheet-sheet-name" value="Jadwal_UJK" class="w-full bg-[#FFFFFF] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#1E3A8A]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Nama Tab / Sheet</label>
+                        <input type="text" id="gsheet-sheet-name" value="Jadwal_UJK" class="w-full bg-[#0B1120] border border-[#334155] rounded-xl px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#38BDF8]">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-[#334155] mb-1">Interval Sinkronisasi</label>
-                        <select id="gsheet-sync-interval" class="w-full bg-[#FFFFFF] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#1E3A8A]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Interval Sinkronisasi</label>
+                        <select id="gsheet-sync-interval" class="w-full bg-[#0B1120] border border-[#334155] rounded-xl px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#38BDF8]">
                             <option value="10">Setiap 10 Detik</option>
                             <option value="30">Setiap 30 Detik</option>
                             <option value="60">Setiap 1 Menit</option>
@@ -342,36 +342,36 @@
                 </div>
 
                 <div class="flex flex-wrap gap-2">
-                    <button onclick="connectGoogleSheet()" class="flex-1 bg-[#1E3A8A] hover:bg-[#172554] text-[#FFFFFF] font-black text-xs py-2 px-3 rounded-xl transition cursor-pointer">
+                    <button onclick="connectGoogleSheet()" class="flex-1 bg-[#0284C7] hover:bg-[#0369A1] text-[#FFFFFF] font-black text-xs py-2 px-3 rounded-xl transition cursor-pointer">
                         <i class="fa-solid fa-link mr-1"></i> Hubungkan Sheets
                     </button>
-                    <button onclick="disconnectGoogleSheet()" class="bg-[#FFFFFF] hover:bg-[#FEE2E2] text-[#0F172A] hover:text-[#B91C1C] border border-[#94A3B8] font-bold text-xs py-2 px-3 rounded-xl transition cursor-pointer">
+                    <button onclick="disconnectGoogleSheet()" class="bg-[#0B1120] hover:bg-[#7F1D1D] text-[#E2E8F0] hover:text-[#FFFFFF] border border-[#334155] font-bold text-xs py-2 px-3 rounded-xl transition cursor-pointer">
                         Putuskan
                     </button>
-                    <button onclick="downloadTemplateCSV()" class="bg-[#FFFFFF] hover:bg-[#E2E8F0] text-[#0F172A] border border-[#94A3B8] font-bold text-xs py-2 px-3 rounded-xl transition cursor-pointer">
+                    <button onclick="downloadTemplateCSV()" class="bg-[#0B1120] hover:bg-[#1E293B] text-[#E2E8F0] border border-[#334155] font-bold text-xs py-2 px-3 rounded-xl transition cursor-pointer">
                         <i class="fa-solid fa-download mr-1"></i> Template CSV
                     </button>
                 </div>
             </section>
 
             <!-- BAGIAN 2: BEL PEMBERITAHUAN STASIUN/BANDARA -->
-            <section class="bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl p-4 space-y-3.5">
-                <h3 class="text-sm font-extrabold text-[#0F172A] uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-bell text-[#1E3A8A]"></i> 2. Bel Pemberitahuan Ruang Tunggu & Pengingat ISOMA
+            <section class="bg-[#162033] border border-[#283548] rounded-2xl p-4 space-y-3.5">
+                <h3 class="text-sm font-extrabold text-[#F8FAFC] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-bell text-[#38BDF8]"></i> 2. Bel Pemberitahuan Ruang Tunggu & Pengingat ISOMA
                 </h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#334155] mb-1">Nada Bel Pemberitahuan</label>
-                        <select id="setting-bell-style" class="w-full bg-[#FFFFFF] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#1E3A8A]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Nada Bel Pemberitahuan</label>
+                        <select id="setting-bell-style" class="w-full bg-[#0B1120] border border-[#334155] rounded-xl px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#38BDF8]">
                             <option value="airport_chime">Chime Bandara Internasional (4 Nada)</option>
                             <option value="kai_westminster">Bel Stasiun Kereta Api (Westminster)</option>
                             <option value="boarding_dingdong">Ding-Dong Panggilan Ruang Tunggu</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-[#334155] mb-1">Pemicu Otomatis Bel Pemberitahuan</label>
-                        <select id="setting-auto-bell" class="w-full bg-[#FFFFFF] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#1E3A8A]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Pemicu Otomatis Bel Pemberitahuan</label>
+                        <select id="setting-auto-bell" class="w-full bg-[#0B1120] border border-[#334155] rounded-xl px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#38BDF8]">
                             <option value="slide_and_status">Setiap Ganti Slide, Status & Jam 12:00 ISOMA</option>
                             <option value="slide_only">Setiap Pergantian Slide Halaman & ISOMA</option>
                             <option value="status_only">Pergantian Status (07:30, 08:00, 15:23) & 12:00 ISOMA</option>
@@ -382,31 +382,31 @@
             </section>
 
             <!-- BAGIAN 3: KUSTOMISASI TAMPILAN & RUNNING TEXT -->
-            <section class="bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl p-4 space-y-3.5">
-                <h3 class="text-sm font-extrabold text-[#0F172A] uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-desktop text-[#1E3A8A]"></i> 3. Kustomisasi Header & Layar TV
+            <section class="bg-[#162033] border border-[#283548] rounded-2xl p-4 space-y-3.5">
+                <h3 class="text-sm font-extrabold text-[#F8FAFC] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-desktop text-[#38BDF8]"></i> 3. Kustomisasi Header & Layar TV
                 </h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#334155] mb-1">Badge Lembaga</label>
-                        <input type="text" id="setting-badge" class="w-full bg-[#FFFFFF] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#1E3A8A]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Badge Lembaga</label>
+                        <input type="text" id="setting-badge" class="w-full bg-[#0B1120] border border-[#334155] rounded-xl px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#38BDF8]">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-[#334155] mb-1">Judul Utama Layar</label>
-                        <input type="text" id="setting-title" class="w-full bg-[#FFFFFF] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#1E3A8A]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Judul Utama Layar</label>
+                        <input type="text" id="setting-title" class="w-full bg-[#0B1120] border border-[#334155] rounded-xl px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#38BDF8]">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-[#334155] mb-1">Subjudul Lembaga / Keterangan</label>
-                    <input type="text" id="setting-subtitle" class="w-full bg-[#FFFFFF] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#1E3A8A]">
+                    <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Subjudul Lembaga / Keterangan</label>
+                    <input type="text" id="setting-subtitle" class="w-full bg-[#0B1120] border border-[#334155] rounded-xl px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#38BDF8]">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-[#334155] mb-1">Baris per Halaman TV</label>
-                        <select id="setting-rows-per-page" class="w-full bg-[#FFFFFF] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#1E3A8A]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Baris per Halaman TV</label>
+                        <select id="setting-rows-per-page" class="w-full bg-[#0B1120] border border-[#334155] rounded-xl px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#38BDF8]">
                             <option value="4" selected>4 Baris (Default TV Besar)</option>
                             <option value="5">5 Baris (Huruf Sangat Besar)</option>
                             <option value="7">7 Baris (Standar TV 43"-55")</option>
@@ -414,8 +414,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-[#334155] mb-1">Durasi Auto-Slide Halaman</label>
-                        <select id="setting-slide-interval" class="w-full bg-[#FFFFFF] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#1E3A8A]">
+                        <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Durasi Auto-Slide Halaman</label>
+                        <select id="setting-slide-interval" class="w-full bg-[#0B1120] border border-[#334155] rounded-xl px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#38BDF8]">
                             <option value="8">8 Detik</option>
                             <option value="10">10 Detik</option>
                             <option value="15">15 Detik</option>
@@ -425,26 +425,26 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-[#334155] mb-1">Teks Pengumuman Berjalan (Running Text)</label>
-                    <textarea id="setting-running-text" rows="2" class="w-full bg-[#FFFFFF] border border-[#94A3B8] rounded-xl px-3 py-2 text-xs text-[#0F172A] focus:outline-none focus:border-[#1E3A8A]"></textarea>
+                    <label class="block text-xs font-bold text-[#CBD5E1] mb-1">Teks Pengumuman Berjalan (Running Text)</label>
+                    <textarea id="setting-running-text" rows="2" class="w-full bg-[#0B1120] border border-[#334155] rounded-xl px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#38BDF8]"></textarea>
                 </div>
 
-                <button onclick="saveDisplaySettings()" class="w-full bg-[#1E3A8A] hover:bg-[#172554] text-[#FFFFFF] font-black text-xs py-2.5 px-4 rounded-xl shadow transition cursor-pointer flex items-center justify-center gap-2">
+                <button onclick="saveDisplaySettings()" class="w-full bg-[#0284C7] hover:bg-[#0369A1] text-[#FFFFFF] font-black text-xs py-2.5 px-4 rounded-xl shadow transition cursor-pointer flex items-center justify-center gap-2">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan Semua Pengaturan
                 </button>
             </section>
 
             <!-- BAGIAN 4: EXPORT LAPORAN -->
-            <section class="bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl p-4 space-y-3">
-                <h3 class="text-sm font-extrabold text-[#0F172A] uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-file-export text-[#1E3A8A]"></i> 4. Unduh Laporan Jadwal
+            <section class="bg-[#162033] border border-[#283548] rounded-2xl p-4 space-y-3">
+                <h3 class="text-sm font-extrabold text-[#F8FAFC] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-file-export text-[#38BDF8]"></i> 4. Unduh Laporan Jadwal
                 </h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <button onclick="exportToExcel()" class="bg-[#FFFFFF] hover:bg-[#059669] text-[#0F172A] hover:text-[#FFFFFF] border border-[#94A3B8] font-bold text-xs py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-excel"></i> Unduh Excel (.xlsx)
+                    <button onclick="exportToExcel()" class="bg-[#0B1120] hover:bg-[#059669] text-[#F8FAFC] hover:text-[#FFFFFF] border border-[#334155] font-bold text-xs py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-excel text-[#34D399]"></i> Unduh Excel (.xlsx)
                     </button>
-                    <button onclick="exportToPDF()" class="bg-[#FFFFFF] hover:bg-[#DC2626] text-[#0F172A] hover:text-[#FFFFFF] border border-[#94A3B8] font-bold text-xs py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-pdf"></i> Unduh PDF (.pdf)
+                    <button onclick="exportToPDF()" class="bg-[#0B1120] hover:bg-[#DC2626] text-[#F8FAFC] hover:text-[#FFFFFF] border border-[#334155] font-bold text-xs py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-pdf text-[#FB7185]"></i> Unduh PDF (.pdf)
                     </button>
                 </div>
             </section>
@@ -452,9 +452,9 @@
     </aside>
 
     <!-- BANNER PEMBERITAHUAN PANGGILAN ALA BANDARA / STASIUN -->
-    <div id="station-notice-banner" class="hidden fixed bottom-14 right-4 z-40 max-w-md bg-[#0F172A] border-2 border-[#38BDF8] rounded-2xl p-4 shadow-[0_16px_45px_rgba(15,23,42,0.45)] transition-all duration-300">
+    <div id="station-notice-banner" class="hidden fixed bottom-14 right-4 z-40 max-w-md bg-[#0F172A] border-2 border-[#38BDF8] rounded-2xl p-4 shadow-[0_16px_45px_rgba(2,6,23,0.75)] transition-all duration-300">
         <div class="flex items-start gap-3">
-            <div class="w-11 h-11 rounded-xl bg-[#1E3A8A] text-[#FFFFFF] flex items-center justify-center shrink-0">
+            <div class="w-11 h-11 rounded-xl bg-[#1E3A8A] text-[#38BDF8] flex items-center justify-center shrink-0">
                 <i class="fa-solid fa-bell text-lg"></i>
             </div>
             <div class="min-w-0 flex-1">
@@ -479,47 +479,47 @@
     <!-- WADAH NOTIFIKASI TOAST -->
     <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- POPUP KALENDER VISUAL RAMAH REMOTE TV -->
-    <div id="tv-calendar-modal" class="hidden fixed inset-0 z-50 bg-[#0F172A]/75 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="tv-cal-title">
-        <div class="w-full max-w-lg bg-[#FFFFFF] border-2 border-[#1E3A8A] rounded-3xl p-5 sm:p-6 shadow-[0_24px_60px_rgba(15,23,42,0.45)] text-[#0F172A]">
+    <!-- POPUP KALENDER VISUAL RAMAH REMOTE TV (DARK MODE) -->
+    <div id="tv-calendar-modal" class="hidden fixed inset-0 z-50 bg-[#020617]/80 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="tv-cal-title">
+        <div class="w-full max-w-lg bg-[#111827] border-2 border-[#38BDF8] rounded-3xl p-5 sm:p-6 shadow-[0_24px_60px_rgba(2,6,23,0.85)] text-[#F8FAFC]">
             <!-- Header Popup Kalender -->
-            <div class="flex items-center justify-between gap-2 pb-3 border-b border-[#CBD5E1]">
+            <div class="flex items-center justify-between gap-2 pb-3 border-b border-[#283548]">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-10 h-10 rounded-xl bg-[#1E3A8A] text-[#FFFFFF] flex items-center justify-center font-black shadow">
+                    <div class="w-10 h-10 rounded-xl bg-[#1E3A8A] text-[#38BDF8] flex items-center justify-center font-black shadow">
                         <i class="fa-regular fa-calendar-days text-lg"></i>
                     </div>
                     <div>
-                        <h3 id="tv-cal-title" class="text-sm sm:text-base font-black text-[#0F172A]">Pilih Tanggal Jadwal UJK</h3>
-                        <p class="text-[11px] text-[#475569] font-semibold">Gunakan tombol arah Remote TV (◀ ▲ ▼ ▶) & tekan OK</p>
+                        <h3 id="tv-cal-title" class="text-sm sm:text-base font-black text-[#F8FAFC]">Pilih Tanggal Jadwal UJK</h3>
+                        <p class="text-[11px] text-[#94A3B8] font-semibold">Gunakan tombol arah Remote TV (◀ ▲ ▼ ▶) & tekan OK</p>
                     </div>
                 </div>
-                <button type="button" id="tv-cal-close-btn" onclick="closeTvCalendarModal()" class="w-10 h-10 rounded-xl bg-[#F1F5F9] hover:bg-[#1E3A8A] text-[#0F172A] hover:text-[#FFFFFF] border border-[#CBD5E1] flex items-center justify-center transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]">
+                <button type="button" id="tv-cal-close-btn" onclick="closeTvCalendarModal()" class="w-10 h-10 rounded-xl bg-[#1E293B] hover:bg-[#38BDF8] text-[#F8FAFC] hover:text-[#0B1120] border border-[#334155] flex items-center justify-center transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                     <i class="fa-solid fa-xmark text-base"></i>
                 </button>
             </div>
 
             <!-- Navigasi Bulan & Tahun Besar untuk Remote TV -->
-            <div class="flex items-center justify-between gap-2 my-3.5 bg-[#F8FAFC] border border-[#CBD5E1] rounded-2xl p-2">
-                <button type="button" onclick="changeTvCalendarMonth(-1)" class="px-3.5 py-2 rounded-xl bg-[#FFFFFF] hover:bg-[#1E3A8A] text-[#0F172A] hover:text-[#FFFFFF] border border-[#CBD5E1] font-extrabold text-xs sm:text-sm transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]">
+            <div class="flex items-center justify-between gap-2 my-3.5 bg-[#0B1120] border border-[#283548] rounded-2xl p-2">
+                <button type="button" onclick="changeTvCalendarMonth(-1)" class="px-3.5 py-2 rounded-xl bg-[#162033] hover:bg-[#38BDF8] text-[#F8FAFC] hover:text-[#0B1120] border border-[#334155] font-extrabold text-xs sm:text-sm transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                     <i class="fa-solid fa-chevron-left mr-1"></i> Bulan Lalu
                 </button>
-                <div id="tv-cal-month-label" class="text-sm sm:text-lg font-black text-[#0F172A] tracking-wide text-center">
+                <div id="tv-cal-month-label" class="text-sm sm:text-lg font-black text-[#F8FAFC] tracking-wide text-center">
                     November 2026
                 </div>
-                <button type="button" onclick="changeTvCalendarMonth(1)" class="px-3.5 py-2 rounded-xl bg-[#FFFFFF] hover:bg-[#1E3A8A] text-[#0F172A] hover:text-[#FFFFFF] border border-[#CBD5E1] font-extrabold text-xs sm:text-sm transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]">
+                <button type="button" onclick="changeTvCalendarMonth(1)" class="px-3.5 py-2 rounded-xl bg-[#162033] hover:bg-[#38BDF8] text-[#F8FAFC] hover:text-[#0B1120] border border-[#334155] font-extrabold text-xs sm:text-sm transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                     Bulan Depan <i class="fa-solid fa-chevron-right ml-1"></i>
                 </button>
             </div>
 
             <!-- Header Nama Hari -->
             <div class="grid grid-cols-7 gap-1.5 text-center text-xs font-extrabold uppercase tracking-wider mb-2">
-                <div class="text-[#DC2626] py-1">Min</div>
-                <div class="text-[#475569] py-1">Sen</div>
-                <div class="text-[#475569] py-1">Sel</div>
-                <div class="text-[#475569] py-1">Rab</div>
-                <div class="text-[#475569] py-1">Kam</div>
-                <div class="text-[#475569] py-1">Jum</div>
-                <div class="text-[#1E3A8A] py-1">Sab</div>
+                <div class="text-[#FB7185] py-1">Min</div>
+                <div class="text-[#94A3B8] py-1">Sen</div>
+                <div class="text-[#94A3B8] py-1">Sel</div>
+                <div class="text-[#94A3B8] py-1">Rab</div>
+                <div class="text-[#94A3B8] py-1">Kam</div>
+                <div class="text-[#94A3B8] py-1">Jum</div>
+                <div class="text-[#38BDF8] py-1">Sab</div>
             </div>
 
             <!-- Grid Tanggal Besar Mudah Dikontrol Remote TV -->
@@ -528,20 +528,20 @@
             </div>
 
             <!-- Pintasan Cepat Remote TV -->
-            <div class="mt-4 pt-3 border-t border-[#CBD5E1] flex flex-wrap items-center justify-between gap-2">
+            <div class="mt-4 pt-3 border-t border-[#283548] flex flex-wrap items-center justify-between gap-2">
                 <div class="flex flex-wrap items-center gap-1.5">
-                    <button type="button" onclick="selectTvCalendarShortcut(-1)" class="px-3 py-1.5 rounded-xl bg-[#F1F5F9] hover:bg-[#1E3A8A] text-[#0F172A] hover:text-[#FFFFFF] border border-[#CBD5E1] text-xs font-bold transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]">
+                    <button type="button" onclick="selectTvCalendarShortcut(-1)" class="px-3 py-1.5 rounded-xl bg-[#1E293B] hover:bg-[#38BDF8] text-[#F8FAFC] hover:text-[#0B1120] border border-[#334155] text-xs font-bold transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                         Kemarin
                     </button>
-                    <button type="button" onclick="selectTvCalendarShortcut(0)" class="px-3 py-1.5 rounded-xl bg-[#F1F5F9] hover:bg-[#1E3A8A] text-[#0F172A] hover:text-[#FFFFFF] border border-[#CBD5E1] text-xs font-bold transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]">
+                    <button type="button" onclick="selectTvCalendarShortcut(0)" class="px-3 py-1.5 rounded-xl bg-[#1E293B] hover:bg-[#38BDF8] text-[#F8FAFC] hover:text-[#0B1120] border border-[#334155] text-xs font-bold transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                         Hari Ini
                     </button>
-                    <button type="button" onclick="selectTvCalendarShortcut(1)" class="px-3 py-1.5 rounded-xl bg-[#F1F5F9] hover:bg-[#1E3A8A] text-[#0F172A] hover:text-[#FFFFFF] border border-[#CBD5E1] text-xs font-bold transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1E3A8A]">
+                    <button type="button" onclick="selectTvCalendarShortcut(1)" class="px-3 py-1.5 rounded-xl bg-[#1E293B] hover:bg-[#38BDF8] text-[#F8FAFC] hover:text-[#0B1120] border border-[#334155] text-xs font-bold transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#38BDF8]">
                         Besok
                     </button>
                 </div>
-                <div class="flex items-center gap-1.5 text-[11px] text-[#334155] font-semibold">
-                    <span class="w-2 h-2 rounded-full bg-[#059669] inline-block"></span>
+                <div class="flex items-center gap-1.5 text-[11px] text-[#CBD5E1] font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-[#34D399] inline-block"></span>
                     <span>Ada Jadwal UJK</span>
                 </div>
             </div>
@@ -550,9 +550,9 @@
 
     <script>
         /* =====================================================================
-           A. KONFIGURASI DEFAULT & STATE APLIKASI (LIGHT MODE RAMAH MATA)
+           A. KONFIGURASI DEFAULT & STATE APLIKASI (DARK MODE GOOGLE TV)
         ===================================================================== */
-        const STORAGE_KEY = 'lsp_display_ujk_v7_light_eyecomfort';
+        const STORAGE_KEY = 'lsp_display_ujk_v8_dark_googletv';
         const STANDARD_START_MINUTES = 8 * 60;       // 08:00 WIB
         const STANDARD_END_MINUTES = (15 * 60) + 23; // 15:23 WIB
 
@@ -798,9 +798,9 @@
             if (!container) return;
 
             const themes = {
-                success: 'bg-[#0F172A] border-[#10B981] text-[#FFFFFF]',
-                error: 'bg-[#0F172A] border-[#F43F5E] text-[#FFFFFF]',
-                info: 'bg-[#0F172A] border-[#38BDF8] text-[#FFFFFF]'
+                success: 'bg-[#0F172A] border-[#10B981] text-[#F8FAFC]',
+                error: 'bg-[#0F172A] border-[#F43F5E] text-[#F8FAFC]',
+                info: 'bg-[#0F172A] border-[#38BDF8] text-[#F8FAFC]'
             };
             const icons = {
                 success: 'fa-circle-check text-[#34D399]',
@@ -923,29 +923,29 @@
             const scheduledStyle = {
                 code: 'TERJADWAL',
                 label: 'TERJADWAL',
-                badgeClass: 'bg-[#EFF6FF] text-[#1E3A8A] border-[#93C5FD]',
-                dotClass: 'bg-[#2563EB]'
+                badgeClass: 'bg-[#1E3A8A]/70 text-[#BFDBFE] border-[#60A5FA]',
+                dotClass: 'bg-[#60A5FA]'
             };
 
             const doneStyle = {
                 code: 'SELESAI',
                 label: 'SELESAI',
-                badgeClass: 'bg-[#F1F5F9] text-[#475569] border-[#CBD5E1]',
-                dotClass: 'bg-[#64748B]'
+                badgeClass: 'bg-[#1E293B] text-[#94A3B8] border-[#475569]',
+                dotClass: 'bg-[#94A3B8]'
             };
 
             const prepStyle = {
                 code: 'PERSIAPAN',
                 label: 'PERSIAPAN',
-                badgeClass: 'bg-[#FEF3C7] text-[#92400E] border-[#F59E0B]',
-                dotClass: 'bg-[#D97706]'
+                badgeClass: 'bg-[#78350F]/80 text-[#FDE68A] border-[#FBBF24]',
+                dotClass: 'bg-[#FBBF24]'
             };
 
             const liveStyle = {
                 code: 'BERLANGSUNG',
                 label: 'BERLANGSUNG',
-                badgeClass: 'bg-[#D1FAE5] text-[#065F46] border-[#10B981]',
-                dotClass: 'bg-[#059669]'
+                badgeClass: 'bg-[#064E3B]/85 text-[#A7F3D0] border-[#34D399]',
+                dotClass: 'bg-[#34D399]'
             };
 
             if (!item || !item.date) return scheduledStyle;
@@ -1136,7 +1136,7 @@
 
             let cellsHtml = '';
             for (let i = 0; i < firstDayOfWeek; i++) {
-                cellsHtml += '<div class="h-11 sm:h-12 rounded-xl bg-[#F8FAFC]"></div>';
+                cellsHtml += '<div class="h-11 sm:h-12 rounded-xl bg-[#0B1120]/50"></div>';
             }
 
             for (let day = 1; day <= daysInMonth; day++) {
@@ -1145,17 +1145,17 @@
                 const isToday = iso === todayIso;
                 const hasSchedule = scheduledDatesSet.has(iso);
 
-                let btnStyle = 'bg-[#F8FAFC] hover:bg-[#EFF6FF] text-[#0F172A] border border-[#CBD5E1]';
+                let btnStyle = 'bg-[#162033] hover:bg-[#1E3A8A] text-[#F8FAFC] border border-[#334155]';
                 if (isSelected) {
-                    btnStyle = 'bg-[#1E3A8A] text-[#FFFFFF] border-2 border-[#1E3A8A] font-black shadow-md';
+                    btnStyle = 'bg-[#38BDF8] text-[#0B1120] border-2 border-[#FFFFFF] font-black shadow-md';
                 } else if (isToday) {
-                    btnStyle = 'bg-[#EFF6FF] text-[#1E3A8A] border-2 border-[#3B82F6] font-extrabold';
+                    btnStyle = 'bg-[#1E3A8A] text-[#FFFFFF] border-2 border-[#38BDF8] font-extrabold';
                 }
 
                 cellsHtml += `
-                    <button type="button" data-cal-iso="${iso}" onclick="selectTvCalendarDate('${iso}')" onfocus="tvCalFocusedIso='${iso}'" class="relative h-11 sm:h-12 rounded-xl ${btnStyle} flex flex-col items-center justify-center text-sm sm:text-base font-bold transition-transform duration-150 focus:scale-105 focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] cursor-pointer">
+                    <button type="button" data-cal-iso="${iso}" onclick="selectTvCalendarDate('${iso}')" onfocus="tvCalFocusedIso='${iso}'" class="relative h-11 sm:h-12 rounded-xl ${btnStyle} flex flex-col items-center justify-center text-sm sm:text-base font-bold transition-transform duration-150 focus:scale-105 focus:outline-none focus:ring-2 focus:ring-[#38BDF8] cursor-pointer">
                         <span>${day}</span>
-                        ${hasSchedule ? `<span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#FFFFFF]' : 'bg-[#059669]'} mt-0.5"></span>` : ''}
+                        ${hasSchedule ? `<span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#0B1120]' : 'bg-[#34D399]'} mt-0.5"></span>` : ''}
                     </button>
                 `;
             }
@@ -1173,29 +1173,29 @@
 
             if (lower.includes('housekeeper')) {
                 return {
-                    box: 'bg-[#EFF6FF] border-[#93C5FD] text-[#1E3A8A]',
-                    count: 'bg-[#1E3A8A] border-[#1E3A8A] text-[#FFFFFF]',
-                    icon: 'fa-hotel text-[#1D4ED8]'
+                    box: 'bg-[#172554]/85 border-[#60A5FA]/70 text-[#DBEAFE]',
+                    count: 'bg-[#2563EB] border-[#93C5FD] text-[#FFFFFF]',
+                    icon: 'fa-hotel text-[#60A5FA]'
                 };
             }
             if (lower.includes('caretaker')) {
                 return {
-                    box: 'bg-[#ECFDF5] border-[#6EE7B7] text-[#065F46]',
-                    count: 'bg-[#059669] border-[#059669] text-[#FFFFFF]',
-                    icon: 'fa-hand-holding-heart text-[#059669]'
+                    box: 'bg-[#064E3B]/80 border-[#34D399]/70 text-[#D1FAE5]',
+                    count: 'bg-[#059669] border-[#6EE7B7] text-[#FFFFFF]',
+                    icon: 'fa-hand-holding-heart text-[#34D399]'
                 };
             }
             if (lower.includes('babysitter')) {
                 return {
-                    box: 'bg-[#FFF1F2] border-[#FDA4AF] text-[#9F1239]',
-                    count: 'bg-[#E11D48] border-[#E11D48] text-[#FFFFFF]',
-                    icon: 'fa-baby-carriage text-[#E11D48]'
+                    box: 'bg-[#881337]/75 border-[#FB7185]/70 text-[#FFE4E6]',
+                    count: 'bg-[#E11D48] border-[#FDA4AF] text-[#FFFFFF]',
+                    icon: 'fa-baby-carriage text-[#FB7185]'
                 };
             }
             return {
-                box: 'bg-[#F1F5F9] border-[#94A3B8] text-[#0F172A]',
-                count: 'bg-[#334155] border-[#334155] text-[#FFFFFF]',
-                icon: 'fa-award text-[#1E3A8A]'
+                box: 'bg-[#1E293B] border-[#64748B] text-[#F1F5F9]',
+                count: 'bg-[#38BDF8] border-[#BAE6FD] text-[#0B1120]',
+                icon: 'fa-award text-[#38BDF8]'
             };
         }
 
@@ -1225,7 +1225,7 @@
                 totalLabel.textContent = `Menampilkan ${totalItems} jadwal TUK`;
             }
             if (totalAsesiLabel) {
-                totalAsesiLabel.innerHTML = `<i class="fa-solid fa-users text-[#FFFFFF] text-xs"></i><span>Total Asesi: ${totalAsesiAll} Orang</span>`;
+                totalAsesiLabel.innerHTML = `<i class="fa-solid fa-users text-[#93C5FD] text-xs"></i><span>Total Asesi: ${totalAsesiAll} Orang</span>`;
             }
             if (pageIndicatorText) {
                 pageIndicatorText.textContent = `${appState.currentPage} / ${totalPages}`;
@@ -1234,13 +1234,13 @@
             if (totalItems === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="3" class="py-16 px-6 text-center bg-[#FFFFFF]">
+                        <td colspan="3" class="py-16 px-6 text-center bg-[#111827]">
                             <div class="inline-flex flex-col items-center gap-3 max-w-md mx-auto">
-                                <div class="w-16 h-16 rounded-2xl bg-[#F1F5F9] border border-[#CBD5E1] flex items-center justify-center text-[#1E3A8A] text-3xl">
+                                <div class="w-16 h-16 rounded-2xl bg-[#1E293B] border border-[#334155] flex items-center justify-center text-[#38BDF8] text-3xl">
                                     <i class="fa-regular fa-calendar-xmark"></i>
                                 </div>
-                                <div class="text-lg sm:text-xl font-extrabold text-[#0F172A]">Belum Ada Jadwal UJK pada Filter Ini</div>
-                                <p class="text-sm sm:text-base text-[#475569]">Silakan pilih filter tanggal lain pada bilah di atas atau hubungkan Google Sheets melalui tombol pengaturan.</p>
+                                <div class="text-lg sm:text-xl font-extrabold text-[#F8FAFC]">Belum Ada Jadwal UJK pada Filter Ini</div>
+                                <p class="text-sm sm:text-base text-[#94A3B8]">Silakan pilih filter tanggal lain pada bilah di atas atau hubungkan Google Sheets melalui tombol pengaturan.</p>
                             </div>
                         </td>
                     </tr>
@@ -1254,8 +1254,8 @@
             tbody.innerHTML = pageItems.map((item, idx) => {
                 const isOddRow = idx % 2 === 0;
                 const rowBg = isOddRow
-                    ? 'bg-[#FFFFFF] hover:bg-[#E0F2FE]/50'
-                    : 'bg-[#F1F5F9] hover:bg-[#E0F2FE]/50';
+                    ? 'bg-[#111827] hover:bg-[#1E293B]/80'
+                    : 'bg-[#162033] hover:bg-[#1E293B]/80';
                 const statusInfo = getScheduleLiveStatus(item);
                 const schemes = parseSchemesFromItem(item);
                 const itemAsesiTotal = getItemTotalAsesi(item);
@@ -1276,34 +1276,34 @@
 
                 const assessorsHtml = assessors.length > 0
                     ? assessors.map((asr, aIdx) => `
-                        <div class="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-[#FFFFFF] border border-[#CBD5E1] shadow-xs text-base sm:text-lg lg:text-xl font-extrabold">
-                            <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#1E3A8A] text-[#FFFFFF] font-mono text-sm sm:text-base font-black flex items-center justify-center shrink-0">
+                        <div class="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-[#0B1120] border border-[#334155] text-base sm:text-lg lg:text-xl font-extrabold">
+                            <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#38BDF8] text-[#0B1120] font-mono text-sm sm:text-base font-black flex items-center justify-center shrink-0">
                                 ${aIdx + 1}
                             </span>
-                            <span class="text-[#0F172A] leading-snug tracking-tight">${escapeHtml(asr)}</span>
+                            <span class="text-[#F8FAFC] leading-snug tracking-tight">${escapeHtml(asr)}</span>
                         </div>
                     `).join('')
-                    : `<span class="text-[#475569] text-base sm:text-lg">Belum ditentukan</span>`;
+                    : `<span class="text-[#94A3B8] text-base sm:text-lg">Belum ditentukan</span>`;
 
                 return `
                     <tr class="${rowBg} transition-colors duration-200">
-                        <td class="py-5 px-5 sm:px-6 align-middle border-r border-[#CBD5E1]">
+                        <td class="py-5 px-5 sm:px-6 align-middle border-r border-[#283548]">
                             <div class="flex flex-col items-start gap-2.5">
-                                <div class="text-[#0F172A] text-base sm:text-lg lg:text-xl font-black leading-snug">
+                                <div class="text-[#F8FAFC] text-base sm:text-lg lg:text-xl font-black leading-snug">
                                     ${escapeHtml(formatTanggalDenganHari(item.date))}
                                 </div>
                                 <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border ${statusInfo.badgeClass} text-xs sm:text-sm font-black tracking-wider">
                                     <span class="w-2.5 h-2.5 rounded-full ${statusInfo.dotClass}"></span>
                                     <span>${statusInfo.label}</span>
                                 </span>
-                                <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0F172A] text-[#FFFFFF] font-mono text-xs sm:text-sm lg:text-base font-black">
-                                    <i class="fa-solid fa-users text-[#93C5FD] text-xs sm:text-sm"></i>
+                                <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0B1120] border border-[#38BDF8]/50 text-[#E0F2FE] font-mono text-xs sm:text-sm lg:text-base font-black">
+                                    <i class="fa-solid fa-users text-[#38BDF8] text-xs sm:text-sm"></i>
                                     <span>Total: ${itemAsesiTotal} Asesi</span>
                                 </span>
                             </div>
                         </td>
-                        <td class="py-4 px-5 sm:px-6 align-middle border-r border-[#CBD5E1]">
-                            <div class="text-[#0F172A] text-lg sm:text-xl lg:text-2xl font-black leading-snug tracking-tight pb-2 border-b border-[#CBD5E1]">
+                        <td class="py-4 px-5 sm:px-6 align-middle border-r border-[#283548]">
+                            <div class="text-[#F8FAFC] text-lg sm:text-xl lg:text-2xl font-black leading-snug tracking-tight pb-2 border-b border-[#283548]">
                                 ${escapeHtml(item.tuk)}
                             </div>
                             ${schemesHtml ? `
@@ -1611,24 +1611,24 @@
             const lastSyncTime = document.getElementById('last-sync-time');
 
             if (isConnected) {
-                if (pill) pill.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#ECFDF5] border border-[#6EE7B7] text-[11px] sm:text-xs font-bold text-[#065F46]';
-                if (dot) dot.className = 'w-2 h-2 rounded-full bg-[#059669]';
+                if (pill) pill.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#064E3B]/80 border border-[#34D399]/60 text-[11px] sm:text-xs font-bold text-[#A7F3D0]';
+                if (dot) dot.className = 'w-2 h-2 rounded-full bg-[#34D399]';
                 if (label) label.textContent = statusText || 'Google Sheets Aktif';
                 if (drawerStatus) {
                     drawerStatus.textContent = 'Terhubung Real-Time';
-                    drawerStatus.className = 'text-[11px] font-bold px-2 py-0.5 rounded bg-[#ECFDF5] text-[#065F46] border border-[#6EE7B7]';
+                    drawerStatus.className = 'text-[11px] font-bold px-2 py-0.5 rounded bg-[#064E3B]/80 text-[#A7F3D0] border border-[#34D399]/60';
                 }
                 if (syncBtn) {
                     syncBtn.classList.remove('hidden');
                     syncBtn.classList.add('inline-flex');
                 }
             } else {
-                if (pill) pill.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#F1F5F9] border border-[#CBD5E1] text-[11px] sm:text-xs font-bold text-[#0F172A]';
-                if (dot) dot.className = 'w-2 h-2 rounded-full bg-[#0284C7]';
+                if (pill) pill.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#1E293B] border border-[#334155] text-[11px] sm:text-xs font-bold text-[#E2E8F0]';
+                if (dot) dot.className = 'w-2 h-2 rounded-full bg-[#38BDF8]';
                 if (label) label.textContent = statusText || 'Mode Siap Pakai';
                 if (drawerStatus) {
                     drawerStatus.textContent = 'Belum Terhubung';
-                    drawerStatus.className = 'text-[11px] font-bold px-2 py-0.5 rounded bg-[#FFFFFF] text-[#475569] border border-[#CBD5E1]';
+                    drawerStatus.className = 'text-[11px] font-bold px-2 py-0.5 rounded bg-[#0B1120] text-[#94A3B8] border border-[#334155]';
                 }
                 if (syncBtn) {
                     syncBtn.classList.add('hidden');
