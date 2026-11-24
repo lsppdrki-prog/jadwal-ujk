@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id" class="light" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,18 +39,39 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
-        /* Variabel Palet Warna Monokrom Hitam & Putih Kontras Tinggi */
+        /* Variabel Palet Warna Monokrom Hitam & Putih Kontras Tinggi (Kompatibel Android TV) */
         :root,
-        html.dark {
+        html.light,
+        body.theme-light {
+            --bg-canvas: #F5F5F5;
+            --bg-surface: #FFFFFF;
+            --bg-surface-alt: #F0F0F0;
+            --bg-surface-elevated: #E5E5E5;
+            --bg-row-odd: #FFFFFF;
+            --bg-row-even: #F2F2F2;
+            --bg-row-hover: #E5E5E5;
+            --border-subtle: #CCCCCC;
+            --border-strong: #171717;
+            --text-primary: #000000;
+            --text-secondary: #333333;
+            --text-accent: #171717;
+            --accent-primary: #000000;
+            --accent-secondary: #D4D4D4;
+            --accent-contrast: #FFFFFF;
+            --grid-line: rgba(0, 0, 0, 0.06);
+        }
+
+        html.dark,
+        body.theme-dark {
             --bg-canvas: #050505;
             --bg-surface: #0d0d0d;
             --bg-surface-alt: #171717;
             --bg-surface-elevated: #262626;
-            --bg-row-odd: rgba(13, 13, 13, 0.96);
-            --bg-row-even: rgba(23, 23, 23, 0.94);
-            --bg-row-hover: rgba(255, 255, 255, 0.12);
-            --border-subtle: rgba(255, 255, 255, 0.22);
-            --border-strong: rgba(255, 255, 255, 0.55);
+            --bg-row-odd: #0d0d0d;
+            --bg-row-even: #171717;
+            --bg-row-hover: #262626;
+            --border-subtle: #333333;
+            --border-strong: #A3A3A3;
             --text-primary: #FFFFFF;
             --text-secondary: #D4D4D4;
             --text-accent: #F5F5F5;
@@ -58,6 +79,92 @@
             --accent-secondary: #404040;
             --accent-contrast: #000000;
             --grid-line: rgba(255, 255, 255, 0.06);
+        }
+
+        /* Explicit Fallback Rules untuk Android TV WebView Lama */
+        html.light body,
+        body.theme-light {
+            background-color: #F5F5F5 !important;
+            color: #000000 !important;
+        }
+        html.dark body,
+        body.theme-dark {
+            background-color: #050505 !important;
+            color: #FFFFFF !important;
+        }
+
+        html.light .tv-surface,
+        body.theme-light .tv-surface {
+            background-color: #FFFFFF !important;
+            color: #000000 !important;
+            border-color: #171717 !important;
+        }
+        html.dark .tv-surface,
+        body.theme-dark .tv-surface {
+            background-color: #0d0d0d !important;
+            color: #FFFFFF !important;
+            border-color: #8C8C8C !important;
+        }
+
+        html.light .tv-surface-alt,
+        body.theme-light .tv-surface-alt {
+            background-color: #F0F0F0 !important;
+            color: #000000 !important;
+            border-color: #CCCCCC !important;
+        }
+        html.dark .tv-surface-alt,
+        body.theme-dark .tv-surface-alt {
+            background-color: #171717 !important;
+            color: #FFFFFF !important;
+            border-color: #333333 !important;
+        }
+
+        html.light .tv-row-odd,
+        body.theme-light .tv-row-odd {
+            background-color: #FFFFFF !important;
+            color: #000000 !important;
+        }
+        html.light .tv-row-even,
+        body.theme-light .tv-row-even {
+            background-color: #F2F2F2 !important;
+            color: #000000 !important;
+        }
+        html.dark .tv-row-odd,
+        body.theme-dark .tv-row-odd {
+            background-color: #0d0d0d !important;
+            color: #FFFFFF !important;
+        }
+        html.dark .tv-row-even,
+        body.theme-dark .tv-row-even {
+            background-color: #171717 !important;
+            color: #FFFFFF !important;
+        }
+
+        html.light .tv-text-primary,
+        body.theme-light .tv-text-primary {
+            color: #000000 !important;
+        }
+        html.dark .tv-text-primary,
+        body.theme-dark .tv-text-primary {
+            color: #FFFFFF !important;
+        }
+
+        html.light .tv-text-secondary,
+        body.theme-light .tv-text-secondary {
+            color: #333333 !important;
+        }
+        html.dark .tv-text-secondary,
+        body.theme-dark .tv-text-secondary {
+            color: #D4D4D4 !important;
+        }
+
+        /* Latar Kisi Geometris Statis Ringan */
+        .bg-motion-grid {
+            background-color: var(--bg-canvas);
+            background-image:
+                linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+            background-size: 48px 48px;
         }
 
         html.light {
@@ -130,64 +237,64 @@
         }
     </style>
 </head>
-<body class="bg-motion-grid text-[var(--text-primary)] font-sans antialiased selection:bg-[#FFFFFF] selection:text-[#000000] overflow-x-hidden relative transition-colors duration-300">
+<body class="theme-light bg-motion-grid text-[#000000] font-sans antialiased selection:bg-[#000000] selection:text-[#FFFFFF] overflow-x-hidden relative">
 
     <!-- Wrapper Utama Layar Penuh (100dvh Anti-Potong pada Smart TV & Desktop) -->
-    <div class="relative z-10 min-h-[100dvh] flex flex-col justify-between">
+    <div class="relative z-10 min-h-screen flex flex-col justify-between">
 
-        <!-- HEADER UTAMA (Kombinasi Hitam & Putih Monokrom) -->
-        <header id="main-header" class="relative overflow-hidden bg-[var(--bg-surface)] border-b-2 border-[var(--border-strong)] px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_8px_28px_rgba(0,0,0,0.35)] shrink-0 transition-colors duration-300">
+        <!-- HEADER UTAMA (Kombinasi Hitam & Putih Monokrom - Default Light Mode Android TV) -->
+        <header id="main-header" class="tv-surface relative overflow-hidden bg-[#FFFFFF] border-b-2 border-[#171717] px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_8px_28px_rgba(0,0,0,0.12)] shrink-0">
             <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
 
                 <!-- Kiri: Identitas Lembaga & Judul Board -->
                 <div class="flex items-center gap-3.5 min-w-0">
-                    <div id="header-icon-box" title="LSP Ratu Kompetensi Indonesia" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-[#FFFFFF] via-[#F5F5F5] to-[#E5E5E5] flex items-center justify-center shadow-[0_6px_20px_rgba(0,0,0,0.35)] shrink-0 border-2 border-[#737373] overflow-hidden">
+                    <div id="header-icon-box" title="LSP Ratu Kompetensi Indonesia" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-[#FFFFFF] via-[#F5F5F5] to-[#E5E5E5] flex items-center justify-center shadow-[0_6px_20px_rgba(0,0,0,0.2)] shrink-0 border-2 border-[#171717] overflow-hidden">
                         <div id="logo-3d-canvas-container" class="w-full h-full"></div>
                     </div>
                     <div class="min-w-0">
                         <div class="flex flex-wrap items-center gap-2 mb-0.5">
-                            <span id="header-badge-text" class="px-2.5 py-0.5 rounded-md bg-[#FFFFFF] text-[#000000] text-[11px] sm:text-xs font-extrabold uppercase tracking-wider border border-[#000000]">
+                            <span id="header-badge-text" class="px-2.5 py-0.5 rounded-md bg-[#000000] text-[#FFFFFF] text-[11px] sm:text-xs font-extrabold uppercase tracking-wider border border-[#000000]">
                                 LSP RATU KOMPETENSI INDONESIA
                             </span>
-                            <span id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-[11px] sm:text-xs font-bold text-[var(--text-primary)]">
-                                <span id="connection-dot" class="w-2 h-2 rounded-full bg-[#FFFFFF] border border-[#000000]"></span>
+                            <span id="connection-status-pill" class="tv-surface-alt inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#F0F0F0] border border-[#CCCCCC] text-[11px] sm:text-xs font-bold text-[#000000]">
+                                <span id="connection-dot" class="w-2 h-2 rounded-full bg-[#000000]"></span>
                                 <span id="connection-label">Mode Siap Pakai</span>
                             </span>
                         </div>
-                        <h1 id="header-main-title" class="text-lg sm:text-2xl lg:text-3xl font-black tracking-tight text-[var(--text-primary)] truncate">
+                        <h1 id="header-main-title" class="tv-text-primary text-lg sm:text-2xl lg:text-3xl font-black tracking-tight text-[#000000] truncate">
                             JADWAL UJK LSP RATU KOMPETENSI INDONESIA
                         </h1>
-                        <p id="header-subtitle" class="text-xs sm:text-sm font-semibold text-[var(--text-secondary)] truncate">
+                        <p id="header-subtitle" class="tv-text-secondary text-xs sm:text-sm font-semibold text-[#333333] truncate">
                             LSP Ratu Kompetensi Indonesia • Informasi Pelaksanaan Asesmen Real-Time
                         </p>
                     </div>
                 </div>
 
                 <!-- Kanan: Jam Digital Real-Time WIB & Tombol Tema / Layar Penuh / Pengaturan -->
-                <div class="flex items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 border-[var(--border-subtle)] pt-2.5 lg:pt-0">
+                <div class="flex items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 border-[#CCCCCC] pt-2.5 lg:pt-0">
                     <div class="text-left lg:text-right">
-                        <div id="live-date" class="text-xs sm:text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wider">
+                        <div id="live-date" class="tv-text-secondary text-xs sm:text-sm font-bold text-[#333333] uppercase tracking-wider">
                             MEMUAT TANGGAL...
                         </div>
                         <div class="flex items-baseline gap-1.5 justify-start lg:justify-end">
-                            <span id="live-clock" class="font-mono text-2xl sm:text-3xl lg:text-4xl font-black text-[var(--text-primary)] tracking-wider">
+                            <span id="live-clock" class="tv-text-primary font-mono text-2xl sm:text-3xl lg:text-4xl font-black text-[#000000] tracking-wider">
                                 00:00:00
                             </span>
-                            <span class="text-xs font-extrabold text-[#FFFFFF] bg-[#000000] border border-[#737373] px-2 py-0.5 rounded-md">
+                            <span class="text-xs font-extrabold text-[#FFFFFF] bg-[#000000] border border-[#171717] px-2 py-0.5 rounded-md">
                                 WIB
                             </span>
                         </div>
                     </div>
 
                     <!-- Tombol Ikon Kontrol -->
-                    <div id="header-control-buttons" class="flex items-center gap-2 pl-3 border-l border-[var(--border-subtle)]">
-                        <button id="btn-theme-toggle" onclick="toggleThemeMode()" title="Ganti Dark Mode / Light Mode (Alt + T)" aria-label="Ganti Tema Gelap atau Terang" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[#000000] text-[var(--text-primary)] hover:text-[#FFFFFF] border border-[var(--border-subtle)] flex items-center justify-center transition-colors duration-200 cursor-pointer">
-                            <i id="icon-theme-toggle" class="fa-solid fa-sun text-base sm:text-lg"></i>
+                    <div id="header-control-buttons" class="flex items-center gap-2 pl-3 border-l border-[#CCCCCC]">
+                        <button id="btn-theme-toggle" onclick="toggleThemeMode()" title="Beralih ke Dark Mode (Hitam) (Alt + T)" aria-label="Ganti Tema Gelap atau Terang" class="tv-surface-alt w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#F0F0F0] hover:bg-[#000000] text-[#000000] hover:text-[#FFFFFF] border border-[#171717] flex items-center justify-center transition-colors duration-200 cursor-pointer">
+                            <i id="icon-theme-toggle" class="fa-solid fa-moon text-base sm:text-lg"></i>
                         </button>
-                        <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Layar Penuh (F11)" aria-label="Layar Penuh" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[var(--bg-surface-elevated)] hover:bg-[#000000] text-[var(--text-primary)] hover:text-[#FFFFFF] border border-[var(--border-subtle)] flex items-center justify-center transition-colors duration-200 cursor-pointer">
+                        <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Layar Penuh (F11)" aria-label="Layar Penuh" class="tv-surface-alt w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#F0F0F0] hover:bg-[#000000] text-[#000000] hover:text-[#FFFFFF] border border-[#171717] flex items-center justify-center transition-colors duration-200 cursor-pointer">
                             <i id="icon-fullscreen" class="fa-solid fa-expand text-base sm:text-lg"></i>
                         </button>
-                        <button id="btn-admin-drawer" onclick="toggleAdminDrawer()" title="Pengaturan & Google Sheets (Alt + A)" aria-label="Pengaturan Google Sheets" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#000000] hover:bg-[#262626] text-[#FFFFFF] border border-[#737373] flex items-center justify-center transition-colors duration-200 cursor-pointer shadow">
+                        <button id="btn-admin-drawer" onclick="toggleAdminDrawer()" title="Pengaturan & Google Sheets (Alt + A)" aria-label="Pengaturan Google Sheets" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#000000] hover:bg-[#262626] text-[#FFFFFF] border border-[#171717] flex items-center justify-center transition-colors duration-200 cursor-pointer shadow">
                             <i class="fa-solid fa-table-cells text-base sm:text-lg"></i>
                         </button>
                     </div>
@@ -197,17 +304,17 @@
 
         <!-- KONTEN UTAMA: PAPAN TABEL JADWAL UJK -->
         <main class="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 py-3 sm:py-4 min-h-0">
-            <div class="flex-1 flex flex-col bg-[var(--bg-surface)] border-2 border-[var(--border-strong)] rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.35)] overflow-hidden min-h-0 transition-colors duration-300">
+            <div class="tv-surface flex-1 flex flex-col bg-[#FFFFFF] border-2 border-[#171717] rounded-2xl shadow-[0_12px_32px_rgba(0,0,0,0.12)] overflow-hidden min-h-0">
 
                 <!-- Bilah Filter Tanggal UJK & Status Sinkronisasi -->
-                <div class="bg-[var(--bg-surface-alt)] border-b border-[var(--border-subtle)] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <div class="tv-surface-alt bg-[#F0F0F0] border-b border-[#CCCCCC] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
                     <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                        <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[var(--text-primary)]">
-                            <i class="fa-solid fa-filter text-[var(--text-secondary)]"></i>
+                        <span class="tv-text-primary inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#000000]">
+                            <i class="fa-solid fa-filter"></i>
                             <span>Filter Jadwal:</span>
                         </span>
 
-                        <select id="quick-filter-mode" onchange="handleQuickFilterChange()" class="bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-strong)] rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#737373] transition cursor-pointer">
+                        <select id="quick-filter-mode" onchange="handleQuickFilterChange()" class="tv-surface bg-[#FFFFFF] text-[#000000] border border-[#171717] rounded-xl px-3 py-1.5 text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#000000] transition cursor-pointer">
                             <option value="today_tomorrow">Hari Ini & Besok</option>
                             <option value="today">Hari Ini Saja</option>
                             <option value="specific">Pilih Tanggal UJK Tertentu</option>
@@ -215,23 +322,23 @@
                             <option value="all">Semua Tanggal UJK</option>
                         </select>
 
-                        <button type="button" id="btn-open-tv-calendar" onclick="openTvCalendarModal()" class="hidden items-center gap-2 bg-[var(--bg-surface)] hover:bg-[#000000] text-[var(--text-primary)] hover:text-[#FFFFFF] border border-[var(--border-strong)] rounded-xl px-3.5 py-1.5 text-xs sm:text-sm font-extrabold transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#737373]">
+                        <button type="button" id="btn-open-tv-calendar" onclick="openTvCalendarModal()" class="tv-surface hidden items-center gap-2 bg-[#FFFFFF] hover:bg-[#000000] text-[#000000] hover:text-[#FFFFFF] border border-[#171717] rounded-xl px-3.5 py-1.5 text-xs sm:text-sm font-extrabold transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#171717]">
                             <i class="fa-regular fa-calendar-days"></i>
                             <span id="btn-tv-calendar-label">Pilih Tanggal</span>
                             <i class="fa-solid fa-caret-down text-xs opacity-80"></i>
                         </button>
 
-                        <span id="active-filter-badge" class="px-2.5 py-1 rounded-lg bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] border border-[var(--border-subtle)] text-xs font-bold">
+                        <span id="active-filter-badge" class="tv-surface px-2.5 py-1 rounded-lg bg-[#FFFFFF] text-[#000000] border border-[#CCCCCC] text-xs font-bold">
                             Hari Ini & Besok
                         </span>
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <span id="last-sync-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-xs text-[var(--text-secondary)] font-mono font-semibold">
-                            <i class="fa-solid fa-circle-check text-[11px] text-[var(--text-primary)]"></i>
+                        <span id="last-sync-badge" class="tv-surface inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FFFFFF] border border-[#CCCCCC] text-xs text-[#333333] font-mono font-semibold">
+                            <i class="fa-solid fa-circle-check text-[11px]"></i>
                             <span id="last-sync-time">Data Siap</span>
                         </span>
-                        <button id="btn-manual-sync" onclick="manualSyncNow()" title="Sinkronkan Data Google Sheets Sekarang" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#000000] hover:bg-[#262626] text-[#FFFFFF] border border-[#737373] text-xs font-extrabold transition cursor-pointer">
+                        <button id="btn-manual-sync" onclick="manualSyncNow()" title="Sinkronkan Data Google Sheets Sekarang" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#000000] hover:bg-[#262626] text-[#FFFFFF] border border-[#171717] text-xs font-extrabold transition cursor-pointer">
                             <i id="icon-manual-sync" class="fa-solid fa-arrows-rotate text-[11px]"></i>
                             <span>Sync</span>
                         </button>
@@ -239,14 +346,14 @@
                 </div>
 
                 <!-- Progress Bar Pergantian Auto-Slide -->
-                <div class="w-full h-1 bg-[var(--bg-surface-elevated)] overflow-hidden shrink-0">
-                    <div id="auto-slide-progress-bar" class="h-full w-0 bg-gradient-to-r from-[#525252] via-[#A3A3A3] to-[#FFFFFF]"></div>
+                <div class="w-full h-1 bg-[#D4D4D4] overflow-hidden shrink-0">
+                    <div id="auto-slide-progress-bar" class="h-full w-0 bg-[#000000]"></div>
                 </div>
 
                 <!-- Tabel Utama Display (3 Kolom Ekstra Luas) -->
                 <div class="flex-1 overflow-auto min-h-0">
                     <table class="w-full table-fixed text-left border-collapse">
-                        <thead class="sticky top-0 z-10 text-xs sm:text-sm lg:text-base uppercase tracking-wider border-b-2 border-[#737373]">
+                        <thead class="sticky top-0 z-10 text-xs sm:text-sm lg:text-base uppercase tracking-wider border-b-2 border-[#171717]">
                             <tr>
                                 <th class="w-[25%] py-4 px-5 sm:px-6 font-extrabold bg-[#000000] text-[#FFFFFF] border-r border-[#404040]">
                                     <i class="fa-regular fa-calendar-days text-[#D4D4D4] mr-2"></i>Tanggal, Status & Asesi
@@ -259,41 +366,41 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody id="schedule-table-body" class="divide-y-2 divide-[var(--border-subtle)] text-[var(--text-primary)]">
+                        <tbody id="schedule-table-body" class="divide-y-2 divide-[#CCCCCC] text-[#000000]">
                             <!-- Baris jadwal dirender otomatis oleh JavaScript -->
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Footer Tabel: Statistik, Bel Stasiun & Navigasi Halaman -->
-                <div class="bg-[var(--bg-surface-alt)] border-t border-[var(--border-subtle)] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
-                    <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-[var(--text-secondary)]">
-                        <span id="total-count-label" class="font-bold text-[var(--text-primary)]">Menampilkan 0 jadwal</span>
+                <div class="tv-surface-alt bg-[#F0F0F0] border-t border-[#CCCCCC] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                    <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-[#333333]">
+                        <span id="total-count-label" class="tv-text-primary font-bold text-[#000000]">Menampilkan 0 jadwal</span>
                         <span class="opacity-40">•</span>
-                        <span id="total-asesi-label" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#000000] border border-[#737373] font-bold text-[#FFFFFF]">
+                        <span id="total-asesi-label" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#000000] border border-[#171717] font-bold text-[#FFFFFF]">
                             <i class="fa-solid fa-users text-[#FFFFFF] text-xs"></i>
                             <span>Total Asesi: 0 Orang</span>
                         </span>
                         <span class="hidden sm:inline opacity-40">•</span>
-                        <span id="auto-slide-info" class="hidden sm:inline text-xs font-semibold text-[var(--text-secondary)]">Auto-slide aktif (10 dtk)</span>
+                        <span id="auto-slide-info" class="tv-text-secondary hidden sm:inline text-xs font-semibold text-[#333333]">Auto-slide aktif (10 dtk)</span>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
                         <!-- Tombol Bel Pemberitahuan Bandara / Stasiun (Ikon Saja) -->
-                        <button id="btn-station-bell" onclick="triggerStationAnnouncement('MANUAL')" title="Bunyikan Bel Pemberitahuan Bandara / Stasiun (Alt + B)" aria-label="Bel Pemberitahuan" class="w-9 h-9 rounded-lg bg-[#000000] hover:bg-[#262626] text-[#FFFFFF] border border-[#737373] flex items-center justify-center transition-all duration-300 cursor-pointer">
+                        <button id="btn-station-bell" onclick="triggerStationAnnouncement('MANUAL')" title="Bunyikan Bel Pemberitahuan Bandara / Stasiun (Alt + B)" aria-label="Bel Pemberitahuan" class="w-9 h-9 rounded-lg bg-[#000000] hover:bg-[#262626] text-[#FFFFFF] border border-[#171717] flex items-center justify-center transition-all duration-300 cursor-pointer">
                             <i id="icon-bell-status" class="fa-solid fa-bell text-sm"></i>
                         </button>
 
                         <!-- Navigasi Halaman (Ikon Saja) -->
-                        <div class="flex items-center gap-1.5 pl-2 border-l border-[var(--border-subtle)]" id="pagination-nav-buttons">
-                            <button onclick="prevPage()" title="Halaman Sebelumnya" aria-label="Halaman Sebelumnya" class="w-9 h-9 rounded-lg bg-[var(--bg-surface)] hover:bg-[#000000] text-[var(--text-primary)] hover:text-[#FFFFFF] border border-[var(--border-subtle)] flex items-center justify-center transition cursor-pointer">
+                        <div class="flex items-center gap-1.5 pl-2 border-l border-[#CCCCCC]" id="pagination-nav-buttons">
+                            <button onclick="prevPage()" title="Halaman Sebelumnya" aria-label="Halaman Sebelumnya" class="tv-surface w-9 h-9 rounded-lg bg-[#FFFFFF] hover:bg-[#000000] text-[#000000] hover:text-[#FFFFFF] border border-[#171717] flex items-center justify-center transition cursor-pointer">
                                 <i class="fa-solid fa-chevron-left text-xs"></i>
                             </button>
-                            <span id="page-indicator" title="Nomor Halaman" class="inline-flex items-center gap-1.5 font-mono text-xs sm:text-sm font-extrabold px-2.5 h-9 rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-subtle)]">
-                                <i class="fa-solid fa-layer-group text-[11px] text-[var(--text-secondary)]"></i>
+                            <span id="page-indicator" title="Nomor Halaman" class="tv-surface inline-flex items-center gap-1.5 font-mono text-xs sm:text-sm font-extrabold px-2.5 h-9 rounded-lg bg-[#FFFFFF] text-[#000000] border border-[#171717]">
+                                <i class="fa-solid fa-layer-group text-[11px] opacity-75"></i>
                                 <span id="page-indicator-text">1 / 1</span>
                             </span>
-                            <button onclick="nextPage()" title="Halaman Berikutnya" aria-label="Halaman Berikutnya" class="w-9 h-9 rounded-lg bg-[var(--bg-surface)] hover:bg-[#000000] text-[var(--text-primary)] hover:text-[#FFFFFF] border border-[var(--border-subtle)] flex items-center justify-center transition cursor-pointer">
+                            <button onclick="nextPage()" title="Halaman Berikutnya" aria-label="Halaman Berikutnya" class="tv-surface w-9 h-9 rounded-lg bg-[#FFFFFF] hover:bg-[#000000] text-[#000000] hover:text-[#FFFFFF] border border-[#171717] flex items-center justify-center transition cursor-pointer">
                                 <i class="fa-solid fa-chevron-right text-xs"></i>
                             </button>
                         </div>
@@ -303,12 +410,12 @@
         </main>
 
         <!-- RUNNING TEXT PENGUMUMAN BAWAH -->
-        <footer class="bg-[var(--bg-surface)] border-t-2 border-[var(--border-strong)] px-4 py-2 flex items-center gap-3 shrink-0 overflow-hidden transition-colors duration-300">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#000000] text-[#FFFFFF] text-xs font-extrabold uppercase tracking-wider shrink-0 border border-[#737373]">
+        <footer class="tv-surface bg-[#FFFFFF] border-t-2 border-[#171717] px-4 py-2 flex items-center gap-3 shrink-0 overflow-hidden">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#000000] text-[#FFFFFF] text-xs font-extrabold uppercase tracking-wider shrink-0 border border-[#000000]">
                 <i class="fa-solid fa-bullhorn"></i> INFO UJK
             </span>
             <div class="relative flex-1 overflow-hidden whitespace-nowrap">
-                <div id="running-text-content" class="animate-marquee text-xs sm:text-sm font-bold text-[var(--text-primary)]">
+                <div id="running-text-content" class="tv-text-primary animate-marquee text-xs sm:text-sm font-bold text-[#000000]">
                     Selamat datang di Tempat Uji Kompetensi (TUK). Peserta Uji Kompetensi dimohon hadir 30 menit sebelum jadwal dimulai dengan membawa kartu identitas dan kelengkapan portofolio.
                 </div>
             </div>
@@ -415,8 +522,8 @@
                     <div>
                         <label class="block text-xs font-bold text-[var(--text-secondary)] mb-1">Mode Tampilan</label>
                         <select id="setting-theme-mode" onchange="setThemeMode(this.value)" class="w-full bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[#737373]">
+                            <option value="light" selected>Light Mode (Putih - Android TV)</option>
                             <option value="dark">Dark Mode (Hitam)</option>
-                            <option value="light">Light Mode (Putih)</option>
                         </select>
                     </div>
                     <div>
@@ -655,7 +762,7 @@
                 syncInterval: '10'
             },
             settings: {
-                theme: 'dark',
+                theme: 'light',
                 badge: 'LSP RATU KOMPETENSI INDONESIA',
                 title: 'JADWAL UJK LSP RATU KOMPETENSI INDONESIA',
                 subtitle: 'LSP Ratu Kompetensi Indonesia • Informasi Pelaksanaan Asesmen Real-Time',
@@ -668,10 +775,25 @@
         };
 
         function applyThemeToDocument(theme) {
-            const mode = theme === 'light' ? 'light' : 'dark';
+            const mode = theme === 'dark' ? 'dark' : 'light';
             const root = document.documentElement;
+            const body = document.body;
+
             root.classList.remove('dark', 'light');
             root.classList.add(mode);
+            root.setAttribute('data-theme', mode);
+
+            if (body) {
+                body.classList.remove('theme-dark', 'theme-light');
+                body.classList.add(mode === 'dark' ? 'theme-dark' : 'theme-light');
+                body.style.backgroundColor = mode === 'dark' ? '#050505' : '#F5F5F5';
+                body.style.color = mode === 'dark' ? '#FFFFFF' : '#000000';
+            }
+
+            const progressBar = document.getElementById('auto-slide-progress-bar');
+            if (progressBar) {
+                progressBar.style.backgroundColor = mode === 'dark' ? '#FFFFFF' : '#000000';
+            }
 
             const toggleIcon = document.getElementById('icon-theme-toggle');
             const toggleBtn = document.getElementById('btn-theme-toggle');
@@ -690,14 +812,14 @@
         }
 
         function setThemeMode(mode) {
-            appState.settings.theme = mode === 'light' ? 'light' : 'dark';
+            appState.settings.theme = mode === 'dark' ? 'dark' : 'light';
             applyThemeToDocument(appState.settings.theme);
             saveAppState();
             renderScheduleTable(false);
         }
 
         function toggleThemeMode() {
-            const next = appState.settings.theme === 'light' ? 'dark' : 'light';
+            const next = appState.settings.theme === 'dark' ? 'light' : 'dark';
             setThemeMode(next);
             showToast(`Beralih ke ${next === 'light' ? 'Light Mode (Putih)' : 'Dark Mode (Hitam)'}.`, 'info');
         }
@@ -739,7 +861,7 @@
             const g = appState.gsheet;
             const f = appState.filter;
 
-            applyThemeToDocument(s.theme || 'dark');
+            applyThemeToDocument(s.theme || 'light');
 
             const badgeEl = document.getElementById('header-badge-text');
             const titleEl = document.getElementById('header-main-title');
@@ -766,7 +888,7 @@
             setVal('setting-badge', s.badge || '');
             setVal('setting-title', s.title || '');
             setVal('setting-subtitle', s.subtitle || '');
-            setVal('setting-theme-mode', s.theme || 'dark');
+            setVal('setting-theme-mode', s.theme || 'light');
             setVal('setting-rows-per-page', s.rowsPerPage || '4');
             setVal('setting-slide-interval', s.slideInterval || '10');
             setVal('setting-running-text', s.runningText || '');
@@ -1341,9 +1463,10 @@
 
             tbody.innerHTML = pageItems.map((item, idx) => {
                 const isOddRow = idx % 2 === 0;
+                const isLight = appState.settings.theme !== 'dark';
                 const rowBg = isOddRow
-                    ? 'bg-[var(--bg-row-odd)] hover:bg-[var(--bg-row-hover)]'
-                    : 'bg-[var(--bg-row-even)] hover:bg-[var(--bg-row-hover)]';
+                    ? (isLight ? 'tv-row-odd bg-[#FFFFFF] hover:bg-[#E5E5E5]' : 'tv-row-odd bg-[#0d0d0d] hover:bg-[#262626]')
+                    : (isLight ? 'tv-row-even bg-[#F2F2F2] hover:bg-[#E5E5E5]' : 'tv-row-even bg-[#171717] hover:bg-[#262626]');
                 const statusInfo = getScheduleLiveStatus(item);
                 const schemes = parseSchemesFromItem(item);
                 const itemAsesiTotal = getItemTotalAsesi(item);
@@ -1364,20 +1487,20 @@
 
                 const assessorsHtml = assessors.length > 0
                     ? assessors.map((asr, aIdx) => `
-                        <div class="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-[var(--bg-surface-alt)] border border-[var(--border-subtle)] text-base sm:text-lg lg:text-xl font-extrabold text-[var(--text-primary)]">
+                        <div class="tv-surface-alt flex items-center gap-3 px-3.5 py-2 rounded-xl border text-base sm:text-lg lg:text-xl font-extrabold">
                             <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#000000] border border-[#737373] text-[#FFFFFF] font-mono text-sm sm:text-base font-black flex items-center justify-center shrink-0">
                                 ${aIdx + 1}
                             </span>
-                            <span class="leading-snug tracking-tight">${escapeHtml(asr)}</span>
+                            <span class="tv-text-primary leading-snug tracking-tight">${escapeHtml(asr)}</span>
                         </div>
                     `).join('')
-                    : `<span class="text-base sm:text-lg text-[var(--text-secondary)]">Belum ditentukan</span>`;
+                    : `<span class="tv-text-secondary text-base sm:text-lg">Belum ditentukan</span>`;
 
                 return `
                     <tr class="${rowBg} transition-colors duration-200">
-                        <td class="py-5 px-5 sm:px-6 align-middle border-r border-[var(--border-subtle)]">
+                        <td class="py-5 px-5 sm:px-6 align-middle border-r ${isLight ? 'border-[#CCCCCC]' : 'border-[#333333]'}">
                             <div class="flex flex-col items-start gap-2.5">
-                                <div class="text-base sm:text-lg lg:text-xl font-black text-[var(--text-primary)] leading-snug">
+                                <div class="tv-text-primary text-base sm:text-lg lg:text-xl font-black leading-snug">
                                     ${escapeHtml(formatTanggalDenganHari(item.date))}
                                 </div>
                                 <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border ${statusInfo.badgeClass} text-xs sm:text-sm font-black tracking-wider">
@@ -1390,8 +1513,8 @@
                                 </span>
                             </div>
                         </td>
-                        <td class="py-4 px-5 sm:px-6 align-middle border-r border-[var(--border-subtle)]">
-                            <div class="text-lg sm:text-xl lg:text-2xl font-black text-[var(--text-primary)] leading-snug tracking-tight pb-2 border-b border-[var(--border-subtle)]">
+                        <td class="py-4 px-5 sm:px-6 align-middle border-r ${isLight ? 'border-[#CCCCCC]' : 'border-[#333333]'}">
+                            <div class="tv-text-primary text-lg sm:text-xl lg:text-2xl font-black leading-snug tracking-tight pb-2 border-b ${isLight ? 'border-[#CCCCCC]' : 'border-[#333333]'}">
                                 ${escapeHtml(item.tuk)}
                             </div>
                             ${schemesHtml ? `
